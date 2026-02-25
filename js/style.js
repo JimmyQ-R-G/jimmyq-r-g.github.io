@@ -506,11 +506,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Copy alt to data-alt for image alt display
-  const images = document.querySelectorAll('.game-item img, .image .game-item, .image img, .collection-img img');
+  // Copy alt to data-alt for image alt display (use closest .image/.collection-img so it works with placeholder wrapper)
+  const images = document.querySelectorAll('.image img, .collection-img img, .game-item img');
   images.forEach(img => {
-    if (img.alt && !img.parentElement.getAttribute('data-alt')) {
-      img.parentElement.setAttribute('data-alt', img.alt);
+    const container = img.closest('.image, .collection-img');
+    if (container && img.alt && !container.getAttribute('data-alt')) {
+      container.setAttribute('data-alt', img.alt);
     }
   });
 
