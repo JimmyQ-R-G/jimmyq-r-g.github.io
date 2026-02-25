@@ -2011,8 +2011,9 @@ body {
       /* ---------- Games page (jqrg-games) - full-page scroll ---------- */
       body.games-page {
         display: block;
-        overflow-y: auto;
+        overflow: visible;
         width: 100%;
+        min-height: 100%;
       }
 
       .strategies-shell {

@@ -26,13 +26,16 @@
       <script src="/js/cursor.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-      /* Prevent horizontal overflow on narrow screens */
+      /* Full-page scroll: html is scroll container so wheel works everywhere */
       html {
         overflow-x: hidden;
+        overflow-y: auto;
+        height: 100%;
       }
       body {
         overflow-x: hidden;
-        overflow-y: auto !important;
+        overflow: visible !important;
+        min-height: 100%;
         max-width: 100vw;
       }
       
