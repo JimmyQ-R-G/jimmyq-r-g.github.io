@@ -506,19 +506,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Copy alt to data-alt for image alt display (use closest .image/.collection-img so it works with placeholder wrapper)
+  // Copy alt to data-alt for image alt display. Must set on wrapper (not img) because
+  // the img often has class "image" so closest() would return the img; ::after doesn't
+  // display on replaced elements like <img>, so the tooltip must be on the wrapper.
   function syncAltToDataAlt() {
     document.querySelectorAll('.image img, .collection-img img, .game-item img').forEach(img => {
-      const container = img.closest('.image, .collection-img');
-      if (container && img.alt) {
+      let container = img.closest('.image, .collection-img');
+      if (container === img) container = img.parentElement; // img has class .image; use wrapper
+      if (container && img.alt && (container.classList.contains('image') || container.classList.contains('collection-img'))) {
         container.setAttribute('data-alt', img.alt);
       }
     });
   }
   syncAltToDataAlt();
-  // Run again after load in case placeholders or late content changed the DOM
   window.addEventListener('load', syncAltToDataAlt);
   setTimeout(syncAltToDataAlt, 300);
+
+  // Ensure wheel scroll works everywhere on games/strategies pages (fixes "only scroll on right" issue)
+  (function() {
+    const isScrollFixPage = document.body.classList.contains('games-page') || document.body.classList.contains('strategies-page');
+    if (!isScrollFixPage) return;
+    document.addEventListener('wheel', function(e) {
+      // Don't steal scroll from a modal/dropdown that has its own scroll
+      let el = e.target;
+      while (el && el !== document.body) {
+        const style = getComputedStyle(el);
+        const oy = style.overflowY;
+        if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight) {
+          return; // let this element scroll
+        }
+        el = el.parentElement;
+      }
+      const root = document.scrollingElement || document.documentElement;
+      const atTop = root.scrollTop <= 0 && e.deltaY < 0;
+      const atBottom = root.scrollTop + root.clientHeight >= root.scrollHeight && e.deltaY > 0;
+      if (atTop || atBottom) return;
+      window.scrollBy(0, e.deltaY);
+      e.preventDefault();
+    }, { passive: false });
+  })();
 
   // Strategy cards 3D tilt
   const strategyCards = document.querySelectorAll('.strategy-item');
