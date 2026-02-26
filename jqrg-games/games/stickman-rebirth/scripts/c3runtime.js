@@ -21759,7 +21759,16 @@ THE SOFTWARE.
                 return C3.FetchText(url)
         }
         async FetchJson(url) {
-            const text = await this.FetchText(url);
+            let text;
+            if (url === "data.json" || url.endsWith("/data.json")) {
+                const baseUrl = this._runtime.GetRuntimeBaseURL();
+                const resolvedUrl = baseUrl && C3.IsRelativeURL(url) ? (new URL(url, baseUrl)).toString() : url;
+                const response = await fetch(resolvedUrl, { cache: "reload" });
+                C3.ThrowIfNotOk(response);
+                text = await response.text();
+            } else {
+                text = await this.FetchText(url);
+            }
             if (!text || (typeof text === "string" && text.trim() === ""))
                 throw new Error("FetchJson: empty response for " + url + " (check that the file exists and is served correctly)");
             return JSON.parse(text)
