@@ -21707,10 +21707,14 @@ THE SOFTWARE.
                     url = url.toLowerCase();
                 if (this._isCordova && this._isFileProtocol)
                     return this.CordovaFetchLocalFileAsBlob(url);
-                else if (loadPolicy === "local")
-                    return this._promiseThrottle.Add( () => C3.FetchBlob(url));
-                else
-                    return C3.FetchBlob(url)
+                else {
+                    const baseUrl = this._runtime.GetRuntimeBaseURL();
+                    const resolvedUrl = baseUrl ? (new URL(url, baseUrl)).toString() : url;
+                    if (loadPolicy === "local")
+                        return this._promiseThrottle.Add( () => C3.FetchBlob(resolvedUrl));
+                    else
+                        return C3.FetchBlob(resolvedUrl)
+                }
             } else
                 return C3.FetchBlob(url)
         }
@@ -21723,10 +21727,14 @@ THE SOFTWARE.
                     url = url.toLowerCase();
                 if (this._isCordova && this._isFileProtocol)
                     return this.CordovaFetchLocalFileAsArrayBuffer(url);
-                else if (this._defaultLoadPolicy === "local")
-                    return this._promiseThrottle.Add( () => C3.FetchArrayBuffer(url));
-                else
-                    return C3.FetchArrayBuffer(url)
+                else {
+                    const baseUrl = this._runtime.GetRuntimeBaseURL();
+                    const resolvedUrl = baseUrl ? (new URL(url, baseUrl)).toString() : url;
+                    if (this._defaultLoadPolicy === "local")
+                        return this._promiseThrottle.Add( () => C3.FetchArrayBuffer(resolvedUrl));
+                    else
+                        return C3.FetchArrayBuffer(resolvedUrl)
+                }
             } else
                 return C3.FetchArrayBuffer(url)
         }
@@ -21739,15 +21747,21 @@ THE SOFTWARE.
                     url = url.toLowerCase();
                 if (this._isCordova && this._isFileProtocol)
                     return this.CordovaFetchLocalFileAsText(url);
-                else if (this._defaultLoadPolicy === "local")
-                    return this._promiseThrottle.Add( () => C3.FetchText(url));
-                else
-                    return C3.FetchText(url)
+                else {
+                    const baseUrl = this._runtime.GetRuntimeBaseURL();
+                    const resolvedUrl = baseUrl ? (new URL(url, baseUrl)).toString() : url;
+                    if (this._defaultLoadPolicy === "local")
+                        return this._promiseThrottle.Add( () => C3.FetchText(resolvedUrl));
+                    else
+                        return C3.FetchText(resolvedUrl)
+                }
             } else
                 return C3.FetchText(url)
         }
         async FetchJson(url) {
             const text = await this.FetchText(url);
+            if (!text || (typeof text === "string" && text.trim() === ""))
+                throw new Error("FetchJson: empty response for " + url + " (check that the file exists and is served correctly)");
             return JSON.parse(text)
         }
         _CordovaFetchLocalFileAs(filename, as_) {
