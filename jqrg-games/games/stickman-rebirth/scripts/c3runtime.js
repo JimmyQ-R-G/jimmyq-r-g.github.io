@@ -7640,6 +7640,9 @@ THE SOFTWARE.
     }
     ;
     C3.FetchOk = function FetchOk(url, init) {
+        if (typeof url === "string" && url.indexOf("data.json") !== -1) {
+            init = Object.assign({}, init || {}, { cache: "reload" });
+        }
         return fetch(url, init).then(response => {
             C3.ThrowIfNotOk(response);
             return response
