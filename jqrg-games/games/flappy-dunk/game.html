@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="flappyDunkApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flappy Dunk</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <canvas id="board"></canvas>
+    <div id="gameOverScreen" style="display: none">
+      <div id="gameOverBox" ng-controller="GameController">
+        <h1>Game Over</h1>
+        <p>Your Score: <span id="finalScore">{{ score }}</span></p>
+        <div class="playAgainButton" onclick="restartGame()">Play Again</div>
+      </div>
+    </div>
+    <script>
+      var app = angular.module("flappyDunkApp", []);
+
+      app.controller("GameController", function ($scope) {
+        $scope.score = 0;
+      });
+    </script>
+  </body>
+</html>

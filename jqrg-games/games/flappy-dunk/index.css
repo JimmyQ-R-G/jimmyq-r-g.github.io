@@ -1,0 +1,54 @@
+.bg {
+    width: 100%;
+    height: 100vh;
+    background-image: url("bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+      sans-serif;
+    text-align: center;
+    font-size: xx-large;
+  }
+  .ball {
+    position: relative;
+    margin-bottom: 100px;
+  }
+  .play {
+    height: 70px;
+    width: 200px;
+    border: 2px solid black;
+    border-radius: 10px;
+    color: white;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+      sans-serif;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin: auto;
+  }
+  @media screen and (max-width: 768px) {
+    
+    .container {
+      font-size: large;
+    }
+  
+   
+    .ball {
+      margin-bottom: 50px;
+    }
+  
+    
+    .play {
+      height: 50px;
+      width: 150px;
+      font-size: 24px;
+    }
+}
