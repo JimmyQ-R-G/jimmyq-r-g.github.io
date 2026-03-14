@@ -2984,6 +2984,8 @@ let dropKeyPressed = false;
 let mousePressed = false;
 let touchPressed = false;
 let keybindRecording = null;
+// Ignore synthetic mousedown after touch on mobile (prevents double jump on one tap)
+let lastTouchEndTime = 0;
 
 function normalizeKeyList(list) {
   if(!Array.isArray(list)) return [];
@@ -3140,6 +3142,8 @@ window.addEventListener('mousedown', (e) => {
     addKeybind(keybindRecording, mouseCode);
     return;
   }
+  // On mobile, a tap fires touchstart then synthetic mousedown; ignore the latter to avoid double jump
+  if (Date.now() - lastTouchEndTime < 400) return;
   if(!gameRunning || isPaused || voidDamagePause) return;
   const jumpKeys = getKeybindList('jump');
   const dropKeys = getKeybindList('drop');
@@ -3192,6 +3196,7 @@ window.addEventListener('touchend', () => {
   touchStartTime = null;
   isDraggingDown = false;
   stopDrop();
+  lastTouchEndTime = Date.now();
 });
 
 // Extra safety: ensure taps inside the canvas trigger jumps on mobile,
@@ -3202,10 +3207,15 @@ if (__canvasForTouch) {
     if (e.cancelable) {
       e.preventDefault();
     }
+    e.stopPropagation(); // Prevent window touchstart from also firing (one tap = one jump)
     if (!gameRunning || isPaused || voidDamagePause) return;
-    // Simple tap-to-jump; advanced swipe/drop logic is handled by the
-    // global touch listeners above.
-    jump();
+    if (!touchPressed) {
+      touchPressed = true;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      isDraggingDown = false;
+      jump();
+    }
   }, { passive: false });
 }
 
