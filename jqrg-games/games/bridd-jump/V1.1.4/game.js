@@ -2030,7 +2030,8 @@ window.addEventListener('keyup', e => {
   keys[e.code] = false;
   if(["ArrowDown","KeyS"].includes(e.code)) stopDrop();
 });
-window.addEventListener('mousedown', () => jump());
+let lastTouchEndTime = 0;
+window.addEventListener('mousedown', () => { if(Date.now() - lastTouchEndTime < 400) return; jump(); });
 window.addEventListener('touchstart', (e) => {
   touchStartY = e.touches[0].clientY;
   touchStartTime = Date.now();
@@ -2060,6 +2061,7 @@ window.addEventListener('touchend', () => {
   touchStartTime = null;
   isDraggingDown = false;
   stopDrop();
+  lastTouchEndTime = Date.now();
 });
 
 function jump(){

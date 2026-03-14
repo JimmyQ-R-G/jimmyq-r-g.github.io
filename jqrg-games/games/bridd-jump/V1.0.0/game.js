@@ -7,7 +7,7 @@ const BLOCK_SIZE=50;
 const JUMP_SPEED=-15;
 const GRAVITY=0.7;
 
-let keys={}, score=0, bestScore=0, lastTime=0, gameStarted=false, animationId=null;
+let keys={}, score=0, bestScore=0, lastTime=0, gameStarted=false, animationId=null, lastTouchEndTime=0;
 let crashPieces=[], particles=[];
 let baseColors=[{r:255,g:0,b:0},{r:255,g:153,b:0},{r:255,g:255,b:0},{r:0,g:255,g:0},{r:0,g:255,b:255},{r:0,g:0,b:255},{r:153,g:0,b:255}];
 let colorIndex=0, platformColor={r:255,g:0,b:0}, nextColor=baseColors[1], colorLerp=0;
@@ -24,8 +24,8 @@ let platforms=[], spikes=[], lines=[];
 // Input
 window.addEventListener("keydown", e=>{ if(["KeyW","ArrowUp","Space"].includes(e.code)) jump(); keys[e.code]=true; });
 window.addEventListener("keyup", e=>keys[e.code]=false);
-window.addEventListener("mousedown", ()=>jump());
-window.addEventListener("touchstart", ()=>jump());
+window.addEventListener("mousedown", ()=>{ if(Date.now()-lastTouchEndTime<400) return; jump(); });
+window.addEventListener("touchstart", ()=>{ lastTouchEndTime=Date.now(); jump(); });
 
 function jump(){
     if(!player.visible) return;

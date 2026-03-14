@@ -2982,6 +2982,7 @@ let jumpKeyPressed = false;
 let dropKeyPressed = false;
 let mousePressed = false;
 let touchPressed = false;
+let lastTouchEndTime = 0;
 
 window.addEventListener('keydown', e => {
   if(!gameRunning || isPaused || voidDamagePause) return;
@@ -3071,6 +3072,7 @@ window.addEventListener('touchend', () => {
   touchStartTime = null;
   isDraggingDown = false;
   stopDrop();
+  lastTouchEndTime = Date.now();
 });
 
 function jump(){

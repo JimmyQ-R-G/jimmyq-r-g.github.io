@@ -2012,13 +2012,14 @@ function addLine(){
 }
 
 /* ---------- Input handling ---------- */
+let lastTouchEndTime = 0;
 window.addEventListener('keydown', e => {
   keys[e.code] = true;
   if(["KeyW","ArrowUp","Space"].includes(e.code)) jump();
 });
 window.addEventListener('keyup', e => { keys[e.code] = false; });
-window.addEventListener('mousedown', () => jump());
-window.addEventListener('touchstart', () => jump());
+window.addEventListener('mousedown', () => { if(Date.now() - lastTouchEndTime < 400) return; jump(); });
+window.addEventListener('touchstart', () => { lastTouchEndTime = Date.now(); jump(); });
 
 function jump(){
   if(!player.visible) return;

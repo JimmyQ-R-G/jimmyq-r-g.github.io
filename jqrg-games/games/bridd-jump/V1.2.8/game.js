@@ -2976,6 +2976,7 @@ let jumpKeyPressed = false;
 let dropKeyPressed = false;
 let mousePressed = false;
 let touchPressed = false;
+let lastTouchEndTime = 0;
 
 window.addEventListener('keydown', e => {
   keys[e.code] = true;
@@ -3061,6 +3062,7 @@ window.addEventListener('touchend', () => {
   touchStartTime = null;
   isDraggingDown = false;
   stopDrop();
+  lastTouchEndTime = Date.now();
 });
 
 function jump(){

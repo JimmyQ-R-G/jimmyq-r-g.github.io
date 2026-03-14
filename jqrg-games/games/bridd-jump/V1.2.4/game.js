@@ -2353,6 +2353,7 @@ let jumpKeyPressed = false;
 let dropKeyPressed = false;
 let mousePressed = false;
 let touchPressed = false;
+let lastTouchEndTime = 0;
 
 window.addEventListener('keydown', e => {
   keys[e.code] = true;
@@ -2392,6 +2393,7 @@ window.addEventListener('keyup', e => {
   }
 });
 window.addEventListener('mousedown', () => {
+  if(Date.now() - lastTouchEndTime < 400) return;
   if(!mousePressed) {
     mousePressed = true;
     jump();
@@ -2433,6 +2435,7 @@ window.addEventListener('touchend', () => {
   touchStartTime = null;
   isDraggingDown = false;
   stopDrop();
+  lastTouchEndTime = Date.now();
 });
 
 function jump(){
