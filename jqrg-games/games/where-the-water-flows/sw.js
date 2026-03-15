@@ -34,7 +34,7 @@ self.addEventListener('fetch', function (e) {
         if (!r.ok) return r;
         const headers = new Headers(r.headers);
         headers.set(COOP, 'same-origin');
-        headers.set(COEP, 'require-corp');
+        headers.set(COEP, 'credentialless');
         headers.set(CORP, 'same-origin');
         return new Response(await r.arrayBuffer(), {
           status: r.status,
