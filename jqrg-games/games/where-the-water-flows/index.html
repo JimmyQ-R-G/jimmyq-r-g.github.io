@@ -186,7 +186,7 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 	} else {
 		setStatusMode('progress');
-		engine.startGame({
+		var startGamePromise = engine.startGame({
 			'onProgress': function (current, total) {
 				if (current > 0 && total > 0) {
 					statusProgress.value = current;
@@ -196,9 +196,21 @@ const engine = new Engine(GODOT_CONFIG);
 					statusProgress.removeAttribute('max');
 				}
 			},
-		}).then(() => {
+		});
+		var timeout = setTimeout(function () {
+			displayFailureNotice(
+				'Game is taking too long to start.\n\n' +
+				'If you see "worker sent an error" in the console, this export needs threading support that may not work in all browsers/setups.\n\n' +
+				'Try: Chrome in a normal tab (not inside an iframe), or ask the game author for a version exported with "Threads" disabled in Godot HTML5 export.'
+			);
+		}, 45000);
+		startGamePromise.then(function () {
+			clearTimeout(timeout);
 			setStatusMode('hidden');
-		}, displayFailureNotice);
+		}, function (err) {
+			clearTimeout(timeout);
+			displayFailureNotice(err);
+		});
 	}
 }());
 		</script>
