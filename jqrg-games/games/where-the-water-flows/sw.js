@@ -34,7 +34,7 @@ self.addEventListener('fetch', function (e) {
         if (!r.ok) return r;
         const headers = new Headers(r.headers);
         headers.set(COOP, 'same-origin');
-        headers.set(COEP, 'credentialless');
+        headers.set(COEP, 'require-corp');
         headers.set(CORP, 'same-origin');
         return new Response(await r.arrayBuffer(), {
           status: r.status,
@@ -48,11 +48,12 @@ self.addEventListener('fetch', function (e) {
     return;
   }
 
-  // All scripts and workers MUST have CORP when document has COEP, or they are blocked.
-  // Match by path so we never miss (destination can be empty); bypass cache so we always add CORP.
-  const isScriptOrWorker = path.endsWith('.js') || path.endsWith('.wasm') ||
-    e.request.destination === 'script' || e.request.destination === 'worker';
-  if (isScriptOrWorker) {
+  // With COEP require-corp, ALL subresources (scripts, wasm, pck, etc.) need CORP or they are blocked.
+  // Add CORP to every in-scope resource so workers and main thread can load everything.
+  const needsCORP = path.endsWith('.js') || path.endsWith('.wasm') || path.endsWith('.pck') ||
+    path.endsWith('.png') || path.endsWith('.ico') ||
+    e.request.destination === 'script' || e.request.destination === 'worker' || e.request.destination === 'embed';
+  if (needsCORP) {
     e.respondWith(
       fetch(e.request, { cache: 'reload' }).then(async function (r) {
         if (!r.ok) return r;
