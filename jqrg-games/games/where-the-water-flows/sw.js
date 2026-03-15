@@ -48,11 +48,13 @@ self.addEventListener('fetch', function (e) {
     return;
   }
 
-  // Scripts and workers: add CORP so they load under COEP (helps with loading-workers)
-  const dest = e.request.destination;
-  if (dest === 'script' || dest === 'worker' || (dest === '' && (path.endsWith('.js') || path.endsWith('.wasm')))) {
+  // All scripts and workers MUST have CORP when document has COEP, or they are blocked.
+  // Match by path so we never miss (destination can be empty); bypass cache so we always add CORP.
+  const isScriptOrWorker = path.endsWith('.js') || path.endsWith('.wasm') ||
+    e.request.destination === 'script' || e.request.destination === 'worker';
+  if (isScriptOrWorker) {
     e.respondWith(
-      fetch(e.request).then(async function (r) {
+      fetch(e.request, { cache: 'reload' }).then(async function (r) {
         if (!r.ok) return r;
         const headers = new Headers(r.headers);
         headers.set(CORP, 'same-origin');
