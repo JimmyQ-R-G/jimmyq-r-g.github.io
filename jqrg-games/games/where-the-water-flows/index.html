@@ -168,29 +168,16 @@ const engine = new Engine(GODOT_CONFIG);
 
 	if (missing.length !== 0) {
 		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
-			let serviceWorkerRegistrationPromise;
-			try {
-				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
-			} catch (err) {
-				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
+			// Send user to loader so SW is registered; loader will redirect back here and SW will serve this page with COOP/COEP.
+			if (!navigator.serviceWorker.controller && window.location.pathname.indexOf('loader.html') < 0) {
+				window.location.replace('loader.html');
+				return;
 			}
-			// There's a chance that installing the service worker would fix the issue
-			Promise.race([
-				serviceWorkerRegistrationPromise.then((registration) => {
-					if (registration != null) {
-						return Promise.reject(new Error('Service worker already exists.'));
-					}
-					return registration;
-				}).then(() => engine.installServiceWorker()),
-				// For some reason, `getRegistration()` can stall
-				new Promise((resolve) => {
-					setTimeout(() => resolve(), 2000);
-				}),
-			]).then(() => {
-				// Reload if there was no error.
+			// If we have a controller we were served by SW but still missing features (shouldn't happen), or loader sent us back without SW.
+			engine.installServiceWorker().then(() => {
 				window.location.reload();
-			}).catch((err) => {
-				console.error('Error while registering service worker:', err);
+			}).catch(() => {
+				displayFailureNotice('Cross-Origin Isolation is required.\n\nOpen the game via the loader:\n' + location.origin + location.pathname.replace(/[^/]+$/, '') + 'loader.html');
 			});
 		} else {
 			// Display the message as usual

@@ -14,20 +14,24 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   const url = new URL(e.request.url);
   const sameOrigin = url.origin === self.location.origin;
-  const isDocument = e.request.mode === 'navigate' || (e.request.destination === 'document');
+  // Top-level document request (navigate) or explicit document destination
+  const isDoc = e.request.mode === 'navigate' || e.request.destination === 'document';
 
-  if (sameOrigin && isDocument) {
-    e.respondWith(
-      fetch(e.request).then(async function (r) {
-        const headers = new Headers(r.headers);
-        headers.set(COOP, 'same-origin');
-        headers.set(COEP, 'require-corp');
-        return new Response(await r.arrayBuffer(), {
-          status: r.status,
-          statusText: r.statusText,
-          headers: headers
-        });
-      })
-    );
-  }
+  if (!sameOrigin || !isDoc) return;
+
+  e.respondWith(
+    fetch(e.request, { cache: 'reload' }).then(async function (r) {
+      if (!r.ok) return r;
+      const headers = new Headers(r.headers);
+      headers.set(COOP, 'same-origin');
+      headers.set(COEP, 'require-corp');
+      return new Response(await r.arrayBuffer(), {
+        status: r.status,
+        statusText: r.statusText,
+        headers: headers
+      });
+    }).catch(function () {
+      return fetch(e.request);
+    })
+  );
 });

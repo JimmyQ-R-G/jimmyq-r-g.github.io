@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loading… | Where the Water Flows</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(0, 255, 255, 0.2);
+      border-top-color: #0ff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    p { margin: 0.5rem 0; opacity: 0.9; }
+    .err { color: #f88; margin-top: 1rem; }
+    a { color: #0ff; }
+  </style>
+</head>
+<body>
+  <div class="spinner" id="spinner"></div>
+  <p id="msg">Enabling game…</p>
+  <p id="err" class="err" style="display:none;"></p>
+
+  <script>
+    (function () {
+      var target = 'index.html';
+      var msg = document.getElementById('msg');
+      var errEl = document.getElementById('err');
+      var spinner = document.getElementById('spinner');
+
+      function showErr(text) {
+        spinner.style.display = 'none';
+        msg.textContent = 'Could not enable the game.';
+        errEl.style.display = 'block';
+        errEl.textContent = text;
+      }
+
+      if (!('serviceWorker' in navigator)) {
+        showErr('Service workers are not supported in this browser.');
+        return;
+      }
+
+      if (navigator.serviceWorker.controller) {
+        msg.textContent = 'Starting game…';
+        window.location.replace(target);
+        return;
+      }
+
+      msg.textContent = 'Enabling game (one-time setup)…';
+
+      navigator.serviceWorker.register('sw.js', { scope: './' })
+        .then(function (reg) {
+          return navigator.serviceWorker.ready;
+        })
+        .then(function () {
+          msg.textContent = 'Starting game…';
+          window.location.replace(target);
+        })
+        .catch(function (e) {
+          showErr(e.message || 'Service worker registration failed. Try opening this page in its own tab: ' + location.origin + location.pathname.replace('loader.html', ''));
+        });
+    })();
+  </script>
+</body>
+</html>
