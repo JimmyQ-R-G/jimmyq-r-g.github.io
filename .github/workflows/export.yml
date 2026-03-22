@@ -1,0 +1,76 @@
+# Export Godot game to HTML5 and upload the web build as an artifact.
+# Add your Godot project (with project.godot and export_presets.cfg) in the path
+# set in GODOT_PROJECT_PATH, or in another repo and uncomment the checkout step.
+#
+# For "Where the Water Flows" worker/SharedArrayBuffer issues: in the Godot project
+# set the HTML5 export preset to disable threads before running this workflow.
+
+name: Export Web Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_path:
+        description: 'Path to Godot project (folder containing project.godot)'
+        required: true
+        default: 'game'
+      godot_version:
+        description: 'Godot version (optional; leave empty for 4.2)'
+        required: false
+        default: '4.2'
+
+env:
+  GODOT_VERSION: '4.2'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Node.js 24 for actions
+        run: echo "FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Optional: check out another repo that contains the Godot project, then set project_path to its path
+      # - name: Checkout game repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: 'your-org/your-godot-repo'
+      #     path: game
+
+      - name: Verify Godot project and export preset
+        run: |
+          PROJECT_PATH="${{ github.event.inputs.project_path }}"
+          if [ ! -f "$PROJECT_PATH/project.godot" ]; then
+            echo "::error::No project.godot in '$PROJECT_PATH'."
+            echo "Either: (1) Add your Godot project to this repo in a folder (e.g. 'game/') and set project_path to that folder, or (2) Uncomment the 'Checkout game repo' step above, set the repository and path, then use that path as project_path."
+            exit 1
+          fi
+          if [ ! -f "$PROJECT_PATH/export_presets.cfg" ]; then
+            echo "::error::No export_presets.cfg in '$PROJECT_PATH'. In Godot: Project → Export → Add… → Web, then save."
+            exit 1
+          fi
+          echo "Godot project and export preset found."
+
+      - name: Set Godot version from input
+        if: ${{ github.event.inputs.godot_version != '' }}
+        run: echo "GODOT_VERSION=${{ github.event.inputs.godot_version }}" >> $GITHUB_ENV
+
+      - name: Export Godot project (HTML5)
+        id: export
+        uses: Firebelley/godot-export@v5.2.1
+        with:
+          godot_executable_download_url: 'https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.headless.zip'
+          godot_export_templates_download_url: 'https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz'
+          relative_project_path: ${{ github.event.inputs.project_path }}
+          cache: true
+          use_preset_export_path: true
+          archive_output: false
+          verbose: true
+
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: ${{ steps.export.outputs.build_directory }}
