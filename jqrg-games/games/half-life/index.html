@@ -1,12 +1,7 @@
+
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ --> 
-
-
 <html lang="en-us">
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@354e3c6939a08e472482653567d566ba3a2aa527/half%20life/">
+
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -225,11 +220,7 @@
 		if (document.createElement("detect").style.textShadow==="") {
 			document.getElementsByTagName("html")[0].className+=" textshadow";
 		}
-	 /* Custom Cursor */
-      * {
-        cursor: url('/cursor/cursor.png') 24 24, auto !important;
-      }
-</style>
+	</style>
 </head>
 
 <body onerror=alert(event); bgcolor=#555555 text=#F0B418 link=#ffa600 vlink=#ffa600>
@@ -248,7 +239,6 @@
 	<textarea style='visibility: hidden;' id="output" rows="8" style="display: none;"></textarea>
 	<div style='visibility: hidden;' id="asyncDialog" style="float:left"></div>
 
-    <div hidden>
 	<center> <a class="glow">
 		<div id=optionsTitle>
 			<h1>Xash</h1>
@@ -281,7 +271,6 @@
 			<a style='visibility: hidden;' class="glow"><span><label><input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer &nbsp;&nbsp;&nbsp;</label></span></a>
 			<span style='visibility: hidden;'><input type="button" value="Fullscreen" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked, document.getElementById('resize').checked)"></span>
 	</span></div>
-</div>
 
 	<script type='text/javascript' src='browserfs.min.js'></script>
 	<script type='text/javascript'>
@@ -377,8 +366,7 @@
 						else if (text == "shader success") {
 							pashalka_count = 100;
 							a.pause();
-                            let canvass = document.getElementById('canvas');
-							canvass.style.display = "block";
+							document.getElementById('canvas').style.display = "block";
 						} else {
 						}
 					}
@@ -673,9 +661,6 @@
 		//Module.websocket.url = 'wsproxy://the-swank.pp.ua:3000/'
 		Module.websocket.url = 'wsproxy://4.tcp.ngrok.io:10657/';
 		ENV = [];
-        window.addEventListener('load', function(event) {
-            startXash()
-        });
 	</script>
 
 	<script>
