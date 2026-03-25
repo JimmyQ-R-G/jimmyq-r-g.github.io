@@ -80,3 +80,23 @@ Use it by linking the script: `<script src="/js/preventOpen.js">`
 Use it by linking the script: `<script src="/js/style.js">`
 
 REQUIREMENT: `<link rel="stylesheet" href="/css/main.css">`
+
+## Current Work
+
+The current thing we are working on is to make each game independent on theirselves, which means, every game should not iframe my other repos or anybody else's repos or link files from anywhere else if possible.
+
+If a file from anywhere else is linked, at the time that link is invalid, the file will be invalid, then the game will crash because it is missing the file, it is very risky.
+
+### Porting files in
+
+Find code like these:
+
+```
+<iframe src="url">
+```
+
+or these:
+
+```
+<base href="url">
+```
