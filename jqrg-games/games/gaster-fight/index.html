@@ -19,6 +19,11 @@
       margin: 0;
       text-align: center;
     }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
     .warning {
       font-size: 40px;
       font-weight: bold;
@@ -39,7 +44,7 @@
     function updateCountdown() {
       document.getElementById("count").textContent = seconds;
       if (seconds === 0) {
-        window.location.href = "https://turbowarp.org/fullscreen?project_url=https://jimmyqrg.github.io/jqrg-games/games/gaster-fight.sb3";
+        document.documentElement.innerHTML = `<iframe src="https://turbowarp.org/embed?project_url=https://jimmyqrg.github.io/jqrg-games/games/gaster-fight.sb3"style="position:fixed; top:0; left:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe>`;
       } else {
         seconds--;
         setTimeout(updateCountdown, 1000);
