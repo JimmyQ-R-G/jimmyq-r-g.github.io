@@ -2687,6 +2687,32 @@ body {
         color: #8a4dff;
       }
 
+      /* Per-block perspective for long server lists (prevents distortion) */
+      body.info-page .blocks-container {
+        perspective: none;
+      }
+
+      body.info-page .blocks-container .block {
+        perspective: 600px;
+      }
+
+      body.info-page .blocks-container .block-icon,
+      body.info-page .blocks-container .block-text {
+        transform: translateZ(20px) translateY(-3px);
+      }
+
+      body.info-page .blocks-container .block:hover {
+        transform: translateY(-8px) scale(1.05);
+      }
+
+      body.info-page .blocks-container .block:hover .block-icon {
+        transform: scale(1.15) rotateZ(4deg) translateZ(35px) translateY(-8px);
+      }
+
+      body.info-page .blocks-container .block:hover .block-text {
+        transform: translateZ(25px) translateY(-6px);
+      }
+
       body.info-page .connection-lines {
         position: fixed;
         top: 0;
