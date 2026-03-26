@@ -110,5 +110,60 @@
     </div>
   </footer>
 
+  <script>
+    // Right-click context menu for game blocks
+    (function() {
+      const menu = document.createElement('div');
+      menu.id = 'gameContextMenu';
+      menu.style.cssText = 'display:none;position:fixed;z-index:9999;background:rgba(15,15,25,0.95);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:8px 0;min-width:180px;box-shadow:0 10px 40px rgba(0,0,0,0.5);backdrop-filter:blur(10px);';
+      menu.innerHTML = '<div class="ctx-item" data-action="normal">Open Normally</div><div class="ctx-item" data-action="direct">Open Directly</div>';
+      document.body.appendChild(menu);
+      menu.querySelectorAll('.ctx-item').forEach(i => {
+        i.style.cssText = 'padding:10px 16px;cursor:pointer;color:rgba(255,255,255,0.9);font-size:0.9rem;font-family:"Oxanium",sans-serif;transition:background 0.15s;';
+        i.addEventListener('mouseenter', () => { i.style.background = 'rgba(77,140,255,0.25)'; });
+        i.addEventListener('mouseleave', () => { i.style.background = 'transparent'; });
+      });
+
+      function parseBlockLink(el) {
+        const link = el.closest('.block-link');
+        if (!link) return null;
+        const onclick = (link.getAttribute('onclick') || '').trim();
+        const m = onclick.match(/openGame\s*\(\s*['"]([^'"]+)['"]\s*\)/);
+        if (m) return { url: m[1], isDirect: false };
+        const href = link.getAttribute('href');
+        if (href && href !== '#') return { url: href, isDirect: true };
+        return null;
+      }
+
+      function hideMenu() {
+        menu.style.display = 'none';
+        document.removeEventListener('click', hideMenu);
+      }
+
+      document.addEventListener('contextmenu', function(e) {
+        const info = parseBlockLink(e.target);
+        if (!info) { hideMenu(); return; }
+        e.preventDefault();
+        menu.style.display = 'block';
+        menu.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px';
+        menu.style.top = Math.min(e.clientY, window.innerHeight - 120) + 'px';
+        menu._info = info;
+        setTimeout(() => document.addEventListener('click', hideMenu), 0);
+      });
+
+      menu.addEventListener('click', function(e) {
+        const action = e.target.dataset.action;
+        const info = menu._info;
+        if (!action || !info) return;
+        hideMenu();
+        if (action === 'direct' || info.isDirect) {
+          const fullUrl = info.url.startsWith('http') ? info.url : (window.location.origin + (info.url.startsWith('/') ? '' : '/') + info.url);
+          window.open(fullUrl, '_blank');
+        } else {
+          openGame(info.url);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
