@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <script src="js/panicKey.js"></script>
@@ -12,7 +12,7 @@
       (function () {
         const currentUrl = window.location.href;
         const urlParams = new URLSearchParams(window.location.search);
-        const pageParam = urlParams.get("page");
+        const pageParam = urlParams.get('page');
 
         // Skip all redirects if any URL parameter value is "1"
         const hasDirectAccess = Array.from(urlParams.values()).includes("1");
@@ -50,9 +50,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home | JQRG</title>
     <link rel="icon" type="image/png" href="jq.ico" />
-    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="js/style.js"></script>
     <script src="js/cursor.js"></script>
   </head>
@@ -116,8 +122,15 @@
     </div>
 
     <p>
-      <span class="announcement-link">Announcements (Click to reopen)</span><br /><br />If you want to join me and make the website together, click
-      <a href="#" data-path="/join/" target="_blank" style="color: #4d8cff; text-decoration: underline">here</a>!
+      <span class="announcement-link">Announcements (Click to reopen)</span
+      ><br /><br />If you want to join me and make the website together, click
+      <a
+        href="#"
+        data-path="/join/"
+        target="_blank"
+        style="color: #4d8cff; text-decoration: underline"
+        >here</a
+      >!
     </p>
 
     <!-- === Footer === -->
@@ -134,34 +147,26 @@
     <div class="modal-overlay" id="announcementModal">
       <div class="modal-content" id="announcementContent">
         <span class="close-btn" id="closeModal">&times;</span>
-        <h2 style="text-align: center">📢 Announcements</h2>
-        <p>Welcome to <strong>JimmyQrg</strong>! Check here for updates, new game releases, and important information.</p>
-        <p>
-          More informations and updates can be found
-          <a
-            href="https://docs.google.com/document/d/1Xv3x76SwL2CkZPIJq0uMNBt_YQNRfWrR5H5mXILuxfw/edit?tab=t.w5htvyo8czbl"
-            target="_blank"
-            style="color: #4d8cff; text-decoration: underline"
-            >here</a
-          >.
-        </p>
-        <hr style="border: 1px solid rgba(255, 255, 255, 0.3)" />
-        <p>✨ Latest updates:</p>
+        <h2 style="text-align:center;">📢 Announcements</h2>
+      <p>Welcome to <strong>JimmyQrg</strong>! Check here for updates, new game releases, and important information.</p>
+      <p>More informations and updates can be found 
+        <a href="https://docs.google.com/document/d/1Xv3x76SwL2CkZPIJq0uMNBt_YQNRfWrR5H5mXILuxfw/edit?tab=t.w5htvyo8czbl" 
+           target="_blank" 
+           style="color:#4d8cff; text-decoration:underline;">here</a>.</p>
+      <hr style="border: 1px solid rgba(255,255,255,0.3);">
+      <p>✨ Latest updates:</p>
         <ul>
-          <li>Added Rolling Sky</li>
-          <li>Added Bit Plane</li>
-          <li>Added Evaw</li>
-          <li>CatGun Island officially released!</li>
-          <li>Super Star Car officially released!</li>
+          <li>CatGun Island officially released</li>
+          <li>Fixed Crossy Road</li>
         </ul>
         <!-- <p>🚀Future Update</p>
         <ul>
           <li></li>
         </ul> -->
-        <p>⏱️History</p>
+      <p>⏱️History</p>
         <ul>
           <!-- <li>Fixed in total <b>819</b> bugs</li> -->
-          <li>Added in total <b>97</b> games</li>
+          <li>Added in total <b>92</b> games</li>
         </ul>
       </div>
     </div>
@@ -177,16 +182,23 @@
         <h3>🎨 Appearance</h3>
 
         <!-- Enable Cursor -->
-        <label><b>Cursor</b></label
-        ><br />
-        <p style="margin-top: 10px; opacity: 0.8">Show the custom cursor on all pages. (except in games)</p>
-        <input type="checkbox" id="enableCursor" style="margin-top: 10px" />
-        <label for="enableCursor" style="margin-left: 8px; cursor: pointer"> Enable cursor </label>
+        <label><b>Cursor</b></label><br />
+        <p style="margin-top: 10px; opacity: 0.8">
+          Show the custom cursor on all pages. (except in games)
+        </p>
+        <input
+          type="checkbox"
+          id="enableCursor"
+          style="margin-top: 10px"
+        />
+        <label for="enableCursor" style="margin-left: 8px; cursor: pointer;">
+          Enable cursor
+        </label>
 
         <br /><br /><br />
 
         <!-- Disabled Cloak Settings -->
-
+        
         <!-- Main Page Cloak
         <label><b>Use cloak for main page</b></label><br />
         <p style="margin-top: 10px; opacity: 0.8">
@@ -295,16 +307,21 @@
 
         <br />
 
-        <hr style="border: 1px solid rgba(255, 255, 255, 0.2); margin: 30px 0" />
+        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
 
         <!-- ========== GAME SETTINGS ========== -->
         <h3>🎮 Game Settings</h3>
 
         <!-- Open Game Type -->
-        <label><b>Open Game Type</b></label
-        ><br />
-        <p style="margin-top: 10px; opacity: 0.8">Choose how games open when you click on them.</p>
-        <select id="openGameType" class="styled-select" style="margin-top: 8px">
+        <label><b>Open Game Type</b></label><br />
+        <p style="margin-top: 10px; opacity: 0.8">
+          Choose how games open when you click on them.
+        </p>
+        <select
+          id="openGameType"
+          class="styled-select"
+          style="margin-top: 8px"
+        >
           <option value="popup">Popup Window</option>
           <option value="newtab">New Tab</option>
           <option value="sametab">Same Tab</option>
@@ -314,9 +331,14 @@
 
         <!-- Open in popup -->
         <label><b>Open the website in loader mode</b></label>
-        <button class="btn" onclick="openGame('https://jimmyqrg.github.io/?page=extend')">OPEN</button>
+        <button
+          class="btn"
+          onclick="openGame('https://pausd.schooloqy.com/?page=extend')"
+        >
+          OPEN
+        </button>
 
-        <hr style="border: 1px solid rgba(255, 255, 255, 0.2); margin: 30px 0" />
+        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
 
         <!-- ========== ANNOUNCEMENTS ========== -->
         <h3>📢 Announcements</h3>
@@ -324,12 +346,16 @@
         <!-- Auto popup setting -->
         <label><b>Auto pop up announcements:</b></label
         ><br />
-        <select id="announcementSetting" class="styled-select" style="margin-top: 8px">
+        <select
+          id="announcementSetting"
+          class="styled-select"
+          style="margin-top: 8px"
+        >
           <option value="always">Always</option>
           <option value="big">Only when there is a big announcement</option>
         </select>
 
-        <hr style="border: 1px solid rgba(255, 255, 255, 0.2); margin: 30px 0" />
+        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
 
         <!-- ========== SECURITY & EMERGENCY ========== -->
         <h3>🔒 Security & Emergency</h3>
@@ -338,43 +364,66 @@
         <label><b>Panic Key</b></label
         ><br />
         <p style="margin-top: 10px; opacity: 0.8">
-          A key that auto-redirect to an website right when you press it. This will exit the website immediately in an emergency.<br /><br />THIS WORKS IN PAGES
-          ONLY, NOT IN GAMES.<br />
+          A key that auto-redirect to an website right when you press it. This
+          will exit the website immediately in an emergency.<br /><br />THIS
+          WORKS IN PAGES ONLY, NOT IN GAMES.<br />
         </p>
         <p>Customize key</p>
         <button id="panicKeyBtn" class="btn customizeKey"></button><br />
         <p>Customize website</p>
-        <input type="text" id="panicLinkInput" class="styled-input" style="margin-top: 5px" placeholder="https://example.com" />
+        <input
+          type="text"
+          id="panicLinkInput"
+          class="styled-input"
+          style="margin-top: 5px"
+          placeholder="https://example.com"
+        />
         <br /><br /><br />
 
         <!-- Access code -->
         <label><b>Access code:</b></label>
-        <p style="margin-top: 10px; opacity: 0.8">For interaction in construction zone</p>
-        <input id="accessCode" type="password" class="styled-input" placeholder="Enter code" style="margin-top: 5px" />
-        <button id="authorizeBtn" class="btn" style="margin-top: 15px">AUTHORIZE</button>
-        <button id="unauthorizeBtn" class="btn" style="margin-top: 10px">UNAUTHORIZE</button>
+        <p style="margin-top: 10px; opacity: 0.8">
+          For interaction in construction zone
+        </p>
+        <input
+          id="accessCode"
+          type="password"
+          class="styled-input"
+          placeholder="Enter code"
+          style="margin-top: 5px"
+        />
+        <button id="authorizeBtn" class="btn" style="margin-top: 15px">
+          AUTHORIZE
+        </button>
+        <button id="unauthorizeBtn" class="btn" style="margin-top: 10px">
+          UNAUTHORIZE
+        </button>
 
-        <hr style="border: 1px solid rgba(255, 255, 255, 0.2); margin: 30px 0" />
+        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
 
         <!-- ========== INSTALL APP ========== -->
         <h3>📲 Install App</h3>
-
-        <p style="opacity: 0.8; margin-bottom: 15px">Install this website as an app on your device for quick access and offline use.</p>
-
-        <button id="installAppBtn" class="install-btn" style="display: none">
+        
+        <p style="opacity: 0.8; margin-bottom: 15px;">
+          Install this website as an app on your device for quick access and offline use.
+        </p>
+        
+        <button id="installAppBtn" class="install-btn" style="display: none;">
           <i class="fas fa-download"></i>
           <span>Install App</span>
         </button>
-
+        
         <p id="installStatus" class="install-status"></p>
 
-        <hr style="border: 1px solid rgba(255, 255, 255, 0.2); margin: 30px 0" />
+        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
 
         <!-- Lisence -->
         <label><b>Lisence</b></label>
-        <p style="margin-top: 10px">
-          All rights held by <b>ikunbeautiful@gmail.com</b><br />No part of this website may be copied, reused, redistributed, modified, or commercially
-          exploited <b>without prior written permission from the owner</b>.
+        <p style="margin-top: 10px;">
+          All rights held by <b>ikunbeautiful@gmail.com</b><br />No part of this
+          website may be copied, reused, redistributed, modified, or
+          commercially exploited
+          <b>without prior written permission from the owner</b>.
         </p>
       </div>
     </div>
@@ -398,11 +447,13 @@
             .then((registration) => {
               console.log("Service Worker registered with scope:", registration.scope);
               // Check for updates
-              registration.addEventListener("updatefound", () => {
-                console.log("Service Worker update found");
+              registration.addEventListener('updatefound', () => {
+                console.log('Service Worker update found');
               });
             })
-            .catch((err) => console.error("Service Worker registration failed:", err));
+            .catch((err) =>
+              console.error("Service Worker registration failed:", err)
+            );
         }
 
         /* --- Announcement Modal Controls --- */
@@ -418,7 +469,7 @@
           if (isAnnouncementModalOpen || isAnnouncementModalAnimating) return;
           isAnnouncementModalAnimating = true;
           isAnnouncementModalOpen = true;
-
+          
           modal.classList.remove("hide");
           content.classList.remove("hide");
           modal.style.display = "flex";
@@ -432,7 +483,7 @@
         function closeModal() {
           if (!isAnnouncementModalOpen || isAnnouncementModalAnimating) return;
           isAnnouncementModalAnimating = true;
-
+          
           modal.classList.remove("show");
           content.classList.remove("show", "active");
           content.classList.add("hide");
@@ -446,7 +497,8 @@
         }
 
         /* === Auto Popup Logic === */
-        const autoSetting = localStorage.getItem("autoAnnouncement") || "always";
+        const autoSetting =
+          localStorage.getItem("autoAnnouncement") || "always";
 
         if (autoSetting === "always") {
           window.addEventListener("load", openModal);
@@ -458,7 +510,7 @@
           e.stopPropagation();
           openModal();
         });
-
+        
         closeBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           closeModal();
@@ -487,7 +539,7 @@
           if (isSettingsModalOpen || isSettingsModalAnimating) return;
           isSettingsModalAnimating = true;
           isSettingsModalOpen = true;
-
+          
           settingsModal.classList.remove("hide");
           settingsContent.classList.remove("hide");
           settingsModal.style.display = "flex";
@@ -501,7 +553,7 @@
         function closeSettingsModal() {
           if (!isSettingsModalOpen || isSettingsModalAnimating) return;
           isSettingsModalAnimating = true;
-
+          
           settingsModal.classList.remove("show");
           settingsContent.classList.remove("show", "active");
           settingsContent.classList.add("hide");
@@ -539,12 +591,15 @@
         });
 
         /* === SETTINGS FUNCTIONALITY === */
-        const announcementSetting = document.getElementById("announcementSetting");
+        const announcementSetting = document.getElementById(
+          "announcementSetting"
+        );
         announcementSetting.value = autoSetting;
 
         announcementSetting.addEventListener("change", () => {
           localStorage.setItem("autoAnnouncement", announcementSetting.value);
         });
+
 
         /* === Main Page Cloak Setting === */
         const mainPageCloakCheckbox = document.getElementById("mainPageCloak");
@@ -628,7 +683,7 @@
             customizeKey.style.opacity = "1";
             isRecording = false;
           },
-          true,
+          true
         ); // Use capture phase to ensure it runs first
 
         // Cancel recording on outside click
@@ -674,8 +729,10 @@
           if (isRecording) return;
 
           // Always check localStorage directly to get the latest values
-          const currentPanicKey = localStorage.getItem(PANIC_KEY_STORAGE) || "ShiftRight";
-          const currentPanicLink = localStorage.getItem(PANIC_LINK_STORAGE) || "";
+          const currentPanicKey =
+            localStorage.getItem(PANIC_KEY_STORAGE) || "ShiftRight";
+          const currentPanicLink =
+            localStorage.getItem(PANIC_LINK_STORAGE) || "";
 
           // Fix the redirect link if it's incorrect
           const redirectLink = fixRedirectLink(currentPanicLink);
@@ -697,7 +754,8 @@
         async function handleInstallClick() {
           if (!deferredPrompt) {
             if (installStatus) {
-              installStatus.textContent = "Install prompt not available. Please use your browser's menu to install.";
+              installStatus.textContent =
+                "Install prompt not available. Please use your browser's menu to install.";
               installStatus.style.display = "block";
               installStatus.style.color = "#ff4d4d";
             }
@@ -732,7 +790,10 @@
         // Check if app is already installed
         function checkIfInstalled() {
           // Check if running in standalone mode (installed)
-          if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) {
+          if (
+            window.matchMedia("(display-mode: standalone)").matches ||
+            window.navigator.standalone === true
+          ) {
             if (installStatus) {
               installStatus.textContent = "✓ App is already installed";
               installStatus.className = "install-status success";
@@ -778,13 +839,22 @@
 
           // Fallback instructions if prompt doesn't appear
           setTimeout(() => {
-            if (!deferredPrompt && installAppBtn && installAppBtn.style.display !== "none") {
-              const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (
+              !deferredPrompt &&
+              installAppBtn &&
+              installAppBtn.style.display !== "none"
+            ) {
+              const isMobile =
+                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                  navigator.userAgent
+                );
               if (installStatus) {
                 if (isMobile) {
-                  installStatus.textContent = 'Use your browser menu (⋮ or ⋯) and select "Add to Home Screen" or "Install App"';
+                  installStatus.textContent =
+                    'Use your browser menu (⋮ or ⋯) and select "Add to Home Screen" or "Install App"';
                 } else {
-                  installStatus.textContent = 'Use your browser menu (⋮) and select "Install [App Name]"';
+                  installStatus.textContent =
+                    'Use your browser menu (⋮) and select "Install [App Name]"';
                 }
                 installStatus.className = "install-status warning";
               }
