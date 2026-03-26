@@ -21,6 +21,28 @@ The source code for these are in `github.com/jimmyqrg/loader/` and `github.com/j
 Example:
 > `https://jimmyqrg.github.io/loader/?content=https://www.example.com` [go](https://jimmyqrg.github.io/loader/?content=https://www.example.com)
 
+How it is used in `jqrg/games/`
+```html
+<spam class="image game-item"><img class="image" data-j="" data-featured="" data-touchscreen="" alt="Name of the Game" src="/game-images/games/game-name.png" onclick="openGame('https://jimmyqrg.github.io/jqrg-games/games/game-name/')"></spam>
+```
+Break down:
+```html
+<spam class="image game-item"> <!-- We had to use spam because some css and js features are not available on images -->
+  <img class="image" <!-- always use class="image" -->
+    data-j="" <!-- if it is JimmyQrg Original game, true or false -->
+    data-featured="" if it is Featured Game, true or false -->
+    data-touchscreen="" if it is Touchscreen Game, true or false -->
+    alt="" <-- The name of the game it displays -->
+    src="/game-images/games/game-name.png" <-- The image file of the game -->
+    onclick=
+      "openGame(
+        'https://jimmyqrg.github.io/jqrg-games/games/game-name/' <-- URL of the game -->
+      )"
+  >
+</spam>
+```
+For the URL of the game, if possible, keep it inside the repo so it is controllable and independent.
+
 ## Javascript code
 
 They are located in folder `js/`
@@ -89,14 +111,16 @@ If a file from anywhere else is linked, at the time that link is invalid, the fi
 
 ### Porting files in
 
-Find code like these:
+Find code like these in index.html:
 
-```
+```html
 <iframe src="url">
 ```
 
 or these:
 
-```
+```html
 <base href="url">
 ```
+
+And press Ctrl+Shift+I or Cmd+Opt+I to enable dev mode, click on `sources` tab, and add all the files used into this repo inside the game folder.
