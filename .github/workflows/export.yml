@@ -1,9 +1,6 @@
 # Export Godot game to HTML5 and upload the web build as an artifact.
-# Add your Godot project (with project.godot and export_presets.cfg) in the path
-# set in GODOT_PROJECT_PATH, or in another repo and uncomment the checkout step.
-#
-# For "Where the Water Flows" worker/SharedArrayBuffer issues: in the Godot project
-# set the HTML5 export preset to disable threads before running this workflow.
+# Put your Godot project (with project.godot and export_presets.cfg) in the
+# folder set by project_path, then run this workflow from the Actions tab.
 
 name: Export Web Build
 
@@ -15,62 +12,82 @@ on:
         required: true
         default: 'game'
       godot_version:
-        description: 'Godot version (optional; leave empty for 4.2)'
-        required: false
-        default: '4.2'
-
-env:
-  GODOT_VERSION: '4.2'
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+        description: 'Godot version (e.g. 4.2, 4.3, 4.4)'
+        required: true
+        default: '4.4'
 
 jobs:
   export:
     runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: ${{ github.event.inputs.godot_version }}
     steps:
-      - name: Use Node.js 24 for actions
-        run: echo "FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Optional: check out another repo that contains the Godot project, then set project_path to its path
-      # - name: Checkout game repo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: 'your-org/your-godot-repo'
-      #     path: game
-
-      - name: Verify Godot project and export preset
+      - name: Verify Godot project
         run: |
-          PROJECT_PATH="${{ github.event.inputs.project_path }}"
-          if [ ! -f "$PROJECT_PATH/project.godot" ]; then
-            echo "::error::No project.godot in '$PROJECT_PATH'."
-            echo "Either: (1) Add your Godot project to this repo in a folder (e.g. 'game/') and set project_path to that folder, or (2) Uncomment the 'Checkout game repo' step above, set the repository and path, then use that path as project_path."
+          if [ ! -f "${{ github.event.inputs.project_path }}/project.godot" ]; then
+            echo "::error::No project.godot found in '${{ github.event.inputs.project_path }}'."
             exit 1
           fi
-          if [ ! -f "$PROJECT_PATH/export_presets.cfg" ]; then
-            echo "::error::No export_presets.cfg in '$PROJECT_PATH'. In Godot: Project → Export → Add… → Web, then save."
+          if [ ! -f "${{ github.event.inputs.project_path }}/export_presets.cfg" ]; then
+            echo "::error::No export_presets.cfg in '${{ github.event.inputs.project_path }}'. Open your project in Godot → Project → Export → Add Web preset → Save."
             exit 1
           fi
-          echo "Godot project and export preset found."
+          echo "Found project.godot and export_presets.cfg."
 
-      - name: Set Godot version from input
-        if: ${{ github.event.inputs.godot_version != '' }}
-        run: echo "GODOT_VERSION=${{ github.event.inputs.godot_version }}" >> $GITHUB_ENV
+      - name: Download Godot
+        run: |
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          TEMPLATES_URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
 
-      - name: Export Godot project (HTML5)
-        id: export
-        uses: Firebelley/godot-export@v5.2.1
-        with:
-          godot_executable_download_url: 'https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip'
-          godot_export_templates_download_url: 'https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz'
-          relative_project_path: ${{ github.event.inputs.project_path }}
-          cache: true
-          use_preset_export_path: true
-          archive_output: false
-          verbose: true
+          echo "Downloading Godot from: $GODOT_URL"
+          echo "Downloading templates from: $TEMPLATES_URL"
 
-      - name: Upload web build artifact
+          mkdir -p /tmp/godot
+          wget -q "$GODOT_URL" -O /tmp/godot/godot.zip || { echo "::error::Failed to download Godot. Check that version '${GODOT_VERSION}' exists."; exit 1; }
+          wget -q "$TEMPLATES_URL" -O /tmp/godot/templates.tpz || { echo "::error::Failed to download export templates."; exit 1; }
+
+      - name: Install Godot
+        run: |
+          cd /tmp/godot
+          unzip -o godot.zip
+          GODOT_BIN=$(find . -maxdepth 1 -name 'Godot_v*' -type f | head -1)
+          chmod +x "$GODOT_BIN"
+          sudo mv "$GODOT_BIN" /usr/local/bin/godot
+          echo "Godot binary installed: $(godot --version 2>&1 || true)"
+
+      - name: Install export templates
+        run: |
+          TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$TEMPLATE_DIR"
+          cd /tmp/godot
+          unzip -o templates.tpz
+          mv templates/* "$TEMPLATE_DIR/" 2>/dev/null || true
+          echo "Templates installed to $TEMPLATE_DIR"
+          ls "$TEMPLATE_DIR" | head -20
+
+      - name: Export project
+        run: |
+          mkdir -p /tmp/web-build
+          cd "${{ github.event.inputs.project_path }}"
+
+          # Let Godot import assets first
+          timeout 120 godot --headless --import . 2>&1 || true
+
+          # Find the Web export preset name
+          PRESET=$(grep -oP '(?<=name=").*?(?=")' export_presets.cfg | head -1)
+          echo "Using export preset: $PRESET"
+
+          # Export
+          godot --headless --export-release "$PRESET" /tmp/web-build/index.html 2>&1
+
+          echo "Export complete. Files:"
+          ls -la /tmp/web-build/
+
+      - name: Upload web build
         uses: actions/upload-artifact@v4
         with:
           name: web-build
-          path: ${{ steps.export.outputs.build_directory }}
+          path: /tmp/web-build/

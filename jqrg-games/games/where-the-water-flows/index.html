@@ -111,7 +111,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":10473596,"index.wasm":37342091},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"sw.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":10470432,"index.wasm":41833007},"focusCanvas":true,"gdextensionLibs":[]};
 const GODOT_THREADS_ENABLED = true;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -168,16 +168,29 @@ const engine = new Engine(GODOT_CONFIG);
 
 	if (missing.length !== 0) {
 		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
-			// Send user to loader so SW is registered; loader will redirect back here and SW will serve this page with COOP/COEP.
-			if (!navigator.serviceWorker.controller && window.location.pathname.indexOf('loader.html') < 0) {
-				window.location.replace('loader.html');
-				return;
+			let serviceWorkerRegistrationPromise;
+			try {
+				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
+			} catch (err) {
+				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
 			}
-			// If we have a controller we were served by SW but still missing features (shouldn't happen), or loader sent us back without SW.
-			engine.installServiceWorker().then(() => {
+			// There's a chance that installing the service worker would fix the issue
+			Promise.race([
+				serviceWorkerRegistrationPromise.then((registration) => {
+					if (registration != null) {
+						return Promise.reject(new Error('Service worker already exists.'));
+					}
+					return registration;
+				}).then(() => engine.installServiceWorker()),
+				// For some reason, `getRegistration()` can stall
+				new Promise((resolve) => {
+					setTimeout(() => resolve(), 2000);
+				}),
+			]).then(() => {
+				// Reload if there was no error.
 				window.location.reload();
-			}).catch(() => {
-				displayFailureNotice('Cross-Origin Isolation is required.\n\nOpen the game via the loader:\n' + location.origin + location.pathname.replace(/[^/]+$/, '') + 'loader.html');
+			}).catch((err) => {
+				console.error('Error while registering service worker:', err);
 			});
 		} else {
 			// Display the message as usual
@@ -186,7 +199,7 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 	} else {
 		setStatusMode('progress');
-		var startGamePromise = engine.startGame({
+		engine.startGame({
 			'onProgress': function (current, total) {
 				if (current > 0 && total > 0) {
 					statusProgress.value = current;
@@ -196,21 +209,9 @@ const engine = new Engine(GODOT_CONFIG);
 					statusProgress.removeAttribute('max');
 				}
 			},
-		});
-		var timeout = setTimeout(function () {
-			displayFailureNotice(
-				'Game is taking too long to start.\n\n' +
-				'If you see "worker sent an error" in the console, this export needs threading support that may not work in all browsers/setups.\n\n' +
-				'Try: Chrome in a normal tab (not inside an iframe), or ask the game author for a version exported with "Threads" disabled in Godot HTML5 export.'
-			);
-		}, 45000);
-		startGamePromise.then(function () {
-			clearTimeout(timeout);
+		}).then(() => {
 			setStatusMode('hidden');
-		}, function (err) {
-			clearTimeout(timeout);
-			displayFailureNotice(err);
-		});
+		}, displayFailureNotice);
 	}
 }());
 		</script>
