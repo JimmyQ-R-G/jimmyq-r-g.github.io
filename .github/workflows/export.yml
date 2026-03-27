@@ -44,70 +44,44 @@ jobs:
 
       - name: Disable threads in export preset
         if: ${{ github.event.inputs.disable_threads == 'true' }}
+        env:
+          PROJECT_PATH: ${{ github.event.inputs.project_path }}
         run: |
-          CFG="${{ github.event.inputs.project_path }}/export_presets.cfg"
+          CFG="${PROJECT_PATH}/export_presets.cfg"
           echo "=== Full export_presets.cfg ==="
           cat "$CFG"
           echo ""
           echo "=== Patching threads... ==="
 
-          python3 << 'PYEOF'
-          import re, sys
+          cat > /tmp/patch_threads.py << 'SCRIPT'
+          import re, os
 
-          cfg_path = "${{ github.event.inputs.project_path }}/export_presets.cfg"
+          cfg_path = os.environ["PROJECT_PATH"] + "/export_presets.cfg"
           with open(cfg_path, "r") as f:
               content = f.read()
 
           original = content
 
-          # Disable all thread-related variant options (any casing/spacing)
-          content = re.sub(
-              r'(variant/[Tt]hread[ _][Ss]upport\s*=\s*)true',
-              r'\g<1>false',
-              content
-          )
-          content = re.sub(
-              r'(variant/[Tt]hread[Ss]upport\s*=\s*)true',
-              r'\g<1>false',
-              content
-          )
-
-          # Disable cross-origin isolation
-          content = re.sub(
-              r'(html/ensure_cross_origin_isolation_headers\s*=\s*)true',
-              r'\g<1>false',
-              content
-          )
-
-          # Remove "threads" from feature_tags PackedStringArray
-          content = re.sub(
-              r',\s*"threads"', '', content
-          )
-          content = re.sub(
-              r'"threads"\s*,\s*', '', content
-          )
-          content = re.sub(
-              r'"threads"', '', content
-          )
+          content = re.sub(r'(variant/[Tt]hread[ _]?[Ss]upport\s*=\s*)true', r'\1false', content)
+          content = re.sub(r'(html/ensure_cross_origin_isolation_headers\s*=\s*)true', r'\1false', content)
+          content = re.sub(r',\s*"threads"', '', content)
+          content = re.sub(r'"threads"\s*,\s*', '', content)
+          content = re.sub(r'"threads"', '', content)
 
           if content != original:
               print("Changes made to export_presets.cfg")
           else:
               print("WARNING: No thread settings found to patch!")
-              print("Will add thread_support=false to all preset options sections...")
-              # Insert variant/thread_support=false after each [preset.X.options] header
-              content = re.sub(
-                  r'(\[preset\.\d+\.options\]\n)',
-                  r'\1variant/thread_support=false\n',
-                  content
-              )
+              print("Adding variant/thread_support=false to all preset options sections...")
+              content = re.sub(r'(\[preset\.\d+\.options\]\n)', r'\1variant/thread_support=false\n', content)
 
           with open(cfg_path, "w") as f:
               f.write(content)
 
           print("\n=== Patched export_presets.cfg ===")
           print(content)
-          PYEOF
+          SCRIPT
+          python3 /tmp/patch_threads.py
 
       - name: Download Godot
         run: |
