@@ -46,21 +46,68 @@ jobs:
         if: ${{ github.event.inputs.disable_threads == 'true' }}
         run: |
           CFG="${{ github.event.inputs.project_path }}/export_presets.cfg"
-          echo "=== Before patching ==="
-          grep -in 'thread\|cross.origin' "$CFG" || echo "(no thread/cross-origin lines found)"
+          echo "=== Full export_presets.cfg ==="
+          cat "$CFG"
+          echo ""
+          echo "=== Patching threads... ==="
 
-          # Disable Thread Support variant
-          sed -i 's|variant/Thread Support=true|variant/Thread Support=false|g' "$CFG"
-          sed -i 's|variant/thread_support=true|variant/thread_support=false|g' "$CFG"
+          python3 << 'PYEOF'
+          import re, sys
 
-          # Disable cross-origin isolation requirement
-          sed -i 's|html/ensure_cross_origin_isolation_headers=true|html/ensure_cross_origin_isolation_headers=false|g' "$CFG"
+          cfg_path = "${{ github.event.inputs.project_path }}/export_presets.cfg"
+          with open(cfg_path, "r") as f:
+              content = f.read()
 
-          # If "Thread Support" appears in custom_features, remove it
-          sed -i 's|, *"threads"||g; s|"threads" *, *||g; s|"threads"||g' "$CFG"
+          original = content
 
-          echo "=== After patching ==="
-          grep -in 'thread\|cross.origin' "$CFG" || echo "(no thread/cross-origin lines found)"
+          # Disable all thread-related variant options (any casing/spacing)
+          content = re.sub(
+              r'(variant/[Tt]hread[ _][Ss]upport\s*=\s*)true',
+              r'\g<1>false',
+              content
+          )
+          content = re.sub(
+              r'(variant/[Tt]hread[Ss]upport\s*=\s*)true',
+              r'\g<1>false',
+              content
+          )
+
+          # Disable cross-origin isolation
+          content = re.sub(
+              r'(html/ensure_cross_origin_isolation_headers\s*=\s*)true',
+              r'\g<1>false',
+              content
+          )
+
+          # Remove "threads" from feature_tags PackedStringArray
+          content = re.sub(
+              r',\s*"threads"', '', content
+          )
+          content = re.sub(
+              r'"threads"\s*,\s*', '', content
+          )
+          content = re.sub(
+              r'"threads"', '', content
+          )
+
+          if content != original:
+              print("Changes made to export_presets.cfg")
+          else:
+              print("WARNING: No thread settings found to patch!")
+              print("Will add thread_support=false to all preset options sections...")
+              # Insert variant/thread_support=false after each [preset.X.options] header
+              content = re.sub(
+                  r'(\[preset\.\d+\.options\]\n)',
+                  r'\1variant/thread_support=false\n',
+                  content
+              )
+
+          with open(cfg_path, "w") as f:
+              f.write(content)
+
+          print("\n=== Patched export_presets.cfg ===")
+          print(content)
+          PYEOF
 
       - name: Download Godot
         run: |
@@ -90,13 +137,19 @@ jobs:
           cd /tmp/godot
           unzip -o templates.tpz
           mv templates/* "$TEMPLATE_DIR/" 2>/dev/null || true
-          echo "Templates installed to $TEMPLATE_DIR"
-          ls "$TEMPLATE_DIR" | head -20
+          echo "=== Available templates ==="
+          ls "$TEMPLATE_DIR" | grep -i web
+          echo ""
+          echo "=== All templates ==="
+          ls "$TEMPLATE_DIR"
 
       - name: Export project
         run: |
           mkdir -p /tmp/web-build
           cd "${{ github.event.inputs.project_path }}"
+
+          echo "=== Final export_presets.cfg (thread/cross-origin lines) ==="
+          grep -in 'thread\|cross.origin\|variant/' export_presets.cfg || echo "(none found)"
 
           # Let Godot import assets first
           timeout 120 godot --headless --import . 2>&1 || true
@@ -108,17 +161,23 @@ jobs:
           # Export
           godot --headless --export-release "$PRESET" /tmp/web-build/index.html 2>&1
 
-          echo "Export complete. Files:"
+          echo "=== Export complete. Files: ==="
           ls -la /tmp/web-build/
 
-      - name: Patch exported HTML (disable threads)
+          # Verify the exported build
+          if [ -f /tmp/web-build/index.html ]; then
+            echo "=== Thread status in exported HTML ==="
+            grep -i 'THREADS_ENABLED\|ensureCrossOrigin' /tmp/web-build/index.html || echo "(not found)"
+          fi
+
+      - name: Patch exported HTML (safety net)
         if: ${{ github.event.inputs.disable_threads == 'true' }}
         run: |
           cd /tmp/web-build
           if [ -f index.html ]; then
             sed -i 's|GODOT_THREADS_ENABLED = true|GODOT_THREADS_ENABLED = false|g' index.html
             sed -i 's|"ensureCrossOriginIsolationHeaders":true|"ensureCrossOriginIsolationHeaders":false|g' index.html
-            echo "Patched index.html: threads disabled, cross-origin isolation disabled."
+            echo "=== Final index.html thread status ==="
             grep -i 'THREADS_ENABLED\|ensureCrossOrigin' index.html || true
           fi
 
