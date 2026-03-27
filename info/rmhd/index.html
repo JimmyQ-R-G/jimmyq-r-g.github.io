@@ -1,106 +1,96 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rammerhead Browser List | JimmyQrg Infos</title>
     <link rel="stylesheet" href="/css/main.css" />
-    <link rel="icon" href="https://jimmyqrg.github.io/info.ico">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://jimmyqrg.github.io/info.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="../../js/style.js"></script>
     <script src="../../js/cursor.js"></script>
-</head>
-<body class="info-page">
+  </head>
+  <body class="info-page">
     <div class="bg-effects"></div>
     <div class="main-container">
-        <header>
-            <div class="diamond-icon"></div>
-            <h1 class="header-title" data-text="RAMMERHEAD BROWSER LIST">RAMMERHEAD BROWSER LIST</h1>
-            <p class="header-subtitle">JimmyQrg Info</p>
-            <p style="color: rgba(255, 255, 255, 0.7); max-width: 800px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6;">
-                Public working Rammerhead browser pr0xy server list for unblocked browsing.
-            </p>
-        </header>
-        
-        <div class="blocks-container" id="server-list">
-            <!-- Server blocks will be dynamically inserted here -->
-        </div>
-        
-        <div class="footer">
-            <p>To get more urls please use one of them above to open <a href="https://discord.com/channels/886630771182407731/933182459208683530">https://discord.com/channels/886630771182407731/933182459208683530</a></p>
-            <p>© Copyright JimmyQrg 2026</p>
-        </div>
+      <header>
+        <div class="diamond-icon"></div>
+        <h1 class="header-title" data-text="RAMMERHEAD BROWSER LIST">RAMMERHEAD BROWSER LIST</h1>
+        <p class="header-subtitle">JimmyQrg Info</p>
+        <p style="color: rgba(255, 255, 255, 0.7); max-width: 800px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6">
+          Public working Rammerhead browser pr0xy server list for unblocked browsing.
+        </p>
+      </header>
+
+      <div class="blocks-container" id="server-list">
+        <!-- Server blocks will be dynamically inserted here -->
+      </div>
+
+      <div class="footer">
+        <p>
+          To get more urls please use one of them above to open
+          <a href="https://discord.com/channels/886630771182407731/933182459208683530">https://discord.com/channels/886630771182407731/933182459208683530</a>
+        </p>
+        <p>© Copyright JimmyQrg 2026</p>
+      </div>
     </div>
 
     <script>
-        // Server data from your list (excluding vote counts)
-        const servers = [
-            { name: "JIMMYQRG.COM", ip: "https://noblock.jimmyqrg.com" },
-            { name: "CLEVERFR.INFLABOT", ip: "https://cleverfr.inflabot.ar/" },
-            { name: "LEARNING.TEAMGAMING", ip: "https://learning.teamgaming.pw/" },
-            { name: "NANA.RAMMER.JDYMQIC", ip: "https://nana.rammer.jdymqic.shop/" },
-            { name: "NANA.RAMMER.NJUEVED", ip: "https://nana.rammer.njueved.shop/" },
-            { name: "ITRSA.IIDK", ip: "https://www.itrsa.iidx.jp/" },
-            { name: "ITRSA-2026", ip: "https://itrsa-2026.handle.ar/" },
-            { name: "SCHOOL", ip: "https://schooll.antropologiayasombro.ar/" },
-            { name: "RANDOMSUPERDUPER", ip: "https://randomsuperduper.inputobject.com/" },
-            { name: "INFO-FOR-CLEVER", ip: "https://info-for-clever-6cb5204d.nip.io/" },
-            { name: "6CB5204D.NIP", ip: "https://6cb5204d.nip.io/" },
-            { name: "RAMMER-MINNIT", ip: "https://rammer-minnit.drciocan.ro/" },
-            { name: "RAMMER-NANA.ALYAF", ip: "https://rammer-nana.alyaf.com/" },
-            { name: "GOGUARDIANBYPASS", ip: "https://goguardianbypass.inputgate.com/" },
-            { name: "TI84CALC", ip: "https://ti84calc.cogitar.us/" },
-            { name: "MATHCALCULATION", ip: "https://mathcalculation.centrodiagnosticogenetico.com/" },
-            { name: "YOUCANTBLOCKME", ip: "https://youcantblockme.riseelevetors.com/" },
-            { name: "RAMMER.NANA.ZWEB", ip: "https://rammer.nana.zweb.sg/" },
-            { name: "RAMMER.NANA.WOBH", ip: "https://rammer.nana.wobh.org/" },
-            { name: "RAMMER.NANA.PSYCHOGAMETOUS", ip: "https://rammer.nana.psychogametous.com/" },
-            { name: "SERVERSIDEDD", ip: "https://serversidedd.webwise.pt/" },
-            { name: "UZI.ZOPYRA", ip: "https://uzi.uzi.not.againnnn.zopyra.com/" },
-            { name: "FOUNDATION.WAIUKUYOGA", ip: "https://foundation.waiukuyoga.nz/" },
-            { name: "SATURN.TECNOPOINT", ip: "https://saturn.tecnopoint.ru/" },
-            { name: "YOUARE.CIKO", ip: "https://youare.ciko.ch/" },
-            { name: "PANEL.VKREMONT", ip: "https://panel.vkremont.ee/" },
-            { name: "PROJECTGEDLPROXY", ip: "https://projectgedlproxy.sytes.net/" },
-            { name: "RAMMER-NANA.WINIFREDA", ip: "https://rammer-nana.winifreda.gob.ar/" },
-            { name: "RAMMER.NANA.STDAVIDSWELLAND", ip: "https://rammer.nana.stdavidswelland.org/" },
-            { name: "RAMMER.NANA.ALLIANCETRAVEL", ip: "https://rammer.nana.alliancetravel.tur.ar/" },
-            { name: "HOMEWORK.FASCINATINGPHOTO", ip: "https://homework.fascinatingphoto.com/" },
-            { name: "MATHEXCEL", ip: "https://mathexcel.texasmath.net/" },
-            { name: "CANVA.THAT.NINJA", ip: "https://canva.that.ninja/" },
-            { name: "COOLSCHOOL", ip: "https://coolschool.reliability.su/" },
-            { name: "PIDGINCARRIERMAIL", ip: "https://pidgincarriermail.8bit.ca/" },
-            { name: "RC-1140.GERMLAB", ip: "https://rc-1140.germlab.ca/" },
-            { name: "PAPERTUTOR", ip: "https://papertutor.azseguros.cl/" },
-            { name: "RAMMER.NANA.PCA", ip: "https://rammer.nana.pca.inf.br/" },
-            { name: "RAMMER.NANA.KLS", ip: "https://rammer.nana.kls.inf.br/" },
-            { name: "RAMMER.NANA.ROKITA", ip: "https://rammer.nana.rokita.waw.pl/" },
-            { name: "RAMMER.NANA.PORTALWEBVILLAMERCEDES", ip: "https://rammer.nana.portalwebvillamercedes.gob.ar/" },
-            { name: "RAMMER.NANA.OZISIK", ip: "https://rammer.nana.ozisik.gen.tr/" },
-            { name: "RAMMER.NANA.WINIFREDA", ip: "https://rammer.nana.winifreda.gob.ar/" },
-            { name: "RAMMER.NANA.9DEJULIO", ip: "https://rammer.nana.9dejulio.gob.ar/" }
-        ];
+      // Server data from your list (excluding vote counts)
+      const servers = [
+        { name: "JIMMYQRG.COM", ip: "https://noblock.jimmyqrg.com" },
+        { name: "RANDOMSUPERDUPER", ip: "https://randomsuperduper.inputobject.com/" },
+        { name: "INFO-FOR-CLEVER", ip: "https://info-for-clever-6cb5204d.nip.io/" },
+        { name: "6CB5204D.NIP", ip: "https://6cb5204d.nip.io/" },
+        { name: "RAMMER-MINNIT", ip: "https://rammer-minnit.drciocan.ro/" },
+        { name: "RAMMER-NANA.ALYAF", ip: "https://rammer-nana.alyaf.com/" },
+        { name: "GOGUARDIANBYPASS", ip: "https://goguardianbypass.inputgate.com/" },
+        { name: "TI84CALC", ip: "https://ti84calc.cogitar.us/" },
+        { name: "MATHCALCULATION", ip: "https://mathcalculation.centrodiagnosticogenetico.com/" },
+        { name: "YOUCANTBLOCKME", ip: "https://youcantblockme.riseelevetors.com/" },
+        { name: "RAMMER.NANA.ZWEB", ip: "https://rammer.nana.zweb.sg/" },
+        { name: "RAMMER.NANA.WOBH", ip: "https://rammer.nana.wobh.org/" },
+        { name: "RAMMER.NANA.PSYCHOGAMETOUS", ip: "https://rammer.nana.psychogametous.com/" },
+        { name: "SERVERSIDEDD", ip: "https://serversidedd.webwise.pt/" },
+        { name: "UZI.ZOPYRA", ip: "https://uzi.uzi.not.againnnn.zopyra.com/" },
+        { name: "FOUNDATION.WAIUKUYOGA", ip: "https://foundation.waiukuyoga.nz/" },
+        { name: "SATURN.TECNOPOINT", ip: "https://saturn.tecnopoint.ru/" },
+        { name: "YOUARE.CIKO", ip: "https://youare.ciko.ch/" },
+        { name: "PANEL.VKREMONT", ip: "https://panel.vkremont.ee/" },
+        { name: "PROJECTGEDLPROXY", ip: "https://projectgedlproxy.sytes.net/" },
+        { name: "RAMMER-NANA.WINIFREDA", ip: "https://rammer-nana.winifreda.gob.ar/" },
+        { name: "RAMMER.NANA.STDAVIDSWELLAND", ip: "https://rammer.nana.stdavidswelland.org/" },
+        { name: "RAMMER.NANA.ALLIANCETRAVEL", ip: "https://rammer.nana.alliancetravel.tur.ar/" },
+        { name: "HOMEWORK.FASCINATINGPHOTO", ip: "https://homework.fascinatingphoto.com/" },
+        { name: "MATHEXCEL", ip: "https://mathexcel.texasmath.net/" },
+        { name: "CANVA.THAT.NINJA", ip: "https://canva.that.ninja/" },
+        { name: "COOLSCHOOL", ip: "https://coolschool.reliability.su/" },
+        { name: "PIDGINCARRIERMAIL", ip: "https://pidgincarriermail.8bit.ca/" },
+        { name: "RC-1140.GERMLAB", ip: "https://rc-1140.germlab.ca/" },
+        { name: "PAPERTUTOR", ip: "https://papertutor.azseguros.cl/" },
+        { name: "RAMMER.NANA.PCA", ip: "https://rammer.nana.pca.inf.br/" },
+        { name: "RAMMER.NANA.KLS", ip: "https://rammer.nana.kls.inf.br/" },
+        { name: "RAMMER.NANA.ROKITA", ip: "https://rammer.nana.rokita.waw.pl/" },
+        { name: "RAMMER.NANA.PORTALWEBVILLAMERCEDES", ip: "https://rammer.nana.portalwebvillamercedes.gob.ar/" },
+        { name: "RAMMER.NANA.OZISIK", ip: "https://rammer.nana.ozisik.gen.tr/" },
+        { name: "RAMMER.NANA.WINIFREDA", ip: "https://rammer.nana.winifreda.gob.ar/" },
+        { name: "RAMMER.NANA.9DEJULIO", ip: "https://rammer.nana.9dejulio.gob.ar/" },
+      ];
 
-        // Generate server blocks
-        const serverListContainer = document.getElementById('server-list');
-        
-        servers.forEach(server => {
-            const block = document.createElement('div');
-            block.className = 'block';
-            
-            // Get a random icon for each server
-            const icons = ['fas fa-server', 'fas fa-gamepad', 'fas fa-dice-d20', 'fas fa-cube', 'fas fa-gem', 'fas fa-crown'];
-            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-            
-            block.innerHTML = `
+      // Generate server blocks
+      const serverListContainer = document.getElementById("server-list");
+
+      servers.forEach((server) => {
+        const block = document.createElement("div");
+        block.className = "block";
+
+        // Get a random icon for each server
+        const icons = ["fas fa-server", "fas fa-gamepad", "fas fa-dice-d20", "fas fa-cube", "fas fa-gem", "fas fa-crown"];
+        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+        block.innerHTML = `
                 <div class="block-icon">
                     <i class="${randomIcon}"></i>
                 </div>
@@ -110,44 +100,47 @@
                     <i class="fas fa-copy"></i> Copy Url
                 </button>
             `;
-            
-            serverListContainer.appendChild(block);
-        });
 
-        // Copy IP functionality
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('copy-btn') || e.target.parentElement.classList.contains('copy-btn')) {
-                e.preventDefault();
-                e.stopPropagation();
-                const button = e.target.classList.contains('copy-btn') ? e.target : e.target.parentElement;
-                const ip = button.getAttribute('data-ip');
-                
-                // Copy to clipboard
-                navigator.clipboard.writeText(ip).then(() => {
-                    const originalText = button.innerHTML;
-                    button.innerHTML = '<i class="fas fa-check"></i> Url Copied!';
-                    button.style.background = 'linear-gradient(90deg, #00c853, #29ff6a)';
-                    button.style.borderColor = 'transparent';
-                    
-                    setTimeout(() => {
-                        button.innerHTML = originalText;
-                        button.style.background = 'rgba(0, 0, 0, 0.6)';
-                        button.style.borderColor = 'white';
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy Url: ', err);
-                    button.innerHTML = '<i class="fas fa-times"></i> Failed to Copy';
-                    button.style.background = 'linear-gradient(90deg, #ff3b3b, #ff6b2d)';
-                    button.style.borderColor = 'transparent';
-                    
-                    setTimeout(() => {
-                        button.innerHTML = '<i class="fas fa-copy"></i> Copy Url';
-                        button.style.background = 'rgba(0, 0, 0, 0.6)';
-                        button.style.borderColor = 'white';
-                    }, 2000);
-                });
-            }
-        });
+        serverListContainer.appendChild(block);
+      });
+
+      // Copy IP functionality
+      document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("copy-btn") || e.target.parentElement.classList.contains("copy-btn")) {
+          e.preventDefault();
+          e.stopPropagation();
+          const button = e.target.classList.contains("copy-btn") ? e.target : e.target.parentElement;
+          const ip = button.getAttribute("data-ip");
+
+          // Copy to clipboard
+          navigator.clipboard
+            .writeText(ip)
+            .then(() => {
+              const originalText = button.innerHTML;
+              button.innerHTML = '<i class="fas fa-check"></i> Url Copied!';
+              button.style.background = "linear-gradient(90deg, #00c853, #29ff6a)";
+              button.style.borderColor = "transparent";
+
+              setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = "rgba(0, 0, 0, 0.6)";
+                button.style.borderColor = "white";
+              }, 2000);
+            })
+            .catch((err) => {
+              console.error("Failed to copy Url: ", err);
+              button.innerHTML = '<i class="fas fa-times"></i> Failed to Copy';
+              button.style.background = "linear-gradient(90deg, #ff3b3b, #ff6b2d)";
+              button.style.borderColor = "transparent";
+
+              setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-copy"></i> Copy Url';
+                button.style.background = "rgba(0, 0, 0, 0.6)";
+                button.style.borderColor = "white";
+              }, 2000);
+            });
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
