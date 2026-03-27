@@ -63,7 +63,7 @@ jobs:
           original = content
 
           content = re.sub(r'(variant/[Tt]hread[ _]?[Ss]upport\s*=\s*)true', r'\1false', content)
-          content = re.sub(r'(html/ensure_cross_origin_isolation_headers\s*=\s*)true', r'\1false', content)
+          content = re.sub(r'(ensure_cross_origin_isolation_headers\s*=\s*)true', r'\1false', content)
           content = re.sub(r',\s*"threads"', '', content)
           content = re.sub(r'"threads"\s*,\s*', '', content)
           content = re.sub(r'"threads"', '', content)
