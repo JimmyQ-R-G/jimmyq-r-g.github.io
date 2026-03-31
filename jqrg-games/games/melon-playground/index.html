@@ -1,711 +1,498 @@
-<html lang="en-us">
-    <head>
-  <script src="/js/panicKey.js"></script>
-  <script src="/js/openGame.js"></script>
+<!-- 1765967642143 -->
+<!DOCTYPE html>
+<html>
 
-        <meta charset="utf-8">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <style>
-            html {
-                box-sizing: border-box
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-912D4ZR2HV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-912D4ZR2HV');
+</script>
+
+<!-- Robust Anti-Reload (Blocking Live Server) -->
+<script>
+(function() {
+    const block = (m) => console.log("Blocking reload attempt: " + m);
+    try {
+        // Simple override
+        window.location.reload = function() { block("location.reload"); };
+        window.history.go = function() { block("history.go"); };
+        window.location.replace = function() { block("location.replace"); };
+        
+        // Prevent meta refresh
+        const preventRefresh = () => {
+            const refresh = document.querySelector('meta[http-equiv="refresh"]');
+            if (refresh) {
+                console.log("Blocking meta refresh");
+                refresh.remove();
             }
+        };
+        setInterval(preventRefresh, 1000);
 
-            *,*:before,*:after {
-                box-sizing: inherit
+        // Block beforeunload popup if it exists
+        window.addEventListener('beforeunload', (event) => {
+            event.stopImmediatePropagation();
+        }, true);
+
+    } catch(e) { console.error("Reload fix error:", e); }
+})();
+</script>
+
+    <title>Melon Playground Gamemonetize - Play Online for Free</title>
+    <meta name="description" content="Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!"> 
+    <meta name="author" content="HSINI">
+    
+
+    <script>
+        function InitExternEval() {
+            console.log('InitExternEval');
+
+            if (window.firstInit == undefined) {
+                window.firstInit = 1;
+            } else {
+                ExternEval();
             }
+        }
 
-            html,body {
-                height: 100%
-            }
+        function TakeReward() {
+            console.log('TakeReward');
 
-            canvas {
-                display: block
-            }
+            window.adReward = 0;
+        }
 
-            body {
-                margin: 0
-            }
+        function RewardErrorHandled() {
+            console.log('RewardErrorHandled');
 
-            #unity-container {
-                width: 100%;
-                height: 100%;
-                position: relative
-            }
+            window.rewardError = 0;
+        }
 
-            #unity-canvas {
-                width: 100%;
-                height: 100%;
-                background: #231F20
-            }
+        function InitApi(_appId) {
+            var dateNow = new Date();
+            var secondsSinceEpoch = Math.round(dateNow.getTime() / 1000);
 
-            #loading-cover {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center
-            }
+            console.log('InitApi');
 
-            #unity-loading-bar {
-                flex: 1 1 auto;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center
-            }
+            window.callTime = secondsSinceEpoch - 121;
+        }
 
-            #unity-logo {
-                text-align: center
-            }
+        function ExternEval() {
+            console.log("ExternEval");
 
-            #unity-logo img {
-                max-width: 80%;
-                max-height: 80%
-            }
+            var dateNow = new Date();
+            var secondsSinceEpoch = Math.round(dateNow.getTime() / 1000);
 
-            #unity-progress-bar-empty {
-                width: 40%;
-                height: 24px;
-                margin: 10px 20px 20px 10px;
-                text-align: left;
-                border: 1px solid white;
-                padding: 2px
-            }
+            if (window.callTime != undefined &&
+                secondsSinceEpoch - window.callTime > 120) {
+                console.log('ExternEval 2');
 
-            #unity-progress-bar-full {
-                width: 0;
-                height: 100%;
-                background: white
-            }
+                window.callTime = secondsSinceEpoch;
 
-            .light #unity-progress-bar-empty {
-                border-color: black
-            }
+                if (typeof preroll !== 'undefined') {
+                    if (window[preroll.config.loaderObjectName] != undefined) {
+                        window.adRunning = 1;
 
-            .light #unity-progress-bar-full {
-                background: black
-            }
-
-            .spinner,.spinner:after {
-                border-radius: 50%;
-                width: 5em;
-                height: 5em
-            }
-
-            .spinner {
-                margin: 10px;
-                font-size: 10px;
-                position: relative;
-                text-indent: -9999em;
-                border-top: 1.1em solid rgba(255,255,255,0.2);
-                border-right: 1.1em solid rgba(255,255,255,0.2);
-                border-bottom: 1.1em solid rgba(255,255,255,0.2);
-                border-left: 1.1em solid #ffffff;
-                transform: translateZ(0);
-                animation: spinner-spin 1.1s infinite linear
-            }
-
-            @keyframes spinner-spin {
-                0% {
-                    transform: rotate(0deg)
-                }
-
-                100% {
-                    transform: rotate(360deg)
-                }
-            }
-                /* Custom Cursor */
-      * {
-        cursor: url('/cursor/cursor.png') 24 24, auto !important;
-      }
-</style>
-        <style>
-            body {
-                overflow: hidden;
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-                -webkit-tap-highlight-color: rgba(0,0,0,0)
-            }
-        </style>
-        <style type="text/css">
-            #button {
-                display: none;
-            }
-
-            .imgb_vis {
-                animation: imgb-animation 7s linear;
-            }
-
-            @keyframes imgb-animation {
-                10% {
-                    transform: translateX(0);
-                }
-
-                20% {
-                    transform: translateX(100px);
-                }
-
-                90% {
-                    transform: translateX(100px);
-                }
-
-                100% {
-                    transform: translateX(0);
-                }
-            }
-        </style>
-        <title>Melon Playground Game Files</title>
-        <meta name="robots" content="index, follow">
-        <link rel="canonical" href="https://eggy-car.github.io/more-game/melon-playground.html">
-    </head>
-    <body class="dark">
-        <div id="unity-container" class="unity-desktop">
-            <canvas id="unity-canvas" width="1920" height="900" style="cursor: default;"></canvas>
-        </div>
-        <div id="loading-cover" style="display: none;">
-            <div id="unity-loading-bar">
-                <div id="unity-progress-bar-empty" style="">
-                    <div id="unity-progress-bar-full" style="width: 100%;"></div>
-                </div>
-                <div class="spinner" style="display: none;"></div>
-            </div>
-        </div>
-        <script>
-            const hideFullScreenButton = "";
-            const buildUrl = "main";
-            const loaderUrl = buildUrl + "/Builds.loader.js";
-            const config = {
-                dataUrl: buildUrl + "/Builds.data.unityweb",
-                frameworkUrl: buildUrl + "/Builds.framework.js.unityweb",
-                codeUrl: buildUrl + "/Builds.wasm.unityweb",
-                streamingAssetsUrl: "/StreamingAssets",
-            };
-            const container = document.querySelector("#unity-container");
-            const canvas = document.querySelector("#unity-canvas");
-            const loadingCover = document.querySelector("#loading-cover");
-            const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-            const progressBarFull = document.querySelector("#unity-progress-bar-full");
-            const spinner = document.querySelector('.spinner');
-            const canFullscreen = (function() {
-                for (const key of ['exitFullscreen', 'webkitExitFullscreen', 'webkitCancelFullScreen', 'mozCancelFullScreen', 'msExitFullscreen', ]) {
-                    if (key in document) {
-                        return true
+                        try {
+                            window[preroll.config.loaderObjectName].refetchAd(ExternEvalResumeGame);
+                        } catch (err) {
+                            console.log(err.message);
+                            ExternEvalResumeGame();
+                        }
                     }
                 }
-                return false
-            }());
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                container.className = "unity-mobile"
             }
-            loadingCover.style.display = "";
-            canvas.addEventListener("touchstart", () => {
-                window.focus()
-            }
-            );
-            canvas.addEventListener("pointerdown", () => {
-                window.focus()
-            }
-            );
-            let player;
-            let leaderboard;
-            let myGameInstance = null;
-            let payments = null;
-            let promptCanShow = false;
-            let reviewCanShow = false;
-            let initSDK = true;
-            let initGame = true;
-            let photoSizeForInit;
-            let scopesForInit;
-            let nowFullAdOpen = false;
-            let letGameReadyApi = true;
-            let ysdk = null;
-            const script = document.createElement("script");
-            script.src = loaderUrl;
-            script.onload = () => {
-                createUnityInstance(canvas, config, (progress) => {
-                    spinner.style.display = "none";
-                    progressBarEmpty.style.display = "";
-                    progressBarFull.style.width = `${100 * progress}%`
-                }
-                ).then( (unityInstance) => {
-                    myGameInstance = unityInstance;
-                    loadingCover.style.display = "none"
-                }
-                ).catch( (message) => {}
-                )
-            }
-            ;
-            var playerData = 'noData';
-            var environmentData = 'null';
-            var cloudSaves = 'noData';
-            function InitSDK(photoSize, scopes) {
-                console.log('Init GAME');
-                initGame = true;
-                photoSizeForInit = photoSize;
-                scopesForInit = scopes;
-                InitPlayer(photoSize, scopes)
-            }
-            function InitGame(photoSize, scopes, gameReadyApi) {
-                console.log('Init GAME');
-                initGame = true;
-                photoSizeForInit = photoSize;
-                scopesForInit = scopes;
-                if (initSDK == true) {
-                    if (gameReadyApi == true)
-                        GameReadyAPI();
-                    InitPlayer(photoSize, scopes)
-                } else {
-                    InitYandex();
-                    setTimeout(function() {
-                        if (!initSDK) {
-                            console.error('CRASH InitYandex');
-                            NotAuthorized()
-                        }
-                    }, 1000)
-                }
-                if (nowFullAdOpen == true) {
-                    myGameInstance.SendMessage('YandexGame', 'OpenFullAd')
-                }
-            }
-            function GameReadyAPI() {
-                if (letGameReadyApi) {}
-            }
-            function NotAuthorized() {
+        }
+
+        function ExternEvalResumeGame() {
+            console.log("ExternEvalResumeGame");
+
+            window.adRunning = 0;
+
+        }
+
+        function PreloadRewarded() {
+            console.log("PreloadRewarded");
+
+            if (window.rewardedCallbacks == undefined) {
+                window.rewardedCallbacks = true;
+
                 try {
-                    console.log('Authorized failed');
-                    let authJson = {
-                        "playerAuth": "rejected",
-                        "playerName": "unauthorized",
-                        "playerId": "unauthorized",
-                        "playerPhoto": "null"
-                    };
-                    myGameInstance.SendMessage('YandexGame', 'SetInitializationSDK', JSON.stringify(authJson))
-                } catch (e) {
-                    console.error('CRASH Not Authorized: ', e.message)
-                }
-            }
-            function InitPlayer(photoSize, _scopes) {
-                NotAuthorized();
-                window.focus()
-            }
-            function OpenAuthDialog(photoSize, scopes) {
-                try {
-                    ysdk.auth.openAuthDialog().then( () => {
-                        InitPlayer(photoSize, scopes)
-                    }
-                    ).catch( () => {
-                        InitSDK(photoSize, scopes)
-                    }
-                    )
-                } catch (e) {
-                    console.log('CRASH Open Auth Dialog: ', e.message)
-                }
-            }
-            function FullAdShow() {
-                try {
-                    window.ysdk.adv.showFullscreenAdv({
-                        callbacks: {
-                            onOpen: () => {
-                                console.log('Open Fullscreen Ad');
-                                nowFullAdOpen = true;
-                                if (initGame === true)
-                                    myGameInstance.SendMessage('YandexGame', 'OpenFullAd')
-                            }
-                            ,
-                            onClose: (wasShown) => {
-                                nowFullAdOpen = false;
-                                if (initGame === true) {
-                                    if (wasShown) {
-                                        myGameInstance.SendMessage('YandexGame', 'CloseFullAd', 'true')
-                                    } else {
-                                        myGameInstance.SendMessage('YandexGame', 'CloseFullAd', 'false')
-                                    }
-                                }
-                                window.focus()
-                            }
-                            ,
-                            onError: (error) => {
-                                console.error('Error Fullscreen Ad', error);
-                                myGameInstance.SendMessage('YandexGame', 'ErrorFullAd');
-                                window.focus()
-                            }
-                        }
-                    })
-                } catch (e) {
-                    console.error('CRASH FullAd Show: ', e.message)
-                }
-            }
-            function RewardedShow(id) {
-                try {
-                    window.ysdk.adv.showRewardedVideo({
-                        callbacks: {
-                            onOpen: () => {
-                                console.log('Opened Video Ad. Id: ' + id);
-                                myGameInstance.SendMessage('YandexGame', 'OpenVideo')
-                            }
-                            ,
-                            onClose: () => {
-                                console.log('Closed Video Ad. Id: ' + id);
-                                myGameInstance.SendMessage('YandexGame', 'CloseVideo');
-                                window.focus()
-                            }
-                            ,
-                            onRewarded: () => {
-                                console.log('Reward Video Ad. Id: ' + id);
-                                myGameInstance.SendMessage('YandexGame', 'RewardVideo', id)
-                            }
-                            ,
-                            onError: (e) => {
-                                console.error('Error Video Ad. Id: ' + id, e);
-                                myGameInstance.SendMessage('YandexGame', 'ErrorVideo')
-                            }
-                        }
-                    })
+                    window[window.preroll.config.loaderObjectName].registerRewardCallbacks({
+                        onReady: RewardedReady,
+                        onSuccess: RewardedSuccess,
+                        onFail: RewardedFail
+                    });
                 } catch (err) {
-                    console.error('CRASH Rewarded Video Ad Show: ', err.message)
+                    console.log(err.message);
                 }
             }
-            function StickyAdActivity(show) {
-                try {
-                    ysdk.adv.getBannerAdvStatus().then( ({stickyAdvIsShowing, reason}) => {
-                        if (stickyAdvIsShowing) {
-                            if (!show) {
-                                ysdk.adv.hideBannerAdv()
-                            }
-                        } else if (reason) {
-                            console.log('Sticky ad are not shown. Reason:', reason)
-                        } else if (show) {
-                            ysdk.adv.showBannerAdv()
-                        }
+        }
+
+        function ShowRewarded() {
+            console.log("ShowRewarded");
+
+            if (typeof preroll !== 'undefined') {
+                if (window[preroll.config.loaderObjectName] != undefined) {
+                    window.canReward = 0;
+                    window.adRunning = 1;
+
+                    try {
+                        window[preroll.config.loaderObjectName].showRewardAd();
+                    } catch (err) {
+                        console.log(err.message);
+                        window.adRunning = 0;
                     }
-                    )
-                } catch (e) {
-                    console.error('CRASH Sticky Activity: ', e.message)
                 }
             }
-            function InitPayments() {
-                try {
-                    ysdk.getPayments().then(_payments => {
-                        console.log('Purchases are available');
-                        payments = _payments
-                    }
-                    ).catch(e => {
-                        console.log('Purchases are not available', e.message)
-                    }
-                    )
-                } catch (e) {
-                    console.error('CRASH Init Payments: ', e.message)
+
+        }
+
+        function RewardedReady() {
+            console.log("RewardedReady");
+
+            if (window.rewardedCount == undefined) {
+                window.rewardedCount = 1;
+                window.canReward = 1;
+            } else {
+                window.rewardedCount = window.rewardedCount + 1;
+                setTimeout(function() {
+                    window.canReward = 1;
+                }, 30000);
+            }
+
+        }
+
+        function RewardedSuccess() {
+            console.log("RewardedSuccess");
+
+            window.adRunning = 0;
+            window.adReward = 1;
+        }
+
+        function RewardedFail() {
+            console.log("RewardedFail");
+
+            window.adRunning = 0;
+        }
+
+        function OpenLink() {
+
+        }
+
+        window.adRunning = 0;
+        window.adRunningRewarded = 0;
+        window.adReward = 0;
+        window.rewardError = 0;
+        window.canReward = 0;
+
+        window.callTime = 0;
+        window.adPlatform = 1;
+
+        InitApi(0);
+    </script>
+
+
+    <meta property="og:title" content="Melon Playground Gamemonetize - Play Online for Free">
+    <meta property="og:description" content="Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unlockedgames.io/melon-playground-gamemonetize/">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": [
+    "VideoGame",
+    "SoftwareApplication"
+  ],
+  "name": "Melon Playground Gamemonetize",
+  "description": "Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!",
+  "url": "https://unlockedgames.io/melon-playground-gamemonetize/",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any",
+  "genre": "Arcade",
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}</script>
+
+    <meta property="og:title" content="Melon Playground Gamemonetize - Play Online for Free">
+    <meta property="og:description" content="Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unlockedgames.io/melon-playground-gamemonetize/">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": [
+    "VideoGame",
+    "SoftwareApplication"
+  ],
+  "name": "Melon Playground Gamemonetize",
+  "description": "Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!",
+  "url": "https://unlockedgames.io/melon-playground-gamemonetize/",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any",
+  "genre": "Arcade",
+  "inLanguage": "en",
+  "isAccessibleForFree": true
+}</script>
+
+    <meta property="og:title" content="Melon Playground Gamemonetize - Play Online for Free">
+    <meta property="og:description" content="Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unlockedgames.io/melon-playground-gamemonetize/">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": [
+    "VideoGame",
+    "SoftwareApplication"
+  ],
+  "name": "Melon Playground Gamemonetize",
+  "description": "Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!",
+  "url": "https://unlockedgames.io/melon-playground-gamemonetize/",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any",
+  "genre": "Arcade",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "author": {
+    "@type": "Person",
+    "name": "HSINI"
+  }
+}</script>
+
+    <meta property="og:title" content="Melon Playground Gamemonetize - Play Online for Free">
+    <meta property="og:description" content="Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://unlockedgames.io/melon-playground-gamemonetize/">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": [
+    "VideoGame",
+    "SoftwareApplication"
+  ],
+  "name": "Melon Playground Gamemonetize",
+  "description": "Play Melon Playground Gamemonetize online for free. Unblocked and available on all devices. Experience the best Melon Playground Gamemonetize gameplay now!",
+  "url": "https://unlockedgames.io/melon-playground-gamemonetize/",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any",
+  "genre": "Arcade",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "author": {
+    "@type": "Person",
+    "name": "HSINI"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "hsinidev"
+  }
+}</script>
+</head>
+
+<body style= "margin: 0px; padding: 0px; overflow: hidden;">
+    <div id="fb-root"></div>
+
+    <script>
+        // Issue a warning if trying to preview an exported project on disk.
+        (function() {
+            // Check for running exported on file protocol
+            if (window.location.protocol.substr(0, 4) === "file") {
+                alert("Exported games won't work until you upload them. (When running on the file:/// protocol, browsers block many features from working for security reasons.)");
+            }
+        })();
+    </script>
+
+    <!-- The canvas must be inside a div called c2canvasdiv -->
+    <div id="c2canvasdiv">
+
+        <!-- The canvas the project will render to.  If you change its ID, don't forget to change the
+		ID the runtime looks for in the jQuery events above (ready() and cr_sizeCanvas()). -->
+        <canvas id="c2canvas" width="854" height="480">
+			<!-- This text is displayed if the visitor's browser does not support HTML5.
+			You can change it, but it is a good idea to link to a description of a browser
+			and provide some links to download some popular HTML5-compatible browsers. -->
+			<h1>Your browser does not appear to support HTML5.  Try upgrading your browser to the latest version.  <a href="http://www.whatbrowser.org">What is a browser?</a>
+			<br/><br/><a href="http://www.microsoft.com/windows/internet-explorer/default.aspx">Microsoft Internet Explorer</a><br/>
+			<a href="http://www.mozilla.com/firefox/">Mozilla Firefox</a><br/>
+			<a href="https://www.google.com/chrome/">Google Chrome</a><br/>
+			<a href="http://www.apple.com/safari/download/">Apple Safari</a></h1>
+		</canvas>
+
+    </div>
+
+    <!-- Pages load faster with scripts at the bottom -->
+
+    <!-- Construct 2 exported games require jQuery. -->
+    <script src="jquery-3.4.1.min.js"></script>
+
+
+
+    <!-- The runtime script.  You can rename it, but don't forget to rename the reference here as well.
+    This file will have been minified and obfuscated if you enabled "Minify script" during export. -->
+    <script src="c2runtime.js"></script>
+
+    <script>
+        // Start the Construct 2 project running on window load.
+        jQuery(document).ready(function() {
+            // Create new runtime using the c2canvas
+            cr_createRuntime("c2canvas");
+        });
+
+        // Pause and resume on page becoming visible/invisible
+        function onVisibilityChanged() {
+            if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)
+                cr_setSuspended(true);
+            else
+                cr_setSuspended(false);
+        };
+
+        document.addEventListener("visibilitychange", onVisibilityChanged, false);
+        document.addEventListener("mozvisibilitychange", onVisibilityChanged, false);
+        document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
+        document.addEventListener("msvisibilitychange", onVisibilityChanged, false);
+
+        function OnRegisterSWError(e) {
+            console.warn("Failed to register service worker: ", e);
+        };
+
+        // Runtime calls this global method when ready to start caching (i.e. after startup).
+        // This registers the service worker which caches resources for offline support.
+        window.C2_RegisterSW = function C2_RegisterSW() {
+            if (!navigator.serviceWorker)
+                return; // no SW support, ignore call
+
+            try {
+                navigator.serviceWorker.register("sw.js", {
+                        scope: "./"
+                    })
+                    .then(function(reg) {
+                        console.log("Registered service worker on " + reg.scope);
+                    })
+                    .catch(OnRegisterSWError);
+            } catch (e) {
+                OnRegisterSWError(e);
+            }
+        };
+    </script>
+
+<!-- SEO CONTENT (Hidden) -->
+<div class="seo-generated-content" style="display:none; visibility:hidden;">
+<h1>Melon Playground Gamemonetize: A Comprehensive Guide</h1>
+
+<p>The Melon Playground is a browser game developed by Devsquad, where players take on the role of a gardener who must grow and harvest melons in a vibrant garden environment.</p>
+
+<h2>Game Overview</h2>
+<p>Melon Playground is a simple yet addictive game that challenges players to navigate through a colorful landscape, harvesting melons while avoiding obstacles and enemies.</p>
+
+<h3>How to Play</h3>
+<ul>
+  <li><strong>Controls:</strong> Use the arrow keys or WASD keys to move your gardener left or right.</li>
+  <li><strong>Objective:</strong> Collect melon seeds by harvesting them from the ground and placing them in a bin at the top of the screen.</li>
+</ul>
+
+<p>As players progress, they will encounter enemies such as bugs, birds, and other obstacles that must be avoided or defeated to earn rewards and improve their garden.</p>
+
+<h3>Tips and Tricks for Success</h3>
+<ul>
+  <li><strong>Dive into the garden:</strong> Start by exploring the entire garden to discover new areas, seeds, and resources.</li>
+  <li><strong>Manage your time wisely:</strong> Make the most of your gardening session by harvesting as many melons as possible before the timer runs out.</li>
+  <li><strong>Balance growth and defense:</strong> As you progress, be sure to balance your focus between growing more melons and defending against enemies.</li>
+</ul>
+
+<h3Why You Should Play It</h3>
+<p>The Melon Playground offers a unique blend of exploration, strategy, and fun that sets it apart from other browser games. With its colorful graphics and addictive gameplay, this game is sure to captivate players of all ages.</p>
+
+<ul>
+  <li><strong>Easy to learn but hard to master:</strong> The game's simple controls make it accessible to new players, while the depth of strategy required to progress keeps experienced players engaged.</li>
+  <li><strong>High replayability:</strong> With each playthrough, players can discover new paths, seeds, and resources, ensuring a high level of replay value.</li>
+  <li><strong>Collaborative fun:</strong> Players can join forces with friends to tackle challenging levels or compete in melon-harvesting competitions.</li>
+</ul>
+
+<p>Whether you're looking for a relaxing escape from the stresses of everyday life or a fun challenge to test your skills, the Melon Playground is an excellent choice. So why not give it a try and discover the joy of this addictive browser game?
+</div>
+<script>
+    // Silently block specific Live Server reload triggers if possible
+    
+</script>
+</body>
+<script>
+        window.SDK_OPTIONS = {
+            gameId: "g7desduah8xh051fdycx8actydryi677",
+            onEvent: function(a) {
+                switch (a.name) {
+                    case "SDK_GAME_PAUSE":
+                        // pause game logic / mute audio
+                        break;
+                    case "SDK_GAME_START":
+                        // advertisement done, resume game logic and unmute audio
+                        break;
+                    case "SDK_READY":
+                        // when sdk is ready
+                        break;
                 }
             }
-            function BuyPayments(id) {
-                try {
-                    if (payments != null) {
-                        payments.purchase(id).then( () => {
-                            console.log('Purchase Success');
-                            ConsumePurchase(id);
-                            window.focus()
-                        }
-                        ).catch(e => {
-                            console.error('Purchase Failed', e.message);
-                            myGameInstance.SendMessage('YandexGame', 'OnPurchaseFailed', id);
-                            window.focus()
-                        }
-                        )
-                    } else {
-                        console.log('Payments == null')
-                    }
-                } catch (e) {
-                    console.error('CRASH Buy Payments: ', e.message);
-                    window.focus()
-                }
+        };
+        (function(a, b, c) {
+            var d = a.getElementsByTagName(b)[0];
+            a.getElementById(c) || (a = a.createElement(b), a.id = c, a.src = "https://api.gamemonetize.com/sdk.js", d.parentNode.insertBefore(a, d))
+        })(document, "script", "gamemonetize-sdk");
+
+    function google_analytics() {
+        if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+            sdk.showBanner();
+        }
+    };
+
+
+     setTimeout(function() {
+        google_analytics();
+    }, 1000);
+
+ 
+	</script>
+	  <div class="floating" id="moreg" style="position:fixed; top: -1000px; right: 0px; z-index: 10"><a target="_blank" href="https://www.zazgames.com/" title="More of best games"><img
+            src="./MoreGames.png" width="80" height="80"
+            style="cursor:pointer;" alt="More Games"></a></div>
+			<style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            max-height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: none;
+            touch-action: pan-x pan-y;
+        }
+
+        /* @media only screen and (orientation:landscape) {
+			body {
+				transform: rotate(90deg);
+			}
+		} */
+
+        .floating {
+            position: absolute;
+            animation-name: floating;
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        @keyframes floating {
+            from {
+                transform: translate(0, 0px);
             }
-            function GetPayments() {
-                try {
-                    if (payments != null) {
-                        payments.getCatalog().then(products => {
-                            let productID = [];
-                            let title = [];
-                            let description = [];
-                            let imageURI = [];
-                            let priceValue = [];
-                            let consumed = [];
-                            payments.getPurchases().then(purchases => {
-                                for (let i = 0; i < products.length; i++) {
-                                    productID[i] = products[i].id;
-                                    title[i] = products[i].title;
-                                    description[i] = products[i].description;
-                                    imageURI[i] = products[i].imageURI;
-                                    priceValue[i] = products[i].priceValue;
-                                    consumed[i] = true;
-                                    for (i2 = 0; i2 < purchases.length; i2++) {
-                                        if (purchases[i2].productID === productID[i]) {
-                                            consumed[i] = false;
-                                            break
-                                        }
-                                    }
-                                }
-                                let jsonPayments = {
-                                    "id": productID,
-                                    "title": title,
-                                    "description": description,
-                                    "imageURI": imageURI,
-                                    "priceValue": priceValue,
-                                    "consumed": consumed
-                                };
-                                myGameInstance.SendMessage('YandexGame', 'PaymentsEntries', JSON.stringify(jsonPayments))
-                            }
-                            )
-                        }
-                        )
-                    } else {
-                        console.log('Get Payments: payments == null')
-                    }
-                } catch (e) {
-                    console.error('CRASH Get Payments: ', e.message)
-                }
+            65% {
+                transform: translate(0, 15px);
             }
-            function ConsumePurchase(id) {
-                try {
-                    if (payments != null) {
-                        payments.getPurchases().then(purchases => {
-                            for (i = 0; i < purchases.length; i++) {
-                                if (purchases[i].productID === id) {
-                                    payments.consumePurchase(purchases[i].purchaseToken);
-                                    myGameInstance.SendMessage('YandexGame', 'OnPurchaseSuccess', id)
-                                }
-                            }
-                        }
-                        )
-                    } else
-                        console.log('Consume purchase: payments null')
-                } catch (e) {
-                    console.error('CRASH Consume Purchase: ', e.message)
-                }
+            to {
+                transform: translate(0, -0px);
             }
-            function ConsumePurchases() {
-                try {
-                    if (payments != null) {
-                        payments.getPurchases().then(purchases => {
-                            console.log('Unprocessed purchases: ', purchases.length);
-                            for (i = 0; i < purchases.length; i++) {
-                                payments.consumePurchase(purchases[i].purchaseToken);
-                                myGameInstance.SendMessage('YandexGame', 'OnPurchaseSuccess', purchases[i].productID)
-                            }
-                        }
-                        )
-                    } else
-                        console.log('Consume purchases: payments null')
-                } catch (e) {
-                    console.error('CRASH Consume purchases: ', e.message)
-                }
-            }
-            function SaveCloud(jsonData, flush) {
-                try {
-                    player.setData({
-                        saves: [jsonData],
-                    }, flush)
-                } catch (e) {
-                    console.error('CRASH Save Cloud: ', e.message)
-                }
-            }
-            function LoadCloud() {
-                try {
-                    player.getData(["saves"]).then(data => {
-                        if (data.saves) {
-                            myGameInstance.SendMessage('YandexGame', 'SetLoadSaves', JSON.stringify(data.saves))
-                        } else {
-                            myGameInstance.SendMessage('YandexGame', 'SetLoadSaves', "noData")
-                        }
-                    }
-                    ).catch( () => {
-                        console.error('getData Error!');
-                        myGameInstance.SendMessage('YandexGame', 'SetLoadSaves', "noData")
-                    }
-                    )
-                } catch (e) {
-                    console.error('CRASH Load saves Cloud: ', e.message);
-                    myGameInstance.SendMessage('YandexGame', 'SetLoadSaves', "noData")
-                }
-            }
-            function InitLeaderboard() {
-                try {
-                    ysdk.getLeaderboards().then(_lb => {
-                        leaderboard = _lb
-                        myGameInstance.SendMessage('YandexGame', 'InitializedLB');
-                    }
-                    );
-                } catch (e) {
-                    console.error('CRASH Init Leaderboard: ', e.message);
-                }
-            }
-            function SetLeaderboardScores(_name, score) {
-                try {
-                    ysdk.getLeaderboards().then(leaderboard => {
-                        leaderboard.setLeaderboardScore(_name, score);
-                    }
-                    );
-                } catch (e) {
-                    console.error('CRASH Set Leader board Scores: ', e.message);
-                }
-            }
-            function GetLeaderboardScores(nameLB, maxPlayers, quantityTop, quantityAround, photoSize, auth) {
-                try {
-                    var jsonEntries = {
-                        technoName: '',
-                        isDefault: false,
-                        isInvertSortOrder: false,
-                        decimalOffset: 0,
-                        type: ''
-                    };
-                    ysdk.getLeaderboards().then(leaderboard => leaderboard.getLeaderboardDescription(nameLB)).then(res => {
-                        jsonEntries.technoName = nameLB;
-                        jsonEntries.isDefault = res.default;
-                        jsonEntries.isInvertSortOrder = res.description.invert_sort_order;
-                        jsonEntries.decimalOffset = res.description.score_format.options.decimal_offset;
-                        jsonEntries.type = res.description.type;
-                        return leaderboard.getLeaderboardEntries(nameLB, {
-                            quantityTop: quantityTop,
-                            includeUser: auth,
-                            quantityAround: quantityAround
-                        })
-                    }
-                    ).then(res => {
-                        let jsonPlayers = EntriesLB(res, maxPlayers, photoSize);
-                        let combinedJson = {
-                            ...jsonEntries,
-                            ...jsonPlayers
-                        };
-                        myGameInstance.SendMessage('YandexGame', 'LeaderboardEntries', JSON.stringify(combinedJson))
-                    }
-                    ).catch(error => {
-                        console.error(error)
-                    }
-                    )
-                } catch (e) {
-                    console.error('CRASH Get Leaderboard: ', e.message)
-                }
-            }
-            function EntriesLB(res, maxPlayers, photoSize) {
-                let LeaderboardEntriesText = '';
-                let playersCount;
-                if (res.entries.length < maxPlayers) {
-                    playersCount = res.entries.length
-                } else {
-                    playersCount = maxPlayers
-                }
-                let ranks = new Array(playersCount);
-                let photos = new Array(playersCount);
-                let mames = new Array(playersCount);
-                let scores = new Array(playersCount);
-                let uniqueIDs = new Array(playersCount);
-                for (i = 0; i < playersCount; i++) {
-                    ranks[i] = res.entries[i].rank;
-                    scores[i] = res.entries[i].score;
-                    uniqueIDs[i] = res.entries[i].player.uniqueID;
-                    if (photoSize === 'nonePhoto' || res.entries[i].player.scopePermissions.avatar !== "allow") {
-                        photos[i] = 'nonePhoto'
-                    } else {
-                        photos[i] = res.entries[i].player.getAvatarSrc(photoSize)
-                    }
-                    if (res.entries[i].player.scopePermissions.public_name !== "allow") {
-                        mames[i] = "anonymous"
-                    } else {
-                        mames[i] = res.entries[i].player.publicName
-                    }
-                    LeaderboardEntriesText += ranks[i] + '. ' + mames[i] + ": " + scores[i] + '\n'
-                }
-                if (playersCount === 0) {
-                    LeaderboardEntriesText = 'no data'
-                }
-                let jsonPlayers = {
-                    "entries": LeaderboardEntriesText,
-                    "ranks": ranks,
-                    "photos": photos,
-                    "names": mames,
-                    "scores": scores,
-                    "uniqueIDs": uniqueIDs
-                };
-                return jsonPlayers
-            }
-            function LanguageRequest() {
-                try {
-                    myGameInstance.SendMessage('YandexGame', 'SetLanguage', 'en')
-                } catch (e) {}
-            }
-            function RequestingEnvironmentData() {
-                try {
-                    let jsonEnvir = {
-                        "language": 'en',
-                    };
-                    myGameInstance.SendMessage('YandexGame', 'SetEnvironmentData', JSON.stringify(jsonEnvir))
-                } catch (e) {
-                    console.error('CRASH Requesting Environment Data: ', e.message)
-                }
-            }
-            function Review() {
-                try {
-                    ysdk.feedback.canReview().then( ({value, reason}) => {
-                        if (value) {
-                            ysdk.feedback.requestReview().then( ({feedbackSent}) => {
-                                console.log('feedbackSent ', feedbackSent);
-                                if (feedbackSent) {
-                                    myGameInstance.SendMessage('YandexGame', 'ReviewSent', 'true');
-                                    console.log('Review left')
-                                } else {
-                                    myGameInstance.SendMessage('YandexGame', 'ReviewSent', 'false');
-                                    console.log('Review not left', reason)
-                                }
-                                window.focus()
-                            }
-                            )
-                        } else {
-                            console.log('Review can show = false', reason);
-                            window.focus()
-                        }
-                    }
-                    )
-                } catch (e) {
-                    console.error('CRASH Review: ', e.message);
-                    window.focus()
-                }
-            }
-            function PromptShow() {
-                try {
-                    ysdk.shortcut.showPrompt().then(result => {
-                        console.log('Shortcut created?:', result);
-                        if (result.outcome === 'accepted') {
-                            console.log('Prompt Success');
-                            myGameInstance.SendMessage('YandexGame', 'OnPromptSuccess')
-                        } else {
-                            myGameInstance.SendMessage('YandexGame', 'OnPromptFail')
-                        }
-                        window.focus()
-                    }
-                    )
-                } catch (e) {
-                    console.error('CRASH Prompt Show: ', e.message);
-                    window.focus()
-                }
-            }
-            function PaintRBT(rbt) {
-                try {
-                    document.getElementById(rbt).style.background = '#ff0000'
-                } catch (e) {
-                    console.error('CRASH Paint RBT: ', e.message)
-                }
-            }
-            function StaticRBTDeactivate() {}
-            document.body.appendChild(script);
-        </script>
-        <script src="https://truffled.lol/games/melon-playground/main/Builds.loader.js"></script>
-    </body>
-    <script src="https://eggy-car.github.io/site-scripts/frame.js"></script>
+        }
+    </style>
 </html>
