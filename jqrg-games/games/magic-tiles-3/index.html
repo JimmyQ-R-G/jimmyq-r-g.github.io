@@ -1,56 +1,111 @@
-
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head><script>var ForJoy_gameid=631;</script>
-    <title>Magic-Tiles-3-Online</title>
-    <meta content="yes" name="apple-mobile-web-app-capable">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi" name="viewport">
-    <meta name="full-screen" content="yes"/>
-    <meta name="screen-orientation" content="portrait"/>
-    <meta name="x5-fullscreen" content="true"/>
-    <meta name="360-fullscreen" content="true"/>
-    <meta name="allowfullscree" content="true"/>
-<body>
-<style>
-    html, body {
-        -ms-touch-action: none;
-        background: #000000;
-        padding: 0;
-        border: 0;
-        margin: 0;
-        height: 100%;
+
+<head>
+  <meta charset="utf-8">
+  <base href="https://cdn.jsdelivr.net/gh/bubbls/youtube-playables@1b8d5d149e9498d3ea95aad1037d1411511d41d3/magic-tiles-3/">
+  <title>PI Playables</title>
+  <script src="https://cdn.jsdelivr.net/gh/bubbls/youtube-playables@main/ytgame.js" nonce="4eHT7UXCvu0lKrKpiCZYiQ"></script>
+  <meta name="viewport"
+    content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit" />
+  <meta name="force-rendering" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="full-screen" content="yes" />
+  <meta name="x5-fullscreen" content="true" />
+  <meta name="360-fullscreen" content="true" />
+  <meta name="screen-orientation" content="<%=orientation%>" />
+  <meta name="x5-orientation" content="<%=orientation%>">
+  <meta name="x5-page-mode" content="app">
+  <link rel="stylesheet" type="text/css" href="style-mobile.css" nonce="4eHT7UXCvu0lKrKpiCZYiQ" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
-</style>
-<link href="game.css?1489116996" rel="stylesheet">
-<script src="jquery-2.1.1.min.js?1473072359"></script>
-<script src="com4japi.min.v1.9.6.js?1505697614"></script>
-<script src="apidelegate.min.v1.1.js?1479985011"></script>
 
+    #splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
 
-<script src="egret.min-d40ffcff3589ea18d987010f631db1f4.js?1487731383"></script>
-<script src="egret.web.min-82bcb55e82531f3537cce521f6fe2eb5.js?1487731385"></script>
-<script src="res.min-b210065b5a5cf9def89e0fc63cbbc596.js?1487731436"></script>
-<script src="eui.min-01102cff952e1e8d9ef72db17ea75b3b.js?1487731411"></script>
-<script src="tween.min-5575b2bdec005a5d805ef40d4f21b439.js?1487731461"></script>
-<script src="egretFlax.min-b2d9668229c829b5e724722bc34f0d66.js?1492079010"></script>
+    #splash-logo {
+      width: 100vmin;
+      height: 100vmin;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
 
-<script src="App-2aa239521916a8a7761baad4c0884643.js?1482747578"></script>
+    #GameCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
 
-<script src="main.min.js"></script>
-<div style="margin: auto;width: 100%;height: 100%;" class="egret-player"
-     data-entry-class="Main"
-     data-orientation="portrait"
-     data-scale-mode="fixedWidth"
-     data-frame-rate="30"
-     data-content-width="480"
-     data-content-height="800"
-     data-show-paint-rect="false"
-     data-multi-fingered="5"
-     data-show-fps="false" data-show-log="false"
-     data-show-fps-style="x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9">
-</div>
-<script>
-        egret.runEgret({renderMode:"webgl", audioType:0});
-    
-</script>
+<body>
+  <div id="splash">
+    <img id="splash-logo" src="logo_expanded.jpeg" alt="Amanotes Logo">
+  </div>
+  <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+  <script src="src/settings.js" charset="utf-8" nonce="4eHT7UXCvu0lKrKpiCZYiQ"></script>
+  <%=webDebugger%>
+    <script src="main.js" charset="utf-8" nonce="4eHT7UXCvu0lKrKpiCZYiQ"></script>
+
+    <script type="text/javascript" nonce="4eHT7UXCvu0lKrKpiCZYiQ">
+      (function () {
+        if (typeof VConsole !== 'undefined') {
+          window.vConsole = new VConsole();
+        }
+
+        var debug = window._CCSettings.debug;
+        var splash = document.getElementById('splash');
+        splash.style.display = 'block';
+
+        function loadScript(moduleName, cb) {
+          function scriptLoaded() {
+            document.body.removeChild(domScript);
+            domScript.removeEventListener('load', scriptLoaded, false);
+            cb && cb();
+          };
+          var domScript = document.createElement('script');
+          domScript.async = true;
+          domScript.src = moduleName;
+          domScript.addEventListener('load', scriptLoaded, false);
+          document.body.appendChild(domScript);
+        }
+
+        loadScript(debug ? 'cocos2d-js.js' : 'cocos2d-js-min.js', function () {
+          if (CC_PHYSICS_BUILTIN || CC_PHYSICS_CANNON) {
+            loadScript(debug ? 'physics.js' : 'physics-min.js', window.boot);
+          }
+          else {
+            window.boot();
+          }
+        });
+      })();
+    </script>
+</body>
+
 </html>

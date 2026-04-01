@@ -2290,8 +2290,7 @@
             n || (n = {}), this.type = "default", this.status = void 0 === n.status ? 200 : n.status, this.ok = this.status >= 200 && this.status < 300, this.statusText = "statusText" in n ? n.statusText : "OK", this.headers = new f(n.headers), this.url = n.url || "", this._initBody(t)
         }
     }("undefined" != typeof self ? self : this)
-}, function(t, n) {
-    /*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
+}, function(t, n) { /*!@source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
     "document" in window.self && ((!("classList" in document.createElement("_")) || document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg", "g"))) && function(t) {
         "use strict";
         if ("Element" in t) {
@@ -4022,12 +4021,7 @@
                     P = this.initOptions.country || T("country");
                 return P && (_ = function() {
                     return Promise.resolve(P)
-                }), window.addEventListener("resize", this.resize.bind(this), !1), window.addEventListener("message", this.onMessage.bind(this), !1), this.debugIsOverwritten || this.setDebug(this.debug || u), this.debugTouchOverlayController && (E() || x()) && mt(), Promise.all([I(), _(),
-                    et(""),
-                    et(""),
-                    et(ct.a),
-                    et("")
-                ]).catch((function() {
+                }), window.addEventListener("resize", this.resize.bind(this), !1), window.addEventListener("message", this.onMessage.bind(this), !1), this.debugIsOverwritten || this.setDebug(this.debug || u), this.debugTouchOverlayController && (E() || x()) && mt(), Promise.all([I(), _(), et(""), et(""), et(ct.a), et("")]).catch((function() {
                     f.dispatchEvent(A.adblocked)
                 })).then((function(n) {
                     if (void 0 !== n) {
