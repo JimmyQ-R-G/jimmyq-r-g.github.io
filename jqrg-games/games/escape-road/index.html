@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+
+      window.firebase = window.firebase || {};
+      var firebase = window.firebase;
+
+      firebase.analytics =
+        firebase.analytics ||
+        function () {
+          return {
+            logEvent: function () {},
+            setUserId: function () {},
+            setUserProperties: function () {},
+          };
+        };
+
+      firebase.auth =
+        firebase.auth ||
+        function () {
+          return {
+            signInAnonymously: function () {
+              return Promise.resolve();
+            },
+            onAuthStateChanged: function () {},
+            currentUser: null,
+          };
+        };
+    </script>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1, user-scalable=no"
+    />
+    <title>Escape Road | Aymaan</title>
+
+    <link rel="shortcut icon" href="icon.png" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script id="gmsoft-jssdk" src=""></script>
+  </head>
+
+  <body class="dark">
+    <div id="unity-container" class="unity-desktop">
+      <p style="opacity: 0; position: absolute">_</p>
+      <canvas
+        id="unity-canvas"
+        style="cursor: default"
+        width="455"
+        height="614"
+      ></canvas>
+    </div>
+
+    <div id="loading-cover" style="background: black; display: none">
+      <div id="unity-loading-bar">
+        <canvas
+          id="logo-canvas"
+          style="position: absolute; background-color: black"
+          width="454535"
+          height="255"
+        >
+          <img src="loading.png" id="ld_bg" />
+          <img src="car-icon.png" id="ld_car" />
+        </canvas>
+      </div>
+    </div>
+
+    <img
+      id="azlogo"
+      class="az"
+      src="az_logo.png"
+      style="opacity: 0; display: none"
+    />
+
+    <script type="text/javascript">
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const fullscreenButton = document.querySelector(
+        "#unity-fullscreen-button"
+      );
+
+      const loaderUrl = "main.js";
+      const config = {
+        codeUrl: "wasm.unityweb",
+        dataUrl: "data.unityweb",
+        frameworkUrl: "framework.js",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Aymaan",
+        productName: "Escape Road",
+        productVersion: "2.0",
+      };
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+        config.devicePixelRatio = 1;
+      }
+
+      function delay(ms) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve();
+          }, ms);
+        });
+      }
+      async function load() {
+        var az_logo = document.getElementById("azlogo");
+        az_logo.style.opacity = 0;
+        logo_loaded = true;
+
+        az_logo.style.display = "none";
+        logo_loaded = false;
+        createUnityInstance(canvas, config, (progress) => {
+          logo_loading_percent = progress;
+          drawCanvas(progress);
+        })
+          .then((unityInstance) => {
+            window.unityInstance = unityInstance;
+            setTimeout(() => {
+              loadingCover.style.display = "none";
+              logo_loaded = true;
+              window.focus();
+            }, 2000);
+          })
+          .catch((message) => {
+            alert(message);
+          });
+      }
+      loadingCover.style.display = "";
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        load();
+      };
+
+      var logo_loaded = false;
+      var logo_loading_percent = 0;
+      window.onresize = () => {
+        // console.log('onresize');
+        drawCanvas(logo_loading_percent);
+      };
+      window.onload = () => {
+        // console.log('onload');
+        drawCanvas(logo_loading_percent);
+      };
+      var logo_canvas = document.getElementById("logo-canvas");
+
+      function drawCanvas(_percent = 0) {
+        if (logo_loaded) {
+          return;
+        }
+        resizeLogoCanvas();
+        var ctx = logo_canvas.getContext("2d");
+        var ld_bg = document.getElementById("ld_bg");
+        var ld_car = document.getElementById("ld_car");
+        var _sw = logo_canvas.width / 1920;
+        var _sh = logo_canvas.height / 1080;
+        if (_percent > 1) {
+          _percent = 1;
+        }
+        //bgbar
+        var bgbar_H = 86;
+        var bgbar_W = 1383;
+        //fillbar
+        var fillbar_H = 55;
+        var fillbar_W = 1345;
+        //Mask
+        var maskbar_H = 55;
+        var maskbar_W = 1350;
+        //bg_bar_mask
+        var bgbar_mask_H = 86;
+        var bgbar_mask_W = 1383;
+        var posshowbar_Y = 200; //position loadingbar
+        var posbgbar_X = (1920 - bgbar_W) / 2; // center
+        var posbgbar_Y = posshowbar_Y;
+        var posfillbar_X = (1920 - fillbar_W) / 2;
+        var posfillbar_Y = posshowbar_Y - 15;
+        var posmaskbar_X = (1920 - maskbar_W) / 2;
+        var posmaskbar_Y = posshowbar_Y - 15;
+        var _fl = 0;
+        var _fl1 = posmaskbar_X + _percent * maskbar_W;
+        var _fw = maskbar_W - _percent * maskbar_W;
+        // console.log(`${logo_canvas.width} ${logo_canvas.height}`);
+        //background
+        ctx.drawImage(ld_bg, 0, 0, logo_canvas.width, logo_canvas.height);
+        //loading background
+        ctx.fillStyle = "#977e21";
+        var _lw = 700;
+        var _lh = 50;
+        ctx.fillRect(
+          (1920 - _lw) * 0.5 * _sw,
+          (1080 - 150) * _sh,
+          _lw * _sw,
+          _lh * _sh
+        );
+        //loading progress
+        ctx.fillStyle = "#fad234";
+        var _pad = 5;
+        var _pw = _lw - _pad * 2;
+        var _ph = _lh - _pad * 2;
+        var _px = (1920 - _pw) * 0.5;
+        ctx.fillRect(
+          _px * _sw,
+          (1080 - 150 + _pad) * _sh,
+          _pw * _percent * _sw,
+          _ph * _sh
+        );
+        //car
+        var _car_x = _px + _pw * _percent - 100;
+        if (_car_x < _px) {
+          _car_x = _px;
+        }
+        // ctx.drawImage(ld_car,  _car_x * _sw, (1080 - 190) * _sh, 100 * _sw, 42 * _sh);
+        ctx.font = "18px myFirstFont";
+        const match = /(?<value>\d+\.?\d*)/;
+        const setFontSize = (size) =>
+          (ctx.font = ctx.font.replace(match, size));
+        setFontSize(35 * _sh);
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "black";
+        ctx.shadowOffsetY = 2;
+        var new_per = parseInt(_percent * 100);
+        ctx.fillText(
+          "" + new_per + "%",
+          logo_canvas.width / 2,
+          logo_canvas.height / 2 + _sh * 425
+        );
+      }
+
+      function resizeLogoCanvas() {
+        var _w = window.innerWidth;
+        var _h = window.innerHeight;
+        var _nw = (_h * 16) / 9;
+        // console.log(`${_w} ${_h} ${_nw}`);
+        if (_nw <= _w) {
+          logo_canvas.width = _nw;
+          logo_canvas.height = _h;
+        } else {
+          logo_canvas.width = _w;
+          logo_canvas.height = (_w * 9) / 16;
+        }
+      }
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
