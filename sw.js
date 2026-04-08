@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jqrg-pwa-v9';
+const CACHE_NAME = 'jqrg-pwa-v10';
 
 // Complete list of all source files to pre-cache
 const urlsToCache = [
