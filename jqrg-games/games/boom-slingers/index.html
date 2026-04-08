@@ -117,16 +117,6 @@
       return sdk;
     }
 
-    function notifyUnityCrazySdkReady(unityInstance) {
-      if (!unityInstance || typeof unityInstance.SendMessage !== "function") return;
-
-      try {
-        unityInstance.SendMessage("CrazySDKSingleton", "JSLibCallback_Init");
-      } catch (_) {
-        // Ignore; Unity object may not be ready yet.
-      }
-    }
-
     function installCgSdkReuseHook() {
       if (window.__boomSlingersCgHookInstalled) return;
       window.__boomSlingersCgHookInstalled = true;
@@ -235,17 +225,6 @@
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {}).then((unityInstance) => {
           window.gameInstance = unityInstance;
-
-          if (window.__boomSlingersCgInitPromise) {
-            window.__boomSlingersCgInitPromise.then(() => {
-              notifyUnityCrazySdkReady(unityInstance);
-
-              // Retry a few times for startup order variance across browsers.
-              for (let i = 1; i <= 3; i++) {
-                setTimeout(() => notifyUnityCrazySdkReady(unityInstance), i * 400);
-              }
-            }).catch(() => {});
-          }
         }).catch((message) => alert(message));
       };
       document.body.appendChild(script);
