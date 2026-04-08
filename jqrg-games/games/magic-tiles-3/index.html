@@ -2,44 +2,35 @@
 <html>
 
 <head>
+  
+  
+  <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+          dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-WX5VS54ZDW');
+  </script>
   <meta charset="utf-8">
-
   <title>PI Playables</title>
-
-  <script src="https://www.youtube.com/game_api/v1" nonce="4eHT7UXCvu0lKrKpiCZYiQ"></script>
-
-  <!--http://www.html5rocks.com/en/mobile/mobifying/-->
+  <script src="ytgame.js" nonce="4eHT7UXCvu0lKrKpiCZYiQ"></script>
   <meta name="viewport"
     content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1" />
-
-  <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
-
-  <!-- force webkit on 360 -->
   <meta name="renderer" content="webkit" />
   <meta name="force-rendering" content="webkit" />
-  <!-- force edge on IE -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="msapplication-tap-highlight" content="no">
-
-  <!-- force full screen on some browser -->
   <meta name="full-screen" content="yes" />
   <meta name="x5-fullscreen" content="true" />
   <meta name="360-fullscreen" content="true" />
-
-  <!-- force screen orientation on some browser -->
   <meta name="screen-orientation" content="<%=orientation%>" />
   <meta name="x5-orientation" content="<%=orientation%>">
-
-  <!--fix fireball/issues/3568 -->
-  <!--<meta name="browsermode" content="application">-->
   <meta name="x5-page-mode" content="app">
-
-  <!--<link rel="apple-touch-icon" href=".png" />-->
-  <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
-
   <link rel="stylesheet" type="text/css" href="style-mobile.css" nonce="4eHT7UXCvu0lKrKpiCZYiQ" />
   <link rel="icon" href="favicon.ico" />
   <style>
@@ -94,7 +85,6 @@
 
     <script type="text/javascript" nonce="4eHT7UXCvu0lKrKpiCZYiQ">
       (function () {
-        // open web debugger console
         if (typeof VConsole !== 'undefined') {
           window.vConsole = new VConsole();
         }
