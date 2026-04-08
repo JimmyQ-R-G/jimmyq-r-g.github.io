@@ -25,8 +25,8 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install inliner CLI
-        run: npm install --global inliner
+      - name: Install export dependency
+        run: npm install --no-save inliner
 
       - name: Build single-file HTML
         shell: bash
@@ -45,8 +45,30 @@ jobs:
 
           mkdir -p "${OUTPUT_DIR}"
 
-          # Inlines local CSS/JS/images/fonts into one standalone HTML file.
-          inliner "${SOURCE}" > "${OUTPUT_FILE}"
+          # Use the library API instead of the CLI because the CLI can exit 0
+          # while emitting an empty stdout stream in CI for large/local files.
+          SOURCE_PATH="${SOURCE}" OUTPUT_PATH="${OUTPUT_FILE}" node <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+          const Inliner = require("inliner");
+
+          const sourcePath = path.resolve(process.env.SOURCE_PATH);
+          const outputPath = path.resolve(process.env.OUTPUT_PATH);
+
+          new Inliner(sourcePath, (error, html) => {
+            if (error) {
+              console.error(error && error.stack ? error.stack : error);
+              process.exit(1);
+            }
+
+            if (!html || html.length === 0) {
+              console.error("Generated HTML is empty.");
+              process.exit(1);
+            }
+
+            fs.writeFileSync(outputPath, html);
+          });
+          NODE
 
           if [ ! -s "${OUTPUT_FILE}" ]; then
             echo "::error::Generated file is empty: ${OUTPUT_FILE}"
