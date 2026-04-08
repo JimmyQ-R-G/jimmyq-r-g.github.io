@@ -22,10 +22,15 @@
         "Build/3b03bb7182763a41817b795e550d8412.data.part2"
       ]
     };
+
+    const MERGED_MIME_TYPES = {
+      "2cbda98ae67d1b28f920398806093415.wasm": "application/wasm",
+      "3b03bb7182763a41817b795e550d8412.data": "application/octet-stream"
+    };
     </script>
 
     <script>
-    async function mergeParts(parts) {
+    async function mergeParts(parts, mimeType) {
       if (!parts || parts.length === 0) return null;
 
       const buffers = await Promise.all(parts.map(async (u) => {
@@ -39,7 +44,7 @@
       let offset = 0;
       for (const b of buffers) { merged.set(b, offset); offset += b.length; }
 
-      return URL.createObjectURL(new Blob([merged]));
+      return URL.createObjectURL(new Blob([merged], { type: mimeType || "application/octet-stream" }));
     }
 
     async function preMergeAll() {
@@ -51,7 +56,7 @@
       const loadingText = document.getElementById("loading-text");
 
       for (const [file, parts] of files) {
-        const merged = await mergeParts(parts);
+        const merged = await mergeParts(parts, MERGED_MIME_TYPES[file]);
         map[file] = merged;
         done++;
         const percent = Math.floor((done / total) * 100);
@@ -62,6 +67,91 @@
       loadingText.style.display = "none";
 
       return map;
+    }
+
+    function loadScriptOnce(src) {
+      return new Promise((resolve, reject) => {
+        const existing = document.querySelector(`script[src="${src}"]`);
+        if (existing) {
+          if (existing.dataset.loaded === "true") {
+            resolve(existing);
+            return;
+          }
+          existing.addEventListener("load", () => resolve(existing), { once: true });
+          existing.addEventListener("error", reject, { once: true });
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = src;
+        script.addEventListener("load", () => {
+          script.dataset.loaded = "true";
+          resolve(script);
+        }, { once: true });
+        script.addEventListener("error", reject, { once: true });
+        document.head.appendChild(script);
+      });
+    }
+
+    async function initCrazyGamesSdk() {
+      await loadScriptOnce("cg-sdk.js");
+
+      const sdk = window.CrazyGames && window.CrazyGames.SDK;
+      if (!sdk || typeof sdk.init !== "function") {
+        throw new Error("CrazyGames SDK did not load correctly.");
+      }
+
+      if (!window.__boomSlingersCgInitPromise) {
+        window.__boomSlingersCgInitPromise = sdk.init({
+          wrapper: {
+            engine: "unity",
+            sdkVersion: "3.6.0"
+          }
+        }).catch((error) => {
+          window.__boomSlingersCgInitPromise = null;
+          throw error;
+        });
+      }
+
+      await window.__boomSlingersCgInitPromise;
+      return sdk;
+    }
+
+    function installCgSdkReuseHook() {
+      if (window.__boomSlingersCgHookInstalled) return;
+      window.__boomSlingersCgHookInstalled = true;
+
+      const originalAppendChild = Node.prototype.appendChild;
+      const originalAddEventListener = HTMLScriptElement.prototype.addEventListener;
+
+      Node.prototype.appendChild = function(node) {
+        if (
+          node &&
+          node.tagName === "SCRIPT" &&
+          typeof node.src === "string" &&
+          node.src.endsWith("/cg-sdk.js") &&
+          window.CrazyGames &&
+          window.CrazyGames.SDK
+        ) {
+          node.dataset.cgSdkSkipped = "true";
+          return node;
+        }
+
+        return originalAppendChild.call(this, node);
+      };
+
+      HTMLScriptElement.prototype.addEventListener = function(type, listener, options) {
+        if (
+          type === "load" &&
+          this.dataset &&
+          this.dataset.cgSdkSkipped === "true"
+        ) {
+          queueMicrotask(() => listener.call(this, new Event("load")));
+          return;
+        }
+
+        return originalAddEventListener.call(this, type, listener, options);
+      };
     }
 
     (async () => {
@@ -105,6 +195,9 @@
         }
         clearInterval(compatTimer);
       }, 50);
+
+      installCgSdkReuseHook();
+      await initCrazyGamesSdk();
 
       const canvas = document.querySelector("#unity-canvas");
       const loaderUrl = "Build/d37667e316197a45bf53aa3fdcc6dee6.loader.js";
