@@ -1,0 +1,62 @@
+name: Export Single-File HTML
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_html:
+        description: "Path to the source HTML file"
+        required: true
+        default: "index.html"
+      output_name:
+        description: "Output filename for the single-file export"
+        required: true
+        default: "single-file-export.html"
+
+jobs:
+  export-single-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install inliner CLI
+        run: npm install --global inliner
+
+      - name: Build single-file HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SOURCE="${{ github.event.inputs.source_html }}"
+          OUTPUT_NAME="${{ github.event.inputs.output_name }}"
+          OUTPUT_DIR="/tmp/single-file-export"
+          OUTPUT_FILE="${OUTPUT_DIR}/${OUTPUT_NAME}"
+
+          if [ ! -f "${SOURCE}" ]; then
+            echo "::error::Source HTML not found: ${SOURCE}"
+            exit 1
+          fi
+
+          mkdir -p "${OUTPUT_DIR}"
+
+          # Inlines local CSS/JS/images/fonts into one standalone HTML file.
+          inliner "${SOURCE}" > "${OUTPUT_FILE}"
+
+          if [ ! -s "${OUTPUT_FILE}" ]; then
+            echo "::error::Generated file is empty: ${OUTPUT_FILE}"
+            exit 1
+          fi
+
+          echo "Single-file export created: ${OUTPUT_FILE}"
+
+      - name: Upload single-file HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: single-file-html
+          path: /tmp/single-file-export/*.html
