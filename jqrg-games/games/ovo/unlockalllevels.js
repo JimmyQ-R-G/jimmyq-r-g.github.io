@@ -126,19 +126,11 @@ function crazyHappyTime() {
 }
 
 function crazyMidRoll() {
-  globalThis.WebSdkWrapper.interstitial().then((success) => {
-    if (success) c2_callFunction("adOver");
-    else c2_callFunction("adOverFail");
-  });
-  // if (crazysdk) crazysdk.requestAd("midgame");
+  c2_callFunction("adOver");
 }
 
 function crazyRewarded() {
-  globalThis.WebSdkWrapper.rewarded().then((success) => {
-    if (success) c2_callFunction("adOver");
-    else c2_callFunction("adOverFail");
-  });
-  // if (crazysdk) crazysdk.requestAd("rewarded");
+  c2_callFunction("adOver");
 }
 
 function crazyGameplayStart() {

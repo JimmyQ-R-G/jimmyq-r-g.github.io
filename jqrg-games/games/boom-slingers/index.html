@@ -114,6 +114,14 @@
       }
 
       await window.__boomSlingersCgInitPromise;
+
+      // Disable in-game ad requests to prevent midgame ad overlays.
+      if (sdk.ad) {
+        sdk.ad.requestAd = () => Promise.resolve({ success: false, noAd: true });
+        sdk.ad.hasAdblock = () => Promise.resolve(false);
+        sdk.ad.addAdblockPopupListener = () => {};
+      }
+
       return sdk;
     }
 
@@ -155,7 +163,9 @@
           this.dataset &&
           this.dataset.cgSdkSkipped === "true"
         ) {
-          queueMicrotask(() => listener.call(this, new Event("load")));
+          // Fire synchronously so _InitSDK's callback chain runs immediately,
+          // before Unity's main loop can start a frame that uses SDK methods.
+          listener.call(this, new Event("load"));
           return;
         }
 
@@ -207,6 +217,23 @@
 
       installCgSdkReuseHook();
       await initCrazyGamesSdk();
+
+      // Wrap SDK.init so re-calls from the Unity framework resolve synchronously.
+      // The framework's _InitSDK calls SDK.init().then(cb) — if .then() is async,
+      // SendMessage("CrazySDKSingleton","JSLibCallback_Init") arrives too late and
+      // C# game code throws "CrazySDK initialization required".
+      // Returning a sync thenable makes the entire callback chain run in the same
+      // tick as _InitSDK, before Unity's main loop starts calling SDK methods.
+      const _origSdkInit = window.CrazyGames.SDK.init.bind(window.CrazyGames.SDK);
+      window.CrazyGames.SDK.init = function(opts) {
+        _origSdkInit(opts);            // keep internal state up to date (no-op / returns same promise)
+        const syncThenable = {
+          then(cb)  { if (cb) cb(); return syncThenable; },
+          catch()   { return syncThenable; },
+          finally(cb) { if (cb) cb(); return syncThenable; }
+        };
+        return syncThenable;
+      };
 
       const canvas = document.querySelector("#unity-canvas");
       const loaderUrl = "Build/d37667e316197a45bf53aa3fdcc6dee6.loader.js";
