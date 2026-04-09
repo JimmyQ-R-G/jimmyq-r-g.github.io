@@ -14,6 +14,36 @@
   <meta charset="utf-8">
   <title>PI Playables</title>
   <script src="ytgame.js" nonce="4eHT7UXCvu0lKrKpiCZYiQ"></script>
+  <!-- Ad/overlay suppression and error logging -->
+  <script>
+    // Hide common ad overlays and log errors
+    function hideAdsAndOverlays() {
+      // Hide elements with common ad/overlay ids/classes
+      const selectors = [
+        '[id*="ad"]', '[class*="ad"]', '[id*="overlay"]', '[class*="overlay"]', '[id*="rewarded"]', '[class*="rewarded"]', '[id*="midgame"]', '[class*="midgame"]', '[id*="pause"]', '[class*="pause"]'
+      ];
+      selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+          el.style.display = 'none';
+        });
+      });
+    }
+    // Observe DOM for overlays
+    const observer = new MutationObserver(hideAdsAndOverlays);
+    observer.observe(document.documentElement, {childList: true, subtree: true});
+    window.addEventListener('DOMContentLoaded', hideAdsAndOverlays);
+    window.addEventListener('load', hideAdsAndOverlays);
+    // Patch ad-related APIs
+    window.requestAnimationFrame = (function(orig){
+      return function(cb){
+        try { return orig(cb); } catch(e) { console.error(e); }
+      }
+    })(window.requestAnimationFrame);
+    // Log errors for debugging
+    window.addEventListener('error', function(e){
+      console.error('Game error:', e.error || e.message || e);
+    });
+  </script>
   <meta name="viewport"
     content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -104,11 +134,11 @@
           document.body.appendChild(domScript);
         }
 
-        loadScript(debug ? 'cocos2d-js.js' : 'cocos2d-js-min.js', function () {
-          if (CC_PHYSICS_BUILTIN || CC_PHYSICS_CANNON) {
-            loadScript(debug ? 'physics.js' : 'physics-min.js', window.boot);
-          }
-          else {
+        // Always load minified engine (debug version not present)
+        loadScript('cocos2d-js-min.js', function () {
+          if (typeof CC_PHYSICS_BUILTIN !== 'undefined' || typeof CC_PHYSICS_CANNON !== 'undefined') {
+            loadScript('physics-min.js', window.boot);
+          } else {
             window.boot();
           }
         });
