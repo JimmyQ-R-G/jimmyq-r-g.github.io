@@ -50,7 +50,17 @@
     <script src="js/cursor.js"></script>
   </head>
   <body>
-      <!-- SPA content will be injected here -->
+      <div id="app-root">
+        <nav id="main-nav">
+          <button class="nav-btn" data-tab="home">Home</button>
+          <button class="nav-btn" data-tab="games">Games</button>
+          <button class="nav-btn" data-tab="apps">Apps</button>
+          <button class="nav-btn" data-tab="unblocks">Unblocks</button>
+          <button class="nav-btn" data-tab="contacts">Contacts</button>
+        </nav>
+        <main id="spa-content"></main>
+      </div>
+      <script src="/js/spa.js"></script>
         
         <!-- Main Page Cloak
         <label><b>Use cloak for main page</b></label><br />
