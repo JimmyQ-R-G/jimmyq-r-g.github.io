@@ -18,8 +18,6 @@
         height: 10px;
       }
       ::-webkit-scrollbar-track {
-        /* --- SPA Layout --- */
-        #app-root {
         background: rgba(20, 20, 30, 0.6);
         border-radius: 5px;
       }
@@ -27,7 +25,6 @@
         background: linear-gradient(180deg, #4d8cff, #8a4dff);
         border-radius: 5px;
       }
-        #main-nav {
       ::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(180deg, #6ba3ff, #a06dff);
       }
@@ -37,7 +34,6 @@
       /* Firefox */
       * {
         scrollbar-width: thin;
-        .nav-btn {
         scrollbar-color: #8a4dff rgba(20, 20, 30, 0.6);
       }
 
@@ -47,41 +43,34 @@
         color: white;
       }
       ::-moz-selection {
-        .nav-btn:hover, .nav-btn.active {
         background: rgba(77, 140, 255, 0.4);
         color: white;
-        #spa-content {
       }
 
       /* Title class - uses Josefin Sans for main titles */
       .page-title,
       h1.page-title,
-        .main-title {
       h2.page-title {
         font-family: var(--title-font) !important;
       }
 
       /* ---------- Placeholder Loading System ---------- */
       .placeholder-loading {
-        .browser-box {
         position: relative;
         overflow: hidden;
         background: linear-gradient(135deg, rgba(40, 40, 50, 0.8), rgba(30, 30, 40, 0.9));
         border-radius: inherit;
-        #browser-form {
       }
 
       .placeholder-loading::before {
         content: '';
         position: absolute;
-        #browser-input {
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
         background: linear-gradient(
           90deg,
-        #browser-form button {
           transparent,
           rgba(255, 255, 255, 0.08),
           rgba(77, 140, 255, 0.15),
@@ -91,19 +80,15 @@
         animation: placeholderShimmer 1.5s ease-in-out infinite;
       }
 
-        #browser-form button:hover {
       .placeholder-loading::after {
         content: '';
-        .quick-links {
         position: absolute;
         top: 50%;
-        .quick-apps-list {
         left: 50%;
         width: 24px;
         height: 24px;
         margin: -12px 0 0 -12px;
         border: 2px solid rgba(255, 255, 255, 0.2);
-        .quick-app {
         border-top-color: #4d8cff;
         border-radius: 50%;
         animation: placeholderSpin 0.8s linear infinite;
@@ -115,11 +100,9 @@
       }
 
       @keyframes placeholderSpin {
-        .quick-app:hover {
         to { transform: rotate(360deg); }
       }
 
-        /* --- Games, Apps, Unblocks, Contacts sections will be styled as implemented --- */
       /* Image placeholder */
       .placeholder-image {
         aspect-ratio: 1;
