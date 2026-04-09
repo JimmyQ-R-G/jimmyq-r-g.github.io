@@ -123,3 +123,7 @@ or these:
 ```
 
 And press Ctrl+Shift+I or Cmd+Opt+I to enable dev mode, click on `sources` tab, and add all the files used into this repo inside the game folder.
+
+## Restrictions
+
+The page is currently deployed on V1.1 and please only write commits on main branch, I will pull the commits from V1.1 if verified.
