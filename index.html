@@ -427,6 +427,74 @@
           commercially exploited
           <b>without prior written permission from the owner</b>.
         </p>
+        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
+        <div style="text-align:center; margin-bottom:10px;">
+          <a href="#" id="privacyPolicyLink" style="color:#4d8cff; text-decoration:underline; cursor:pointer; font-weight:bold;">PRIVACY POLICY</a>
+        </div>
+          <!-- === PRIVACY POLICY MODAL === -->
+          <div class="modal-overlay" id="privacyPolicyModal" style="display:none;">
+            <div class="modal-content" id="privacyPolicyContent">
+              <span class="close-btn" id="closePrivacyPolicy">&times;</span>
+              <h2 style="text-align:center;">Privacy Policy</h2>
+              <p>This website does not collect personal information from users. No registration, login, or account creation is required. We do not ask for your name, email, or any identifying information.</p>
+              <p>However, third-party services such as Google AdSense may collect data for advertising and analytics purposes. These services may use cookies or similar technologies to personalize ads and measure performance. Please refer to <a href="https://policies.google.com/technologies/ads" target="_blank" style="color:#4d8cff;">Google's Privacy Policy</a> for more details.</p>
+              <p>Settings and preferences (such as appearance, panic key, and announcement popups) are stored locally in your browser and are never sent to our servers.</p>
+              <p>By using this site, you agree to the use of cookies and local storage for the purposes described above. If you do not agree, please discontinue use of the site.</p>
+              <p>For questions or concerns, contact: <b>ikunbeautiful@gmail.com</b></p>
+            </div>
+          </div>
+          <script>
+            // Privacy Policy Modal Logic
+            document.addEventListener("DOMContentLoaded", function () {
+              const privacyLink = document.getElementById("privacyPolicyLink");
+              const privacyModal = document.getElementById("privacyPolicyModal");
+              const privacyContent = document.getElementById("privacyPolicyContent");
+              const closePrivacy = document.getElementById("closePrivacyPolicy");
+              let isPrivacyOpen = false;
+              let isPrivacyAnimating = false;
+              function openPrivacy() {
+                if (isPrivacyOpen || isPrivacyAnimating) return;
+                isPrivacyAnimating = true;
+                isPrivacyOpen = true;
+                privacyModal.style.display = "flex";
+                setTimeout(() => {
+                  privacyModal.classList.add("show");
+                  privacyContent.classList.add("show", "active");
+                  isPrivacyAnimating = false;
+                }, 10);
+              }
+              function closePrivacyModal() {
+                if (!isPrivacyOpen || isPrivacyAnimating) return;
+                isPrivacyAnimating = true;
+                privacyModal.classList.remove("show");
+                privacyContent.classList.remove("show", "active");
+                privacyContent.classList.add("hide");
+                privacyModal.classList.add("hide");
+                setTimeout(() => {
+                  privacyModal.style.display = "none";
+                  privacyContent.classList.remove("hide");
+                  isPrivacyOpen = false;
+                  isPrivacyAnimating = false;
+                }, 400);
+              }
+              privacyLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                openPrivacy();
+              });
+              closePrivacy.addEventListener("click", function (e) {
+                e.stopPropagation();
+                closePrivacyModal();
+              });
+              privacyContent.addEventListener("click", function (e) {
+                e.stopPropagation();
+              });
+              window.addEventListener("click", function (e) {
+                if (e.target === privacyModal && !isPrivacyAnimating) {
+                  closePrivacyModal();
+                }
+              });
+            });
+          </script>
       </div>
     </div>
 
