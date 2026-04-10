@@ -1,6 +1,16 @@
 # Announcements
 
-**03/22/2026** Added Minecraft (other than eaglercraft). Added fixed 2048 back. In total 92 games.
+**04/09/2026** Added Bomb Pass, Added Boom Slingers, Added Escape Road
+
+**03/30/2026** Added Temple Run 2, Added Brawl Star Simulator, Added OvO, Added OvO 2, Magical Tiles 3 is moved to pending, Shell Shocker is moved to pending, Crazy Cattles is moved to touchscreen games
+
+**03/17/2026** Added Bit Plane, Added Evaw, CatGun Island officially released, Fixed Crossy Road
+
+**03/09/2026** Added Flappy Dunk
+
+**03/08/2026** Added Minecraft (other than eaglercraft), Merged Eaglercraft Added in total **92** games
+
+**03/08/2026** Added fixed 2048 back. Added in total **96** games
 
 **03/05/2026** Fixed bugs.
 
