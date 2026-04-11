@@ -1,10 +1,11 @@
-const CACHE_NAME = 'jqrg-pwa-v11';
+const CACHE_NAME = 'jqrg-pwa-v13';
 
 // Complete list of all source files to pre-cache
 const urlsToCache = [
   // ============ ROOT FILES ============
   '/',
   '/index.html',
+  '/loader/index.html',
   '/403.html',
   '/404.html',
   '/404-building.html',

@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>JimmyQrg</title>
 <link rel="icon" href="/jq.ico">
+<script>
+(function(){
+  if(localStorage.getItem('mainPageCloak')==='true'){
+    document.title='Home | Schoology';
+    var l=document.querySelector('link[rel="icon"]');
+    if(l)l.href='/cloak-images/schoology.png';
+    var s=document.createElement('link');s.rel='shortcut icon';s.href='/cloak-images/schoology.png';
+    document.head.appendChild(s);
+  }
+})();
+</script>
 <link rel="manifest" href="/appmanifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,10 +23,7 @@
 <script src="/js/mainPageCloak.js"></script>
 <script src="/js/panicKey.js"></script>
 <style>
-/* ── Reset ── */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-
-/* ── Tokens ── */
 :root{
   --bg-deep:#0e0514;
   --bg-card:rgba(0,0,0,0.3);
@@ -29,17 +37,13 @@
   --accent-purple:rgba(136,65,214,1);
   --sidebar-w:54px;
   --top-bar-h:54px;
-  --radius:20px;
-  --radius-sm:13px;
 }
-
 html,body{
   height:100%;overflow:hidden;
   font-family:'Oxanium',sans-serif;
   color:var(--text);background:#000;
 }
 
-/* ══ BACKGROUND ══ */
 .bg{
   position:fixed;inset:0;z-index:0;
   background:conic-gradient(from 90deg,#342c8a,#211f39,#5b2d7d,#000,#352f72);
@@ -50,7 +54,6 @@ html,body{
   background:linear-gradient(to bottom,rgba(0,0,0,.3),rgba(0,0,0,.6));
 }
 
-/* ══ SHELL (L-shaped frame) ══ */
 #app{
   position:relative;z-index:1;
   width:100%;height:100%;
@@ -60,27 +63,15 @@ html,body{
 .top-bar{
   height:var(--top-bar-h);min-height:var(--top-bar-h);
   background:var(--bg-deep);
-  border:1.5px solid var(--border);
-  border-bottom:none;
-  border-radius:var(--radius) var(--radius) 0 0;
   display:flex;align-items:center;
   padding:0 16px;gap:12px;
-  margin:8px 8px 0 8px;
 }
 
-.body-row{
-  display:flex;flex:1;min-height:0;
-  margin:0 8px 8px 8px;
-}
+.body-row{display:flex;flex:1;min-height:0}
 
-/* ══ SIDEBAR ══ */
 .sidebar{
   width:var(--sidebar-w);min-width:var(--sidebar-w);
   background:var(--bg-deep);
-  border:1.5px solid var(--border);
-  border-top:none;
-  border-right:1.5px solid var(--border);
-  border-radius:0 0 0 var(--radius);
   display:flex;flex-direction:column;align-items:center;
   padding:10px 0 14px;gap:6px;
 }
@@ -88,37 +79,44 @@ html,body{
 .sidebar .logo{
   width:34px;height:34px;cursor:pointer;margin-bottom:4px;flex-shrink:0;
   filter:drop-shadow(0 0 13px var(--accent-purple));
+  transition:transform .35s ease,filter .35s ease;
 }
+.sidebar .logo:hover{transform:scale(1.12);filter:drop-shadow(0 0 20px var(--accent-purple)) drop-shadow(0 0 6px #fff)}
 .sidebar .logo svg{width:100%;height:100%;display:block}
-
 .sidebar .jq-mark{
-  width:20px;height:24px;margin-bottom:6px;
-  filter:drop-shadow(0 0 23px #fff);flex-shrink:0;
+  width:20px;height:24px;margin-bottom:6px;flex-shrink:0;
+  filter:drop-shadow(0 0 23px #fff);
 }
 .sidebar .jq-mark svg{width:100%;height:100%;display:block}
-
 .sidebar nav{
   display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;
 }
 .sidebar nav button{
   width:38px;height:38px;border:0;background:0;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  border-radius:10px;transition:background .2s;
+  border-radius:10px;transition:background .35s ease,transform .35s ease;
 }
-.sidebar nav button:hover{background:rgba(255,255,255,.08)}
+.sidebar nav button:hover{background:rgba(255,255,255,.08);transform:scale(1.08)}
 .sidebar nav button svg{
   width:20px;height:20px;stroke:var(--text);stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round;fill:none;
-  opacity:.55;transition:opacity .2s,filter .2s;
+  opacity:.55;transition:opacity .35s ease,filter .35s ease,transform .35s ease;
 }
+.sidebar nav button:hover svg{opacity:.8;transform:translateY(-1px)}
 .sidebar nav button.active svg{
   opacity:1;
   filter:drop-shadow(0 0 6.75px #fff) drop-shadow(0 0 6.75px #fff);
 }
-.sidebar nav button[data-nav="games"] svg{fill:var(--text);stroke:none}
-.sidebar nav button.active[data-nav="games"] svg{fill:var(--text);stroke:none}
 
-/* ══ TOP BAR CONTENTS ══ */
+.main{
+  flex:1;display:flex;flex-direction:column;min-width:0;
+  overflow:hidden;
+  border-left:1.5px solid var(--border);
+  border-top:1.5px solid var(--border);
+  border-top-left-radius:24px;
+}
+
+/* ══ TOP BAR ══ */
 .top-bar .brand{
   font-size:14px;font-weight:400;letter-spacing:.5px;
   white-space:nowrap;opacity:.85;flex-shrink:0;margin-right:4px;
@@ -127,74 +125,113 @@ html,body{
   width:34px;height:34px;border:0;background:0;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   border-radius:8px;margin-left:auto;flex-shrink:0;
+  transition:background .35s ease;
 }
 .top-bar .settings-top:hover{background:rgba(255,255,255,.08)}
 .top-bar .settings-top svg{
   width:20px;height:20px;stroke:var(--text);stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:.7;
+  transition:transform .5s ease,opacity .35s ease;
+}
+.top-bar .settings-top:hover svg{transform:rotate(45deg);opacity:1}
+
+.tb-section{display:none;flex:1;align-items:center;gap:10px;min-width:0}
+#app[data-page="home"] .tb-home,
+#app[data-page="games"] .tb-games,
+#app[data-page="apps"] .tb-apps{display:flex}
+
+.tb-section .nav-btns{display:flex;gap:4px;align-items:center;flex-shrink:0}
+.tb-section .nav-btns button{
+  width:30px;height:30px;border:0;background:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:6px;transition:background .3s ease,transform .3s ease;
+}
+.tb-section .nav-btns button:hover{background:rgba(255,255,255,.08);transform:scale(1.1)}
+.tb-section .nav-btns button svg{
+  width:18px;height:18px;stroke:var(--text);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;
 }
 
-/* ══ MAIN CONTENT AREA ══ */
-.main{
-  flex:1;display:flex;flex-direction:column;min-width:0;
-  overflow:hidden;
-  border-bottom:1.5px solid var(--border);
-  border-right:1.5px solid var(--border);
-  border-radius:0 0 var(--radius) 0;
+.url-bar,.search-bar{
+  flex:1;height:38px;border-radius:19px;min-width:0;
+  background:var(--pill-bg);
+  display:flex;align-items:center;padding:0 16px;gap:10px;
+  border:1.5px solid transparent;
+  transition:border-color .35s ease,box-shadow .35s ease;
 }
+.url-bar:focus-within,.search-bar:focus-within{
+  border-color:rgba(255,255,255,.3);
+  box-shadow:0 0 12px rgba(136,65,214,.3);
+}
+.url-bar svg,.search-bar svg{
+  width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
+}
+.url-bar input,.search-bar input{
+  flex:1;background:0;border:0;outline:0;color:var(--text);
+  font-family:inherit;font-size:14px;min-width:0;
+}
+.url-bar input::placeholder,.search-bar input::placeholder{color:var(--text-dim)}
+
+.dropdown{position:relative;flex-shrink:0}
+.dropdown-btn{
+  height:43px;min-width:180px;border-radius:13px;
+  background:var(--dropdown-bg);
+  border:1px solid var(--border);
+  color:var(--text);font-family:inherit;font-size:16px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;gap:10px;cursor:pointer;
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  transition:border-color .3s ease,box-shadow .3s ease;
+}
+.dropdown-btn:hover{border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,.1)}
+.dropdown-btn svg{width:16px;height:8px;fill:#fff;stroke:none;transition:transform .35s ease}
+.dropdown.open .dropdown-btn svg{transform:rotate(180deg)}
+.dropdown-menu{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--dropdown-bg);border:1px solid var(--border);
+  border-radius:13px;padding:6px 0;
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  z-index:50;
+  opacity:0;transform:translateY(-8px);pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease;
+}
+.dropdown.open .dropdown-menu{opacity:1;transform:translateY(0);pointer-events:auto}
+.dropdown-menu button{
+  display:block;width:100%;text-align:left;padding:8px 16px;
+  background:0;border:0;color:var(--text);font-family:inherit;font-size:15px;
+  cursor:pointer;transition:background .3s ease,padding-left .3s ease;
+}
+.dropdown-menu button:hover{background:rgba(255,255,255,.08);padding-left:22px}
+.dropdown-menu hr{border:0;border-top:1px solid var(--border);margin:4px 12px}
 
 /* ══ PAGES ══ */
 .page{
   display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding:0;
   scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent;
 }
-.page.active{display:flex;flex-direction:column}
+.page.active{display:flex;flex-direction:column;animation:fadeInPage .4s ease}
 .page::-webkit-scrollbar{width:6px}
 .page::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
 
-/* ══ HOME PAGE ══ */
-#page-home{align-items:center;justify-content:flex-start;padding-top:10px;gap:20px}
-
-.home-nav{display:flex;align-items:center;gap:10px;width:100%;padding:0 10px}
-.home-nav .nav-btns{display:flex;gap:6px;align-items:center;flex-shrink:0}
-.home-nav .nav-btns button{
-  width:32px;height:32px;border:0;background:0;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:6px;transition:background .15s;
-}
-.home-nav .nav-btns button:hover{background:rgba(255,255,255,.08)}
-.home-nav .nav-btns button svg{
-  width:18px;height:18px;stroke:var(--text);stroke-width:2;
-  stroke-linecap:round;stroke-linejoin:round;fill:none;
-}
-.home-url-bar{
-  flex:1;height:38px;border-radius:19px;
-  background:var(--pill-bg);
-  display:flex;align-items:center;padding:0 16px;gap:10px;
-}
-.home-url-bar svg{
-  width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
-  stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
-}
-.home-url-bar input{
-  flex:1;background:0;border:0;outline:0;color:var(--text);
-  font-family:inherit;font-size:14px;
-}
-.home-url-bar input::placeholder{color:var(--text-dim)}
-
+/* ══ HOME ══ */
+#page-home{align-items:center;justify-content:flex-start;padding-top:20px;gap:20px}
 .home-hero{
   display:flex;flex-direction:column;align-items:center;gap:28px;
   padding:40px 20px 20px;width:100%;max-width:900px;
+  animation:fadeInUp .6s ease;
 }
 .home-hero h1{font-size:52px;font-weight:400;text-align:center}
-
 .home-search-bar{
-  width:100%;max-width:676px;height:57px;
-  border-radius:28.5px;
-  background:var(--search-pill-bg);
-  border:1.5px solid #fff;
+  width:100%;max-width:676px;height:57px;border-radius:28.5px;
+  background:var(--search-pill-bg);border:1.5px solid #fff;
   display:flex;align-items:center;padding:0 24px;gap:12px;
   backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  transition:box-shadow .4s ease,border-color .4s ease;
+}
+.home-search-bar:focus-within{
+  box-shadow:0 0 20px rgba(136,65,214,.4),0 0 40px rgba(136,65,214,.15);
+  border-color:rgba(255,255,255,.8);
 }
 .home-search-bar svg{
   width:20px;height:20px;stroke:var(--text-dim);stroke-width:1.5;
@@ -205,184 +242,230 @@ html,body{
   font-family:inherit;font-size:20px;
 }
 .home-search-bar input::placeholder{color:var(--text-dim)}
-
 .home-cards{
-  display:flex;gap:24px;flex-wrap:wrap;justify-content:center;
-  padding:10px 0 40px;
+  display:flex;gap:24px;flex-wrap:wrap;justify-content:center;padding:10px 0 40px;
+  animation:fadeInUp .7s ease .1s both;
 }
 .home-card{
-  width:300px;height:220px;border-radius:var(--radius);
-  background:var(--bg-card);
-  border:1px solid var(--border);
+  width:300px;height:220px;border-radius:20px;
+  background:var(--bg-card);border:1px solid var(--border-light);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-  cursor:pointer;transition:transform .2s,box-shadow .2s;
+  cursor:pointer;
+  transition:transform .4s ease,box-shadow .4s ease,border-color .4s ease;
 }
-.home-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
-.home-card svg{
-  width:64px;height:64px;stroke:#fff;stroke-width:1.5;
-  stroke-linecap:round;stroke-linejoin:round;fill:none;
+.home-card:hover{
+  transform:translateY(-8px) scale(1.02);
+  box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 20px rgba(136,65,214,.2);
+  border-color:var(--border);
 }
-.home-card[data-nav="games"] svg{fill:#fff;stroke:none}
+.home-card svg{width:64px;height:64px;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .home-card h2{font-size:36px;font-weight:400}
-
-.home-iframe-wrap{display:none;flex:1;width:100%;border-radius:12px;overflow:hidden;min-height:0}
+.home-iframe-wrap{display:none;flex:1;width:100%;overflow:hidden;min-height:0}
 .home-iframe-wrap iframe{width:100%;height:100%;border:0}
 #page-home.browsing .home-hero{display:none}
 #page-home.browsing .home-cards{display:none}
-#page-home.browsing .home-iframe-wrap{display:flex}
-#page-home.browsing .home-nav{display:flex}
+#page-home.browsing .home-iframe-wrap{display:flex;animation:fadeIn .35s ease}
 
-/* ══ GAMES PAGE ══ */
-#page-games{padding:10px 16px;gap:12px}
-
-.games-toolbar{display:flex;gap:12px;align-items:center;flex-shrink:0}
-
-.search-bar{
-  flex:1;height:38px;border-radius:19px;
-  background:var(--pill-bg);
-  display:flex;align-items:center;padding:0 16px;gap:10px;
-}
-.search-bar svg{
-  width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
-  stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
-}
-.search-bar input{
-  flex:1;background:0;border:0;outline:0;color:var(--text);
-  font-family:inherit;font-size:16px;
-}
-.search-bar input::placeholder{color:var(--text-dim)}
-
-/* Dropdown */
-.dropdown{position:relative;flex-shrink:0}
-.dropdown-btn{
-  height:43px;min-width:180px;border-radius:var(--radius-sm);
-  background:var(--dropdown-bg);
-  border:1px solid var(--border);
-  color:var(--text);font-family:inherit;font-size:16px;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;gap:10px;cursor:pointer;
-  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
-}
-.dropdown-btn svg{width:16px;height:8px;fill:#fff;stroke:none;transition:transform .2s}
-.dropdown.open .dropdown-btn svg{transform:rotate(180deg)}
-
-.dropdown-menu{
-  position:absolute;top:calc(100% + 4px);left:0;right:0;
-  background:var(--dropdown-bg);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:6px 0;
-  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
-  z-index:50;display:none;
-}
-.dropdown.open .dropdown-menu{display:block}
-.dropdown-menu button{
-  display:block;width:100%;text-align:left;padding:8px 16px;
-  background:0;border:0;color:var(--text);font-family:inherit;font-size:15px;
-  cursor:pointer;transition:background .15s;
-}
-.dropdown-menu button:hover{background:rgba(255,255,255,.08)}
-.dropdown-menu button.selected{opacity:.5}
-.dropdown-menu hr{border:0;border-top:1px solid var(--border);margin:4px 12px}
-
-/* Game grid */
-.games-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+/* ══ GAMES / APPS ══ */
+#page-games,#page-apps{padding:10px 16px;gap:12px}
+.games-grid,.apps-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
   gap:14px;padding-bottom:20px;
 }
-.game-tile{
+.game-tile,.app-tile{
   aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;
-  position:relative;transition:transform .15s;background:#1a1024;
+  position:relative;background:#1a1024;
+  transition:transform .4s ease,box-shadow .4s ease,filter .4s ease;
 }
-.game-tile:hover{transform:scale(1.04)}
-.game-tile img{width:100%;height:100%;object-fit:cover;display:block}
-.game-tile .tile-label{
+.game-tile:hover,.app-tile:hover{
+  transform:translateY(-6px) scale(1.03);
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  filter:brightness(1.1);
+}
+.game-tile img,.app-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.game-tile .tile-label,.app-tile .tile-label{
   position:absolute;bottom:0;left:0;right:0;
   padding:8px 10px;font-size:12px;font-weight:500;
   background:linear-gradient(transparent,rgba(0,0,0,.85));
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  opacity:.9;transition:opacity .35s ease;
 }
+.game-tile:hover .tile-label,.app-tile:hover .tile-label{opacity:1}
+
+.collections-list{
+  display:flex;flex-direction:column;align-items:center;
+  gap:18px;padding:10px 16px 30px;
+}
+.collection-tile{
+  max-width:600px;width:100%;border-radius:14px;overflow:hidden;cursor:pointer;
+  position:relative;background:#1a1024;
+  transition:transform .4s ease,box-shadow .4s ease;
+}
+.collection-tile:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 28px rgba(0,0,0,.5);
+}
+.collection-tile img{
+  width:100%;height:auto;display:block;
+  transition:transform .5s ease;
+}
+.collection-tile:hover img{transform:scale(1.04)}
+.collection-tile .tile-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:10px 14px;font-size:14px;font-weight:500;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  transition:opacity .35s ease;
+}
+
 .games-empty{text-align:center;padding:60px 20px;opacity:.5;font-size:18px}
 
-/* ══ APPS PAGE ══ */
-#page-apps{padding:10px 16px;gap:12px}
+/* ══ INNER PAGE IFRAME (apps/unblocks) ══ */
+.page-iframe-wrap{
+  display:none;flex:1;width:100%;overflow:hidden;min-height:0;
+}
+.page-iframe-wrap iframe{width:100%;height:100%;border:0}
+#page-apps.browsing .apps-grid{display:none}
+#page-apps.browsing .page-iframe-wrap{display:flex;animation:fadeIn .35s ease}
+#page-unblocks.browsing #unblocks-container{display:none}
+#page-unblocks.browsing .page-iframe-wrap{display:flex;animation:fadeIn .35s ease}
 
-.apps-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-  gap:14px;padding-bottom:20px;
-}
-.app-tile{
-  aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;
-  position:relative;transition:transform .15s;background:#1a1024;
-}
-.app-tile:hover{transform:scale(1.04)}
-.app-tile img{width:100%;height:100%;object-fit:cover;display:block}
-.app-tile .tile-label{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:8px 10px;font-size:12px;font-weight:500;
-  background:linear-gradient(transparent,rgba(0,0,0,.85));
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-
-/* ══ UNBLOCKS PAGE ══ */
-#page-unblocks{padding:10px 16px;gap:12px}
-
-.section-title{
-  font-size:14px;text-transform:uppercase;letter-spacing:2px;
-  opacity:.5;padding:10px 0 4px;
-}
-.unblocks-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+/* ══ UNBLOCKS / CONTACTS ══ */
+#page-unblocks,#page-contacts{padding:10px 16px;gap:12px}
+.section-title{font-size:14px;text-transform:uppercase;letter-spacing:2px;opacity:.5;padding:10px 0 4px}
+.unblocks-grid,.contacts-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
   gap:14px;padding-bottom:10px;
 }
-.unblock-tile{
+.unblock-tile,.contact-tile{
+  position:relative;
   height:120px;border-radius:14px;overflow:hidden;cursor:pointer;
-  position:relative;transition:transform .15s;
   background:var(--bg-card);border:1px solid var(--border-light);
   display:flex;align-items:center;justify-content:center;
   flex-direction:column;gap:8px;padding:16px;
+  transition:transform .4s ease,border-color .4s ease,box-shadow .4s ease;
 }
-.unblock-tile:hover{transform:scale(1.03);border-color:var(--border)}
-.unblock-tile img{width:48px;height:48px;border-radius:10px;object-fit:cover}
-.unblock-tile span{font-size:14px;font-weight:500;text-align:center}
-
-/* ══ CONTACTS PAGE ══ */
-#page-contacts{padding:10px 16px;gap:12px}
-
-.contacts-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:14px;padding-bottom:20px;
+.unblock-tile:hover,.contact-tile:hover{
+  transform:translateY(-5px);
+  border-color:var(--border);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
 }
-.contact-tile{
-  height:100px;border-radius:14px;overflow:hidden;cursor:pointer;
-  background:var(--bg-card);border:1px solid var(--border-light);
-  display:flex;align-items:center;gap:16px;padding:0 20px;
-  transition:transform .15s,border-color .15s;
-}
-.contact-tile:hover{transform:scale(1.02);border-color:var(--border)}
-.contact-tile .ct-icon{
-  width:40px;height:40px;border-radius:10px;
-  background:rgba(255,255,255,.08);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.contact-tile .ct-icon svg{
-  width:22px;height:22px;stroke:#fff;stroke-width:1.5;
+.unblock-tile img,.contact-tile img{width:48px;height:48px;border-radius:10px;object-fit:cover}
+.unblock-tile span,.contact-tile span{font-size:14px;font-weight:500;text-align:center}
+.contact-tile .form-icon{
+  width:48px;height:48px;stroke:var(--text);stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round;fill:none;
 }
-.contact-tile .ct-info{display:flex;flex-direction:column;gap:2px;min-width:0}
-.contact-tile .ct-info strong{font-size:15px;font-weight:500}
-.contact-tile .ct-info small{
-  font-size:11px;opacity:.45;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+
+/* ══ SETTINGS MODAL ══ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
 }
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  width:90%;max-width:480px;max-height:80vh;
+  background:var(--bg-deep);border:1px solid var(--border);
+  border-radius:20px;padding:0;overflow:hidden;
+  display:flex;flex-direction:column;
+  transform:translateY(30px) scale(.96);
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .35s ease;
+  opacity:0;
+}
+.modal-overlay.open .modal{transform:translateY(0) scale(1);opacity:1}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;border-bottom:1px solid var(--border-light);flex-shrink:0;
+}
+.modal-title{font-size:18px;font-weight:500}
+.modal-close{
+  width:32px;height:32px;border:0;background:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:8px;color:var(--text);font-size:22px;
+  transition:background .3s ease,transform .3s ease;
+}
+.modal-close:hover{background:rgba(255,255,255,.1);transform:rotate(90deg)}
+.modal-body{
+  padding:16px 22px 22px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:14px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent;
+}
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.setting-label{font-size:14px;opacity:.85;flex-shrink:0}
+.setting-select{
+  padding:8px 14px;cursor:pointer;
+  background:rgba(255,255,255,.1);border:1px solid var(--border-light);
+  border-radius:8px;color:#fff;font-family:inherit;font-size:13px;
+  transition:border-color .3s ease;
+}
+.setting-select:hover{border-color:var(--border)}
+.setting-input{
+  flex:1;padding:8px 12px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border-light);
+  border-radius:8px;color:#fff;font-family:inherit;font-size:13px;
+  outline:0;min-width:0;
+  transition:border-color .3s ease;
+}
+.setting-input:focus{border-color:var(--border)}
+.setting-btn{
+  padding:8px 16px;border:1px solid var(--border-light);border-radius:8px;
+  background:rgba(255,255,255,.08);color:#fff;cursor:pointer;
+  font-family:inherit;font-size:13px;
+  transition:background .3s ease,border-color .3s ease;
+}
+.setting-btn:hover{background:rgba(255,255,255,.15);border-color:var(--border)}
+.setting-divider{border:0;border-top:1px solid var(--border-light);margin:4px 0}
+.setting-section-title{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;opacity:.5;margin-top:4px}
+.toggle-switch{
+  width:44px;height:24px;border-radius:12px;cursor:pointer;
+  background:rgba(255,255,255,.15);position:relative;flex-shrink:0;
+  transition:background .35s ease;
+}
+.toggle-switch::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform .35s ease;
+}
+.toggle-switch.active{background:var(--accent-purple)}
+.toggle-switch.active::after{transform:translateX(20px)}
+
+/* ══ LOADING SKELETON ══ */
+.skeleton{
+  position:relative;overflow:hidden;
+  background:rgba(255,255,255,.06);
+  border-radius:14px;
+}
+.skeleton::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+  animation:shimmer 1.8s ease infinite;
+}
+.skeleton-tile{position:absolute;inset:0;z-index:0;border-radius:14px}
+.skeleton-collection{max-width:600px;width:100%;height:160px;border-radius:14px}
+.skeleton-unblock{height:120px;border-radius:14px}
+.game-tile img,.app-tile img{position:relative;z-index:1}
+.game-tile .tile-label,.app-tile .tile-label,.collection-tile .tile-label{z-index:2}
+
+/* ══ PARTICLE CANVAS ══ */
+#particle-canvas{
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;
+}
+
+/* ══ KEYFRAME ANIMATIONS ══ */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInPage{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:700px){
-  .top-bar{margin:4px 4px 0;padding:0 10px;height:48px;min-height:48px}
-  .body-row{margin:0 4px 4px}
+  .top-bar{padding:0 10px;height:48px;min-height:48px}
   .sidebar{width:44px;min-width:44px;padding:8px 0 10px}
   .sidebar .logo{width:28px;height:28px}
   .sidebar .jq-mark{width:16px;height:20px}
@@ -395,62 +478,96 @@ html,body{
   .home-card{width:100%;max-width:320px;height:140px}
   .home-card h2{font-size:28px}
   .games-grid,.apps-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
-  .games-toolbar{flex-direction:column;align-items:stretch}
+  .dropdown-btn{min-width:140px;font-size:14px}
+  .collections-list .collection-tile{max-width:100%}
 }
 </style>
 </head>
 <body>
+<script>if(localStorage.getItem('enableCursor')!=='false')document.body.classList.add('custom-cursor-enabled');</script>
+<canvas id="particle-canvas"></canvas>
 <div class="bg"></div>
 
-<div id="app">
+<div id="app" data-page="home">
 
-<!-- ═══ TOP BAR (horizontal part of L-shape) ═══ -->
 <header class="top-bar">
   <span class="brand">JimmyQRG</span>
-  <div id="top-bar-content"></div>
+
+  <div class="tb-section tb-home">
+    <div class="nav-btns">
+      <button onclick="proxyBack()" title="Back">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M5 12L12 19M5 12l7-7"/></svg>
+      </button>
+      <button onclick="proxyForward()" title="Forward">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M19 12l-7-7M19 12l-7 7"/></svg>
+      </button>
+      <button onclick="proxyRefresh()" title="Refresh">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      </button>
+    </div>
+    <div class="url-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="nav-url" placeholder="Search or type in url" onkeydown="if(event.key==='Enter')proxyNavigate(this.value)">
+    </div>
+  </div>
+
+  <div class="tb-section tb-games">
+    <div class="dropdown" id="games-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown()">
+        <span id="dd-label">All Games</span>
+        <svg viewBox="0 0 16 8"><path d="M1 1l7 6 7-6"/></svg>
+      </button>
+      <div class="dropdown-menu" id="dd-menu"></div>
+    </div>
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="games-search" placeholder="Search for games" oninput="filterGames()">
+    </div>
+  </div>
+
+  <div class="tb-section tb-apps">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="apps-search" placeholder="Search for apps" oninput="filterApps()">
+    </div>
+  </div>
+
   <button class="settings-top" title="Settings" onclick="openSettings()">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
   </button>
 </header>
 
-<!-- ═══ BODY ROW (sidebar + main content) ═══ -->
 <div class="body-row">
-
-<!-- Sidebar (vertical part of L-shape) -->
 <aside class="sidebar">
   <div class="logo" onclick="navigate('home')">
-    <svg viewBox="6 8 40 50" fill="none">
+    <svg viewBox="8 10 36 48" fill="none">
       <defs>
         <linearGradient id="logoGrad" x1="42.33" y1="33.87" x2="10.11" y2="33.87" gradientUnits="userSpaceOnUse">
           <stop offset=".298" stop-color="#FF0099"/>
           <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
           <stop offset=".688" stop-color="#009DFF"/>
         </linearGradient>
-        <linearGradient id="logoGlow" x1="26" y1="8" x2="26" y2="56" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#00FAFF"/>
-          <stop offset=".33" stop-color="#A500FF"/>
-          <stop offset=".59" stop-color="#FF3D8E"/>
-          <stop offset=".88" stop-color="#0400FF"/>
+        <linearGradient id="logoGlow" x1="26" y1="10" x2="26" y2="58" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#00FAFF"/><stop offset=".33" stop-color="#A500FF"/>
+          <stop offset=".59" stop-color="#FF3D8E"/><stop offset=".88" stop-color="#0400FF"/>
         </linearGradient>
       </defs>
-      <path d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="url(#logoGlow)"/>
-      <path d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="url(#logoGrad)" fill-opacity="0.5"/>
-      <path d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="white" fill-opacity="0.1"/>
+      <path fill-rule="evenodd" d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="url(#logoGlow)"/>
+      <path fill-rule="evenodd" d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="url(#logoGrad)" fill-opacity="0.5"/>
+      <path fill-rule="evenodd" d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="white" fill-opacity="0.1"/>
     </svg>
   </div>
-
   <div class="jq-mark">
     <svg viewBox="18 16 14 26" fill="none">
       <path d="M26.994 18H30.202c.693 0 1.141.111 1.345.332.224.22.336.682.336 1.384v18.333c0 .702-.112 1.164-.336 1.385-.203.22-.652.331-1.345.331H26.994V18ZM20.546 33.052h3.85c.285 0 .459.04.52.12.061.08.092.251.092.512v2.348c0 .321.04.552.122.692.102.12.336.181.703.181h.244v2.86h-1.436c-1.487 0-2.618-.251-3.392-.753-.754-.501-1.13-1.374-1.13-2.619v-2.709c0-.421.142-.632.427-.632Z" fill="white"/>
     </svg>
   </div>
-
   <nav>
     <button data-nav="home" class="active" onclick="navigate('home')" title="Home">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     </button>
     <button data-nav="games" onclick="navigate('games')" title="Games">
-      <svg viewBox="0 0 24 24"><path d="M6 12h4m-2-2v4m5-1h.01M17 11h.01M15 5H9a7 7 0 000 14h6a7 7 0 000-14z"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/></svg>
     </button>
     <button data-nav="apps" onclick="navigate('apps')" title="Apps">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -464,28 +581,9 @@ html,body{
   </nav>
 </aside>
 
-<!-- ═══ MAIN CONTENT ═══ -->
 <div class="main">
 
-<!-- HOME -->
 <section id="page-home" class="page active">
-  <div class="home-nav" style="display:none">
-    <div class="nav-btns">
-      <button id="btn-back" onclick="proxyBack()" title="Back">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button id="btn-fwd" onclick="proxyForward()" title="Forward">
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button class="refresh-btn" onclick="proxyRefresh()" title="Refresh">
-        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-      </button>
-    </div>
-    <div class="home-url-bar">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="nav-url" placeholder="Search or type in url" onkeydown="if(event.key==='Enter')proxyNavigate(this.value)">
-    </div>
-  </div>
   <div class="home-hero">
     <h1>Browse with Proxy</h1>
     <div class="home-search-bar">
@@ -494,15 +592,15 @@ html,body{
     </div>
   </div>
   <div class="home-cards">
-    <div class="home-card" data-nav="games" onclick="navigate('games')">
-      <svg viewBox="0 0 24 24"><path d="M6 12h4m-2-2v4m5-1h.01M17 11h.01M15 5H9a7 7 0 000 14h6a7 7 0 000-14z" fill="#fff" stroke="none"/></svg>
+    <div class="home-card" onclick="navigate('games')">
+      <svg viewBox="0 0 24 24" style="width:80px;height:60px"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/></svg>
       <h2>Games</h2>
     </div>
     <div class="home-card" onclick="navigate('apps')">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <h2>Apps</h2>
     </div>
-    <div class="home-card" data-nav="unblocks" onclick="navigate('unblocks')">
+    <div class="home-card" onclick="navigate('unblocks')">
       <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/></svg>
       <h2>Unblocks</h2>
     </div>
@@ -510,107 +608,135 @@ html,body{
   <div class="home-iframe-wrap"><iframe id="proxy-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
 </section>
 
-<!-- GAMES -->
 <section id="page-games" class="page">
-  <div class="games-toolbar">
-    <div class="dropdown" id="games-dropdown">
-      <button class="dropdown-btn" onclick="toggleDropdown()">
-        <span id="dd-label">All Games</span>
-        <svg viewBox="0 0 16 8"><path d="M1 1l7 6 7-6"/></svg>
-      </button>
-      <div class="dropdown-menu">
-        <button onclick="setGameTab('all')" class="selected">All Games</button>
-        <hr>
-        <button onclick="setGameTab('collections')">Collections</button>
-        <button onclick="setGameTab('pending')">Pending</button>
-      </div>
-    </div>
-    <div class="search-bar">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="games-search" placeholder="Search for games" oninput="filterGames()">
-    </div>
-  </div>
-  <div id="games-container" class="games-grid"></div>
+  <div id="games-container"></div>
 </section>
 
-<!-- APPS -->
 <section id="page-apps" class="page">
-  <div class="games-toolbar">
-    <div class="search-bar" style="flex:1">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="apps-search" placeholder="Search for apps" oninput="filterApps()">
-    </div>
-  </div>
   <div id="apps-container" class="apps-grid"></div>
+  <div class="page-iframe-wrap"><iframe id="apps-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
 </section>
 
-<!-- UNBLOCKS -->
 <section id="page-unblocks" class="page">
   <div id="unblocks-container"></div>
+  <div class="page-iframe-wrap"><iframe id="unblocks-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
 </section>
 
-<!-- CONTACTS -->
 <section id="page-contacts" class="page">
-  <div class="section-title">Get in Touch</div>
-  <div id="contacts-container" class="contacts-grid"></div>
+  <div id="contacts-container"></div>
 </section>
 
-</div><!-- .main -->
-</div><!-- .body-row -->
-</div><!-- #app -->
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Settings</h3>
+      <button class="modal-close" onclick="closeSettings()">&times;</button>
+    </div>
+    <div class="modal-body" id="settings-body"></div>
+  </div>
+</div>
 
 <script src="/js/openGame.js"></script>
 <script>
-var PROXY_BASE = 'https://rammerhead.fly.dev/unblocker.html';
-function proxyUrl(url, raw) {
-  return PROXY_BASE + '?' + (raw ? 'raw=true&' : '') + 'url=' + encodeURIComponent(url);
+var PROXY_BASE='https://rammerhead.fly.dev/unblocker.html';
+function proxyUrl(url,raw){
+  return PROXY_BASE+'?'+(raw?'raw=true&':'')+'url='+encodeURIComponent(url);
 }
 
-/* ── Navigation ── */
-var currentPage = 'home';
-function navigate(page) {
-  currentPage = page;
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.sidebar nav button').forEach(function(b){
-    b.classList.toggle('active', b.dataset.nav === page);
-  });
-  window.history.replaceState(null, '', '#' + page);
-}
+var currentPage='home';
+var proxyHistory=[];
+var proxyIndex=-1;
 
-window.addEventListener('hashchange', function() {
-  var h = location.hash.slice(1);
-  if (['home','games','apps','unblocks','contacts'].indexOf(h) !== -1) navigate(h);
-});
-if (location.hash) {
-  var h = location.hash.slice(1);
-  if (['home','games','apps','unblocks','contacts'].indexOf(h) !== -1) navigate(h);
-}
-
-/* ── Proxy / Home ── */
-function isUrl(s) {
-  return /^https?:\/\//i.test(s) || /^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}/i.test(s);
-}
-function proxyNavigate(input) {
-  if (!input.trim()) return;
-  var url;
-  if (isUrl(input.trim())) {
-    url = input.trim();
-    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-  } else {
-    url = 'https://duckduckgo.com/?q=' + encodeURIComponent(input.trim());
+function navigate(page){
+  if(currentPage===page){
+    if(page==='home') exitBrowsing();
+    else exitPageBrowsing(page);
+    var el=document.getElementById('page-'+page);
+    if(el) el.scrollTop=0;
+    return;
   }
-  document.getElementById('proxy-frame').src = proxyUrl(url);
-  document.getElementById('nav-url').value = input.trim();
-  document.getElementById('page-home').classList.add('browsing');
-  document.querySelector('.home-nav').style.display = '';
+  exitBrowsing();
+  exitPageBrowsing('apps');
+  exitPageBrowsing('unblocks');
+  currentPage=page;
+  document.getElementById('app').setAttribute('data-page',page);
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.sidebar nav button').forEach(function(b){
+    b.classList.toggle('active',b.dataset.nav===page);
+  });
+  window.history.replaceState(null,'','#'+page);
 }
-function proxyBack() { try { document.getElementById('proxy-frame').contentWindow.history.back(); } catch(e){} }
-function proxyForward() { try { document.getElementById('proxy-frame').contentWindow.history.forward(); } catch(e){} }
-function proxyRefresh() { try { var f = document.getElementById('proxy-frame'); f.src = f.src; } catch(e){} }
 
-/* ══════════ DATA ══════════ */
-var GAMES = [
+window.addEventListener('hashchange',function(){
+  var h=location.hash.slice(1);
+  if(['home','games','apps','unblocks','contacts'].indexOf(h)!==-1) navigate(h);
+});
+if(location.hash){
+  var h=location.hash.slice(1);
+  if(['home','games','apps','unblocks','contacts'].indexOf(h)!==-1) navigate(h);
+}
+
+function isUrl(s){
+  return /^https?:\/\//i.test(s)||/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}/i.test(s);
+}
+function proxyNavigate(input){
+  if(!input.trim()) return;
+  var url;
+  if(isUrl(input.trim())){
+    url=input.trim();
+    if(!/^https?:\/\//i.test(url)) url='https://'+url;
+  }else{
+    url='https://duckduckgo.com/?q='+encodeURIComponent(input.trim());
+  }
+  if(currentPage!=='home') navigate('home');
+  var pUrl=proxyUrl(url);
+  proxyHistory=proxyHistory.slice(0,proxyIndex+1);
+  proxyHistory.push(pUrl);
+  proxyIndex=proxyHistory.length-1;
+  document.getElementById('proxy-frame').src=pUrl;
+  document.getElementById('nav-url').value=input.trim();
+  document.getElementById('page-home').classList.add('browsing');
+}
+function proxyBack(){
+  if(proxyIndex<=0){exitBrowsing();return}
+  proxyIndex--;
+  document.getElementById('proxy-frame').src=proxyHistory[proxyIndex];
+}
+function proxyForward(){
+  if(proxyIndex>=proxyHistory.length-1) return;
+  proxyIndex++;
+  document.getElementById('proxy-frame').src=proxyHistory[proxyIndex];
+}
+function proxyRefresh(){
+  try{var f=document.getElementById('proxy-frame');f.src=f.src}catch(e){}
+}
+function exitBrowsing(){
+  proxyHistory=[];proxyIndex=-1;
+  document.getElementById('page-home').classList.remove('browsing');
+  document.getElementById('proxy-frame').src='';
+  document.getElementById('nav-url').value='';
+  document.getElementById('home-search').value='';
+}
+function openInPage(page,url){
+  var frame=document.getElementById(page+'-frame');
+  if(!frame) return;
+  frame.src=url;
+  document.getElementById('page-'+page).classList.add('browsing');
+}
+function exitPageBrowsing(page){
+  var el=document.getElementById('page-'+page);
+  if(!el) return;
+  el.classList.remove('browsing');
+  var frame=document.getElementById(page+'-frame');
+  if(frame) frame.src='';
+}
+
+var GAMES=[
   {n:"Bridd Jump",img:"bridd-jump",url:"/jqrg-games/games/bridd-jump/",tags:["featured","touch","jqrg"]},
   {n:"Parkoreen",img:"parkoreen",url:"/parkoreen/",tags:["featured","touch","jqrg"]},
   {n:"A Dance of Fire and Ice",img:"a-dance-of-fire-and-ice",url:"/a-dance-of-fire-and-ice",tags:["featured","touch"]},
@@ -627,7 +753,7 @@ var GAMES = [
   {n:"Tomb of the Mask",img:"tomb-of-the-mask",url:"/jqrg-games/games/tomb-of-the-mask/",tags:["featured","touch"]},
   {n:"10 Minutes Till Dawn",img:"10-minutes-till-dawn",url:"/jqrg-games/games/10-minutes-till-dawn/",tags:["featured"]},
   {n:"Amenda The Adventurer",img:"amenda",url:"/jqrg-games/games/amenda/",tags:["featured"]},
-  {n:"Asriel Dreemurr Fight",img:"asriel",url:"/jqrg-games/games/asriel/",tags:["featured"]},
+  {n:"Asriel Dreemurr Fight",img:"asriel",url:"/jqrg-games/games/asriel/",tags:["featured"],wo:true},
   {n:"Undertale",img:"undertale",url:"/jqrg-games/games/undertale/",tags:["featured"]},
   {n:"Deltarune",img:"deltarune",url:"/jqrg-games/games/deltarune/",tags:["featured"]},
   {n:"Backrooms",img:"backrooms",url:"/jqrg-games/games/backrooms/",tags:["featured"]},
@@ -642,7 +768,7 @@ var GAMES = [
   {n:"Iron Lung",img:"iron-lungs",url:"/jqrg-games/games/iron-lungs/",tags:["featured"]},
   {n:"Karlson",img:"karlson",url:"/jqrg-games/games/karlson/",tags:["featured"]},
   {n:"Plant VS Zombies",img:"pvs",url:"/jqrg-games/games/pvs/",tags:["featured"]},
-  {n:"Minecraft",img:"minecraft",url:"/jqrg-games/games/mcraft/",tags:["featured"]},
+  {n:"Minecraft",img:"minecraft",url:"/jqrg-games/games/mcraft/",tags:["featured"],wo:true},
   {n:"Slope",img:"slope",url:"/jqrg-games/games/slope/",tags:["featured"]},
   {n:"Solar Smash",img:"solar-smash",url:"/jqrg-games/games/solar-smash/",tags:["featured"]},
   {n:"Stickman Arena",img:"stickman-arena",url:"/jqrg-games/games/stickman-arena/",tags:["featured"]},
@@ -659,7 +785,7 @@ var GAMES = [
   {n:"Crazy Cattle",img:"crazy-cattle",url:"/jqrg-games/games/crazy-cattle/",tags:["touch"]},
   {n:"Crossy Road",img:"crossy-road",url:"/jqrg-games/games/crossy-road/",tags:["touch"]},
   {n:"CurveBall 3D",img:"curveball",url:"/jqrg-games/games/curveball/",tags:["touch"]},
-  {n:"Dino",img:"dino",url:"/dino/",tags:["touch"]},
+  {n:"Dino",img:"dino",url:"/dino/",tags:["touch"],wo:true},
   {n:"Flappy Bird",img:"flappy-bird",url:"/jqrg-games/games/flappy-bird/",tags:["touch"]},
   {n:"Flappy Dunk",img:"flappy-dunk",url:"/jqrg-games/games/flappy-dunk/",tags:["touch"]},
   {n:"Geometry Dash Lite",img:"geo-dash",url:"/jqrg-games/games/geo-dash/",tags:["touch"]},
@@ -678,8 +804,8 @@ var GAMES = [
   {n:"3D Car Simulator",img:"3d-car-simulator",url:"/jqrg-games/games/3d-car-simulator/",tags:[]},
   {n:"Bitplanes",img:"bitplanes",url:"/jqrg-games/games/bitplanes/",tags:[]},
   {n:"Celeste",img:"celeste",url:"/jqrg-games/games/celeste/",tags:[]},
-  {n:"Mega Flowey Fight",img:"flowey",url:"/jqrg-games/games/flowey/",tags:[]},
-  {n:"Gaster Boss Fight",img:"gaster",url:"/jqrg-games/games/gaster-fight/",tags:[]},
+  {n:"Mega Flowey Fight",img:"flowey",url:"/jqrg-games/games/flowey/",tags:[],wo:true},
+  {n:"Gaster Boss Fight",img:"gaster",url:"/jqrg-games/games/gaster-fight/",tags:[],wo:true},
   {n:"Last Breath",img:"last-breath",url:"/jqrg-games/games/sans-last-breath/",tags:[]},
   {n:"Sans CJS Fight",img:"sans-cjs",url:"/jqrg-games/games/sans-cjs/",tags:[]},
   {n:"Sans CJS Fight (Invincible)",img:"sans-cjs-i",url:"/jqrg-games/games/sans-cjs-i/",tags:[]},
@@ -717,22 +843,19 @@ var GAMES = [
   {n:"Tunnel Rush",img:"tunnel-rush",url:"/jqrg-games/games/tunnel-rush/",tags:[]},
   {n:"Zombie Derby",img:"zombie-derby-pixel-survival",url:"/jqrg-games/games/zombie-derby-pixel-survival/",tags:[]},
 ];
-
-var COLLECTIONS = [
+var COLLECTIONS=[
   {n:"Eaglercraft",img:"/game-images/collections/eaglercraft.png",url:"/jqrg-games/eaglercraft/"},
   {n:"Geometry Dash (Scratch)",img:"/game-images/collections/geo-dash-scratch.png",url:"/scratch/jqrg-games/geometry-dash"},
   {n:"Scratch Games",img:"/game-images/collections/scratch.png",url:"/scratch/jqrg-games/"},
   {n:"Undertale Games",img:"/game-images/collections/undertale.png",url:"/jqrg-games/undertale"},
 ];
-
-var PENDING = [
+var PENDING=[
   {n:"Shell Shocker",img:"shell-shocker",url:"/jqrg-games/games/shell-shocker/"},
   {n:"Magic Tiles 3",img:"magic-tiles-3",url:"/jqrg-games/games/magic-tiles-3/"},
   {n:"World's Most Confusing Button Game",img:"wmcbg",url:"/wmcbg/"},
   {n:"Stickman Rebirth",img:"stickman-rebirth",url:"/jqrg-games/games/stickman-rebirth/"},
 ];
-
-var APPS = [
+var APPS=[
   {n:"TikTok",img:"tiktok",url:"tiktok.com",proxy:true,raw:true},
   {n:"YouTube",img:"youtube",url:"youtube.com",proxy:true,raw:true},
   {n:"GN Math",img:"gn-math",url:"/unblocks/gn-math.html",proxy:false},
@@ -742,135 +865,308 @@ var APPS = [
   {n:"Instagram",img:"instagram",url:"instagram.com",proxy:true,raw:true},
   {n:"JimmyQrg Tools",img:"jtools",url:"/tools/",proxy:false},
 ];
-
-var UNBLOCKS = [
+var UNBLOCKS=[
   {n:"Unlinewize Proxy",img:"unlinewize",url:"https://rammerhead.fly.dev"},
   {n:"Rammerhead Proxy",img:"rammerhead",url:"https://noblock.jimmyqrg.com"},
   {n:"HackWize Proxy",img:"hackwize",url:"/proxy/"},
   {n:"JimmyQrg Info",img:"jinfo",url:"/info/"},
 ];
-
-var CONTACTS = [
-  {n:"JimmyQrg Chat",desc:"Chat with us",url:"https://jchat.fly.dev",icon:"chat"},
-  {n:"Discord Server",desc:"Join our community",url:"https://discord.com/invite/UWY8p8mn",icon:"discord"},
-  {n:"Report Bugs",desc:"Help us fix issues",url:"https://docs.google.com/forms/d/e/1FAIpQLScYdbpe_9Q3w2kpAfy-ntLAoCMtf9wg2vkfHOt6xrYwMvDFNg/viewform?usp=header",icon:"bug"},
-  {n:"Game Suggestions",desc:"Suggest new games",url:"https://docs.google.com/forms/d/e/1FAIpQLSceujZ8Li1ycYrRIK9MR9GUqI1OkANZiMoO1guu9hytfU5hlg/viewform?usp=header",icon:"suggest"},
-  {n:"Join Developers",desc:"Help build JQRG",url:"https://docs.google.com/forms/d/e/1FAIpQLSc0GRyWHqAmI5d0ZQnkLt9Zf3KPVOVHPFuii8ovOmonSeC6Jg/viewform?usp=header",icon:"dev"},
+var CONTACTS=[
+  {n:"JimmyQrg Chat",img:"jchat",url:"https://jchat.fly.dev"},
+  {n:"Discord Server",img:"discord",url:"https://discord.com/invite/UWY8p8mn"},
+  {n:"Report Bugs",img:"report-bugs",url:"https://docs.google.com/forms/d/e/1FAIpQLScYdbpe_9Q3w2kpAfy-ntLAoCMtf9wg2vkfHOt6xrYwMvDFNg/viewform?usp=header",form:true},
+  {n:"Game Suggestions",img:"game-suggestions",url:"https://docs.google.com/forms/d/e/1FAIpQLSceujZ8Li1ycYrRIK9MR9GUqI1OkANZiMoO1guu9hytfU5hlg/viewform?usp=header",form:true},
+  {n:"Join Developers",img:"join-developers",url:"https://docs.google.com/forms/d/e/1FAIpQLSc0GRyWHqAmI5d0ZQnkLt9Zf3KPVOVHPFuii8ovOmonSeC6Jg/viewform?usp=header",form:true},
 ];
 
-/* ══════════ RENDER ══════════ */
-
-function gameTileHTML(g, imgBase) {
-  var src = imgBase ? imgBase : '/game-images/games/' + g.img + '.png';
-  var escaped = g.url.replace(/'/g, "\\'");
-  return '<div class="game-tile" onclick="openGame(\'' + escaped + '\')">' +
-    '<img src="' + src + '" alt="' + g.n + '" loading="lazy" onerror="this.style.display=\'none\'">' +
-    '<div class="tile-label">' + g.n + '</div></div>';
-}
-
-var gameTab = 'all';
-function renderGames() {
-  var c = document.getElementById('games-container');
-  var q = (document.getElementById('games-search').value || '').toLowerCase();
-  var html = '';
-  if (gameTab === 'all') {
-    var filtered = GAMES.filter(function(g){ return g.n.toLowerCase().indexOf(q) !== -1; });
-    if (!filtered.length) html = '<div class="games-empty">No games found</div>';
-    else filtered.forEach(function(g){ html += gameTileHTML(g); });
-  } else if (gameTab === 'collections') {
-    var filtered = COLLECTIONS.filter(function(g){ return g.n.toLowerCase().indexOf(q) !== -1; });
-    if (!filtered.length) html = '<div class="games-empty">No collections found</div>';
-    else filtered.forEach(function(g){ html += gameTileHTML(g, g.img); });
-  } else if (gameTab === 'pending') {
-    var filtered = PENDING.filter(function(g){ return g.n.toLowerCase().indexOf(q) !== -1; });
-    if (!filtered.length) html = '<div class="games-empty">No pending games</div>';
-    else filtered.forEach(function(g){ html += gameTileHTML(g); });
+function gameTileHTML(g,imgBase){
+  var src=imgBase?imgBase:'/game-images/games/'+g.img+'.png';
+  var escaped=g.url.replace(/'/g,"\\'");
+  var onclick;
+  if(g.wo){
+    onclick="window.open('"+escaped+"','_blank')";
+  }else{
+    onclick="openGame('"+escaped+"')";
   }
-  c.innerHTML = html;
+  return '<div class="game-tile" onclick="'+onclick+'">'+
+    '<div class="skeleton skeleton-tile"></div>'+
+    '<img src="'+src+'" alt="'+g.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
+    '<div class="tile-label">'+g.n+'</div></div>';
+}
+function collectionTileHTML(g){
+  var escaped=g.url.replace(/'/g,"\\'");
+  return '<div class="collection-tile" onclick="openGame(\''+escaped+'\')">'+
+    '<div class="skeleton skeleton-collection" style="position:absolute;inset:0;z-index:0"></div>'+
+    '<img src="'+g.img+'" alt="'+g.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
+    '<div class="tile-label">'+g.n+'</div></div>';
 }
 
-function filterGames() { renderGames(); }
+var gameTab='all';
+var GAME_TABS={all:'All Games',collections:'Collections',pending:'Pending'};
 
-function setGameTab(tab) {
-  gameTab = tab;
-  var labels = {all:'All Games',collections:'Collections',pending:'Pending'};
-  document.getElementById('dd-label').textContent = labels[tab];
+function renderDropdown(){
+  var menu=document.getElementById('dd-menu');
+  var html='';
+  var keys=Object.keys(GAME_TABS);
+  html+='<button onclick="setGameTab(\''+gameTab+'\')">'+GAME_TABS[gameTab]+'</button>';
+  html+='<hr>';
+  for(var i=0;i<keys.length;i++){
+    if(keys[i]!==gameTab){
+      html+='<button onclick="setGameTab(\''+keys[i]+'\')">'+GAME_TABS[keys[i]]+'</button>';
+    }
+  }
+  menu.innerHTML=html;
+  document.getElementById('dd-label').textContent=GAME_TABS[gameTab];
+}
+
+function renderGames(){
+  var c=document.getElementById('games-container');
+  var q=(document.getElementById('games-search').value||'').toLowerCase();
+  var html='';
+  if(gameTab==='all'){
+    c.className='games-grid';
+    var filtered=GAMES.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1});
+    if(!filtered.length) html='<div class="games-empty">No games found</div>';
+    else filtered.forEach(function(g){html+=gameTileHTML(g)});
+  }else if(gameTab==='collections'){
+    c.className='collections-list';
+    var filtered=COLLECTIONS.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1});
+    if(!filtered.length) html='<div class="games-empty">No collections found</div>';
+    else filtered.forEach(function(g){html+=collectionTileHTML(g)});
+  }else if(gameTab==='pending'){
+    c.className='games-grid';
+    var filtered=PENDING.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1});
+    if(!filtered.length) html='<div class="games-empty">No pending games</div>';
+    else filtered.forEach(function(g){html+=gameTileHTML(g)});
+  }
+  c.innerHTML=html;
+}
+function filterGames(){renderGames()}
+
+function setGameTab(tab){
+  gameTab=tab;
   document.getElementById('games-dropdown').classList.remove('open');
-  document.querySelectorAll('#games-dropdown .dropdown-menu button').forEach(function(b){ b.classList.remove('selected'); });
-  if (event && event.target) event.target.classList.add('selected');
+  renderDropdown();
   renderGames();
 }
-
-function toggleDropdown() {
+function toggleDropdown(){
   document.getElementById('games-dropdown').classList.toggle('open');
 }
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('#games-dropdown')) {
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#games-dropdown')){
     document.getElementById('games-dropdown').classList.remove('open');
   }
 });
 
-function renderApps() {
-  var c = document.getElementById('apps-container');
-  var q = (document.getElementById('apps-search').value || '').toLowerCase();
-  var filtered = APPS.filter(function(a){ return a.n.toLowerCase().indexOf(q) !== -1; });
-  var html = '';
-  filtered.forEach(function(a) {
-    var onclick;
-    if (a.proxy) {
-      var href = proxyUrl('https://' + a.url, !!a.raw);
-      onclick = "window.open('" + href.replace(/'/g, "\\'") + "','_blank')";
-    } else {
-      onclick = "window.open('" + a.url.replace(/'/g, "\\'") + "','_blank')";
+function renderApps(){
+  var c=document.getElementById('apps-container');
+  var q=(document.getElementById('apps-search').value||'').toLowerCase();
+  var filtered=APPS.filter(function(a){return a.n.toLowerCase().indexOf(q)!==-1});
+  var html='';
+  filtered.forEach(function(a){
+    var loadUrl;
+    if(a.proxy){
+      loadUrl=proxyUrl('https://'+a.url,!!a.raw);
+    }else{
+      loadUrl=a.url;
     }
-    html += '<div class="app-tile" onclick="' + onclick + '">' +
-      '<img src="/game-images/apps/' + a.img + '.png" alt="' + a.n + '" loading="lazy" onerror="this.style.display=\'none\'">' +
-      '<div class="tile-label">' + a.n + '</div></div>';
+    var escaped=loadUrl.replace(/'/g,"\\'");
+    html+='<div class="app-tile" onclick="openInPage(\'apps\',\''+escaped+'\')">'+
+      '<div class="skeleton skeleton-tile"></div>'+
+      '<img src="/game-images/apps/'+a.img+'.png" alt="'+a.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
+      '<div class="tile-label">'+a.n+'</div></div>';
   });
-  if (!filtered.length) html = '<div class="games-empty">No apps found</div>';
-  c.innerHTML = html;
+  if(!filtered.length) html='<div class="games-empty">No apps found</div>';
+  c.innerHTML=html;
 }
-function filterApps() { renderApps(); }
+function filterApps(){renderApps()}
 
-function renderUnblocks() {
-  var c = document.getElementById('unblocks-container');
-  var html = '<div class="section-title">Proxies &amp; Tools</div><div class="unblocks-grid">';
-  UNBLOCKS.forEach(function(u) {
-    var target = u.url.indexOf('http') === 0 ? '_blank' : '_self';
-    html += '<div class="unblock-tile" onclick="window.open(\'' + u.url + '\',\'' + target + '\')">' +
-      '<img src="/game-images/unblocks/' + u.img + '.png" alt="' + u.n + '" loading="lazy" onerror="this.style.display=\'none\'">' +
-      '<span>' + u.n + '</span></div>';
+function renderUnblocks(){
+  var c=document.getElementById('unblocks-container');
+  var html='<div class="section-title">Unblocks</div><div class="unblocks-grid">';
+  UNBLOCKS.forEach(function(u){
+    var escaped=u.url.replace(/'/g,"\\'");
+    html+='<div class="unblock-tile" onclick="openInPage(\'unblocks\',\''+escaped+'\')">'+
+      '<div class="skeleton skeleton-unblock" style="position:absolute;inset:0;z-index:0;border-radius:14px"></div>'+
+      '<img src="/game-images/unblocks/'+u.img+'.png" alt="'+u.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'" style="position:relative;z-index:1">'+
+      '<span style="position:relative;z-index:1">'+u.n+'</span></div>';
   });
-  html += '</div>';
-  c.innerHTML = html;
-}
-
-function renderContacts() {
-  var c = document.getElementById('contacts-container');
-  var icons = {
-    chat:'<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
-    discord:'<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
-    bug:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
-    suggest:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
-    dev:'<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
-  };
-  var html = '';
-  CONTACTS.forEach(function(ct) {
-    var escaped = ct.url.replace(/'/g, "\\'");
-    html += '<div class="contact-tile" onclick="window.open(\'' + escaped + '\',\'_blank\')">' +
-      '<div class="ct-icon"><svg viewBox="0 0 24 24">' + icons[ct.icon] + '</svg></div>' +
-      '<div class="ct-info"><strong>' + ct.n + '</strong><small>' + ct.desc + '</small></div></div>';
-  });
-  c.innerHTML = html;
+  html+='</div>';
+  c.innerHTML=html;
 }
 
-function openSettings() {}
+function renderContacts(){
+  var c=document.getElementById('contacts-container');
+  var html='<div class="section-title">Contacts</div><div class="contacts-grid">';
+  CONTACTS.forEach(function(ct){
+    var escaped=ct.url.replace(/'/g,"\\'");
+    var icon;
+    if(ct.form){
+      icon='<svg class="form-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>';
+    }else{
+      icon='<div class="skeleton" style="width:48px;height:48px;border-radius:10px;flex-shrink:0"></div>'+
+        '<img src="/game-images/contacts/'+ct.img+'.png" alt="'+ct.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">';
+    }
+    html+='<div class="contact-tile" onclick="window.open(\''+escaped+'\',\'_blank\')">'+
+      icon+'<span>'+ct.n+'</span></div>';
+  });
+  html+='</div>';
+  c.innerHTML=html;
+}
 
-/* ── Init ── */
+function openSettings(){
+  var openType=localStorage.getItem('openGameType')||'popup';
+  var panicKey=localStorage.getItem('panicKey')||'ShiftRight';
+  var panicLink=localStorage.getItem('panicKeyLink')||'';
+  var cloakTitle=localStorage.getItem('cloakTitle')||'Grades | Schoology';
+  var cloakIcon=localStorage.getItem('cloakIcon')||'/jq.ico';
+  var mainCloak=localStorage.getItem('mainPageCloak')==='true';
+  var cursorEnabled=localStorage.getItem('enableCursor')!=='false';
+
+  var body=document.getElementById('settings-body');
+  body.innerHTML=
+    '<div class="setting-section-title">Game Settings</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Open As</span>'+
+      '<select id="settOpenType" class="setting-select" onchange="localStorage.setItem(\'openGameType\',this.value)">'+
+        '<option value="popup"'+(openType==='popup'?' selected':'')+'>Popup</option>'+
+        '<option value="newtab"'+(openType==='newtab'?' selected':'')+'>New Tab</option>'+
+        '<option value="sametab"'+(openType==='sametab'?' selected':'')+'>Same Tab</option>'+
+      '</select>'+
+    '</div>'+
+    '<hr class="setting-divider">'+
+    '<div class="setting-section-title">Tab Cloak</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Tab Title</span>'+
+      '<input type="text" class="setting-input" value="'+cloakTitle.replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'cloakTitle\',this.value)">'+
+    '</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Tab Icon URL</span>'+
+      '<input type="text" class="setting-input" value="'+cloakIcon.replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'cloakIcon\',this.value)" placeholder="/cloak-images/schoology.png">'+
+    '</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Main Page Cloak</span>'+
+      '<div class="toggle-switch'+(mainCloak?' active':'')+'" onclick="this.classList.toggle(\'active\');localStorage.setItem(\'mainPageCloak\',this.classList.contains(\'active\'))"></div>'+
+    '</div>'+
+    '<hr class="setting-divider">'+
+    '<div class="setting-section-title">Panic Key</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Key</span>'+
+      '<button class="setting-btn" id="panicKeyBtn" onclick="recordPanicKey(this)">'+panicKey+'</button>'+
+    '</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Redirect URL</span>'+
+      '<input type="text" class="setting-input" value="'+panicLink.replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'panicKeyLink\',this.value)" placeholder="https://pausd.schoology.com">'+
+    '</div>'+
+    '<hr class="setting-divider">'+
+    '<div class="setting-section-title">Appearance</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Custom Cursor</span>'+
+      '<div class="toggle-switch'+(cursorEnabled?' active':'')+'" onclick="this.classList.toggle(\'active\');var on=this.classList.contains(\'active\');localStorage.setItem(\'enableCursor\',on);if(on){document.body.classList.add(\'custom-cursor-enabled\')}else{document.body.classList.remove(\'custom-cursor-enabled\')};window.dispatchEvent(new Event(\'cursorSettingChanged\'))"></div>'+
+    '</div>';
+
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettings(){
+  document.getElementById('settings-modal').classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  var modal=document.getElementById('settings-modal');
+  if(e.target===modal) closeSettings();
+});
+
+var recordingPanicKey=false;
+function recordPanicKey(btn){
+  if(recordingPanicKey) return;
+  recordingPanicKey=true;
+  btn.textContent='Press any key...';
+  function handler(e){
+    e.preventDefault();e.stopPropagation();
+    localStorage.setItem('panicKey',e.code);
+    btn.textContent=e.code;
+    recordingPanicKey=false;
+    document.removeEventListener('keydown',handler,true);
+  }
+  document.addEventListener('keydown',handler,true);
+}
+
+renderDropdown();
 renderGames();
 renderApps();
 renderUnblocks();
 renderContacts();
+
+(function(){
+  var canvas=document.getElementById('particle-canvas');
+  var ctx=canvas.getContext('2d');
+  var mx=window.innerWidth/2, my=window.innerHeight/2;
+  var particles=[];
+  var PARTICLE_COUNT=60;
+  var colors=['rgba(168,85,247,','rgba(99,102,241,','rgba(236,72,153,','rgba(59,130,246,'];
+
+  function resize(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX; my=e.clientY;
+  });
+
+  function Particle(){
+    this.reset();
+  }
+  Particle.prototype.reset=function(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.size=Math.random()*2.5+0.5;
+    this.speedX=(Math.random()-0.5)*0.3;
+    this.speedY=(Math.random()-0.5)*0.3;
+    this.color=colors[Math.floor(Math.random()*colors.length)];
+    this.alpha=Math.random()*0.5+0.1;
+    this.life=Math.random()*300+200;
+    this.maxLife=this.life;
+  };
+  Particle.prototype.update=function(){
+    var dx=mx-this.x;
+    var dy=my-this.y;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<200){
+      this.x+=dx*0.003;
+      this.y+=dy*0.003;
+    }
+    this.x+=this.speedX;
+    this.y+=this.speedY;
+    this.life--;
+    if(this.life<=0||this.x<-10||this.x>canvas.width+10||this.y<-10||this.y>canvas.height+10){
+      this.reset();
+    }
+  };
+  Particle.prototype.draw=function(){
+    var fadeFactor=this.life<50?this.life/50:1;
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=this.color+(this.alpha*fadeFactor)+')';
+    ctx.fill();
+  };
+
+  for(var i=0;i<PARTICLE_COUNT;i++){
+    particles.push(new Particle());
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(var i=0;i<particles.length;i++){
+      particles[i].update();
+      particles[i].draw();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
 </script>
+<script src="/js/cursor.js"></script>
 </body>
 </html>

