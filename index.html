@@ -1,948 +1,492 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6461283206674206"
-     crossorigin="anonymous"></script>
-    <script async src="https://fundingchoicesmessages.google.com/i/pub-6461283206674206?ers=1"></script>
-    <script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
-    <script>(function(){'use strict';function aa(a){var b=0;return function(){return b<a.length?{done:!1,value:a[b++]}:{done:!0}}}var ba=typeof Object.defineProperties=="function"?Object.defineProperty:function(a,b,c){if(a==Array.prototype||a==Object.prototype)return a;a[b]=c.value;return a};
-  function ca(a){a=["object"==typeof globalThis&&globalThis,a,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var b=0;b<a.length;++b){var c=a[b];if(c&&c.Math==Math)return c}throw Error("Cannot find global object");}var da=ca(this);function l(a,b){if(b)a:{var c=da;a=a.split(".");for(var d=0;d<a.length-1;d++){var e=a[d];if(!(e in c))break a;c=c[e]}a=a[a.length-1];d=c[a];b=b(d);b!=d&&b!=null&&ba(c,a,{configurable:!0,writable:!0,value:b})}}
-  function ea(a){return a.raw=a}function n(a){var b=typeof Symbol!="undefined"&&Symbol.iterator&&a[Symbol.iterator];if(b)return b.call(a);if(typeof a.length=="number")return{next:aa(a)};throw Error(String(a)+" is not an iterable or ArrayLike");}function fa(a){for(var b,c=[];!(b=a.next()).done;)c.push(b.value);return c}var ha=typeof Object.create=="function"?Object.create:function(a){function b(){}b.prototype=a;return new b},p;
-  if(typeof Object.setPrototypeOf=="function")p=Object.setPrototypeOf;else{var q;a:{var ja={a:!0},ka={};try{ka.__proto__=ja;q=ka.a;break a}catch(a){}q=!1}p=q?function(a,b){a.__proto__=b;if(a.__proto__!==b)throw new TypeError(a+" is not extensible");return a}:null}var la=p;
-  function t(a,b){a.prototype=ha(b.prototype);a.prototype.constructor=a;if(la)la(a,b);else for(var c in b)if(c!="prototype")if(Object.defineProperties){var d=Object.getOwnPropertyDescriptor(b,c);d&&Object.defineProperty(a,c,d)}else a[c]=b[c];a.A=b.prototype}function ma(){for(var a=Number(this),b=[],c=a;c<arguments.length;c++)b[c-a]=arguments[c];return b}l("Object.is",function(a){return a?a:function(b,c){return b===c?b!==0||1/b===1/c:b!==b&&c!==c}});
-  l("Array.prototype.includes",function(a){return a?a:function(b,c){var d=this;d instanceof String&&(d=String(d));var e=d.length;c=c||0;for(c<0&&(c=Math.max(c+e,0));c<e;c++){var f=d[c];if(f===b||Object.is(f,b))return!0}return!1}});
-  l("String.prototype.includes",function(a){return a?a:function(b,c){if(this==null)throw new TypeError("The 'this' value for String.prototype.includes must not be null or undefined");if(b instanceof RegExp)throw new TypeError("First argument to String.prototype.includes must not be a regular expression");return this.indexOf(b,c||0)!==-1}});l("Number.MAX_SAFE_INTEGER",function(){return 9007199254740991});
-  l("Number.isFinite",function(a){return a?a:function(b){return typeof b!=="number"?!1:!isNaN(b)&&b!==Infinity&&b!==-Infinity}});l("Number.isInteger",function(a){return a?a:function(b){return Number.isFinite(b)?b===Math.floor(b):!1}});l("Number.isSafeInteger",function(a){return function(b){return Number.isInteger(b)&&Math.abs(b)<=Number.MAX_SAFE_INTEGER}});
-  l("Math.trunc",function(a){return a?a:function(b){b=Number(b);if(isNaN(b)||b===Infinity||b===-Infinity||b===0)return b;var c=Math.floor(Math.abs(b));return b<0?-c:c}});/* ...truncated for brevity... */
-  window.__h82AlnkH6D91__("WyJwdWItNjQ2MTI4MzIwNjY3NDIwNiIsW251bGwsbnVsbCxudWxsLCJodHRwczovL2Z1bmRpbmdjaG9pY2VzbWVzc2FnZXMuZ29vZ2xlLmNvbS9iL3B1Yi02NDYxMjgzMjA2Njc0MjA2Il0sbnVsbCxudWxsLCJodHRwczovL2Z1bmRpbmdjaG9pY2VzbWVzc2FnZXMuZ29vZ2xlLmNvbS9lbC9BR1NLV3hWMkttV3c2MHIyLU1Bbll6RkF5TGNzYmdMeWhVTDNtUC1ISHg3dUwteXROTlNVSmM0R19sMExWZ2N0OF85TU1PTE90b1VkU0g0aDY0LXl2VUxfYlRoRHh3XHUwMDNkXHUwMDNkP3RlXHUwMDNkVE9LRU5fRVhQT1NFRCIsImh0dHBzOi8vZnVuZGluZ2Nob2ljZXNtZXNzYWdlcy5nb29nbGUuY29tL2VsL0FHU0tXeFhwODlKMFRaMW9ZVjJ3bWlIdmJIdmFyOWo5UEN4T0d6bF93UzB5Q3NabEo1U3FXTGNodWVoYkJXdWFKSzZqemVYMC02NE1KUF9WT2F3UkUtcUozYlU1bEFcdTAwM2RcdTAwM2Q/YWJcdTAwM2QxXHUwMDI2c2JmXHUwMDNkMSIsImh0dHBzOi8vZnVuZGluZ2Nob2ljZXNtZXNzYWdlcy5nb29nbGUuY29tL2VsL0FHU0tXeFZTZU9sSXh6NkJQQ3ZWOE5HaDZFU2JsQ0ZYa2pxVklNeE0ycjR3akwzcnlhWGpHX1BSVWZ6S05Fa3dqcHJxSGhfWmNTM2FTTXVMdVpBRFVvekU5Q1ZjcUFcdTAwM2RcdTAwM2Q/YWJcdTAwM2QyXHUwMDI2c2JmXHUwMDNkMSIsImh0dHBzOi8vZnVuZGluZ2Nob2ljZXNtZXNzYWdlcy5nb29nbGUuY29tL2VsL0FHU0tXeFdFUy1nR1NnR0dpU19SdlNzX2xYcU9aYng4S0hjOEIzNVctQWhheHNmbWdmazFJSURMeHJRVGdGNnRZTGlvUkRfOHZJYnB0Mk1Fd1BTTmhVYmU2c01fb3dcdTAwM2RcdTAwM2Q/c2JmXHUwMDNkMiIsImRpdi1ncHQtYWQiLDIwLDEwMCwiY0hWaUxUWTBOakV5T0RNeU1EWTJOelF5TURZXHUwMDNkIixbbnVsbCxudWxsLG51bGwsImh0dHBzOi8vd3d3LmdzdGF0aWMuY29tLzBlbW4vZi9wL3B1Yi02NDYxMjgzMjA2Njc0MjA2LmpzP3VzcXBcdTAwM2RDQVkiXSwiaHR0cHM6Ly9mdW5kaW5nY2hvaWNlc21lc3NhZ2VzLmdvb2dsZS5jb20vZWwvQUdTS1d4VXNNRlRpMVBLdC1kcTNzOVZ1UW9BN0lZVmZ1N2I2TUc3U2tTT2taekVncGNVTHRoNVVCNmduTFpaeHkyTUJ5TmpuODlLMFppeUVSdzBYbXRoNHdjU3ZVQVx1MDAzZFx1MDAzZCJd");</script>
-    <script src="js/panicKey.js"></script>
-    <script src="js/mainPageCloak.js"></script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>JimmyQrg</title>
+<link rel="icon" href="/jq.ico">
+<link rel="manifest" href="/appmanifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css">
+<script src="/js/mainPageCloak.js"></script>
+<script src="/js/panicKey.js"></script>
+</head>
+<body>
+<div class="bg"></div>
 
-    <script>
-      let currentDomain = "jimmyqrg.github.io";
-    </script>
+<div id="app">
 
-    <script>
-      (function () {
-        const currentUrl = window.location.href;
-        const urlParams = new URLSearchParams(window.location.search);
-        const pageParam = urlParams.get('page');
+<!-- ═══ TOP BAR (horizontal part of L-shape) ═══ -->
+<header class="top-bar">
+  <span class="brand">JimmyQRG</span>
+  <div id="top-bar-content"></div>
+  <button class="settings-top" title="Settings" onclick="openSettings()">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+  </button>
+</header>
 
-        // Skip all redirects if any URL parameter value is "1"
-        const hasDirectAccess = Array.from(urlParams.values()).includes("1");
-        if (hasDirectAccess) return;
+<!-- ═══ BODY ROW (sidebar + main content) ═══ -->
+<div class="body-row">
 
-        // Check if URL does not include "page"
-        // if (!currentUrl.includes("page")) {
-        //   window.location.href = "page/";
-        //   return;
-        // }
+<!-- Sidebar (vertical part of L-shape) -->
+<aside class="sidebar">
+  <!-- Diamond logo with conic gradient -->
+  <div class="logo" onclick="navigate('home')">
+    <svg viewBox="6 8 40 50" fill="none">
+      <defs>
+        <linearGradient id="logoGrad" x1="42.33" y1="33.87" x2="10.11" y2="33.87" gradientUnits="userSpaceOnUse">
+          <stop offset=".298" stop-color="#FF0099"/>
+          <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+          <stop offset=".688" stop-color="#009DFF"/>
+        </linearGradient>
+        <linearGradient id="logoGlow" x1="26" y1="8" x2="26" y2="56" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#00FAFF"/>
+          <stop offset=".33" stop-color="#A500FF"/>
+          <stop offset=".59" stop-color="#FF3D8E"/>
+          <stop offset=".88" stop-color="#0400FF"/>
+        </linearGradient>
+      </defs>
+      <path d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="url(#logoGlow)"/>
+      <path d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="url(#logoGrad)" fill-opacity="0.5"/>
+      <path d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z" fill="white" fill-opacity="0.1"/>
+    </svg>
+  </div>
 
-        // Check if current page is not iframed in
-        // if (window.self === window.top) {
-        //   window.location.href = "page/";
-        //   return;
-        // }
+  <!-- JQ lettermark -->
+  <div class="jq-mark">
+    <svg viewBox="18 16 14 26" fill="none">
+      <path d="M26.994 18H30.202c.693 0 1.141.111 1.345.332.224.22.336.682.336 1.384v18.333c0 .702-.112 1.164-.336 1.385-.203.22-.652.331-1.345.331H26.994V18ZM20.546 33.052h3.85c.285 0 .459.04.52.12.061.08.092.251.092.512v2.348c0 .321.04.552.122.692.102.12.336.181.703.181h.244v2.86h-1.436c-1.487 0-2.618-.251-3.392-.753-.754-.501-1.13-1.374-1.13-2.619v-2.709c0-.421.142-.632.427-.632Z" fill="white"/>
+    </svg>
+  </div>
 
-        // Check if ?page=extend is not present
-        // if (!pageParam || pageParam !== "extend") {
-        //   window.location.href = "?page=extend";
-        //   return;
-        // }
-      })();
-    </script>
-    <script src="/js/openGame.js"></script>
-    <link rel="stylesheet" href="/css/main.css" />
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#4d8cff" />
-    <!-- iOS PWA support -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="JimmyQrg" />
-    <link rel="apple-touch-icon" href="/game-images/games/jq.png" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home | JQRG</title>
-    <link rel="icon" type="image/png" href="jq.ico" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="js/style.js"></script>
-    <script src="js/cursor.js"></script>
-  </head>
-  <body>
-    <div class="bg-effects"></div>
-    <span id="settingsBtn">⚙️</span>
+  <nav>
+    <button data-nav="home" class="active" onclick="navigate('home')" title="Home">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </button>
+    <button data-nav="games" onclick="navigate('games')" title="Games">
+      <svg viewBox="0 0 24 24"><path d="M6 12h4m-2-2v4m5-1h.01M17 11h.01M15 5H9a7 7 0 000 14h6a7 7 0 000-14z"/></svg>
+    </button>
+    <button data-nav="apps" onclick="navigate('apps')" title="Apps">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </button>
+    <button data-nav="unblocks" onclick="navigate('unblocks')" title="Unblocks">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/></svg>
+    </button>
+    <button data-nav="contacts" onclick="navigate('contacts')" title="Contacts">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    </button>
+  </nav>
+</aside>
 
-    <h1 id="domainTitle" class="page-title">JIMMYQRG</h1>
+<!-- ═══ MAIN CONTENT ═══ -->
+<div class="main">
 
-    <h2 class="page-title">MAIN PORTAL</h2>
-
-    <div class="blocks-container">
-      <a href="jqrg-games/" class="block-link">
-        <div class="block">
-          <div class="block-icon">
-            <i class="fas fa-gamepad"></i>
-          </div>
-          <div class="block-text">JQRG UNBLOCKED GAMES</div>
-        </div>
-      </a>
-      <a href="https://jimmyqrg.github.io/info" class="block-link">
-        <div class="block">
-          <div class="block-icon">
-            <i class="fas fa-circle-info"></i>
-          </div>
-          <div class="block-text">INTERESTING INFOS</div>
-        </div>
-      </a>
-      <a href="https://jimmyqrg.github.io/tools/" class="block-link">
-        <div class="block">
-          <div class="block-icon">
-            <i class="fas fa-wrench"></i>
-          </div>
-          <div class="block-text">TOOLS</div>
-        </div>
-      </a>
-      <a href="unblocks/" class="block-link">
-        <div class="block">
-          <div class="block-icon">
-            <i class="fas fa-unlock"></i>
-          </div>
-          <div class="block-text">OTHER UNBLOCKS</div>
-        </div>
-      </a>
-      <a href="lx/" class="block-link">
-        <div class="block">
-          <div class="block-icon">
-            <i class="fas fa-phone"></i>
-          </div>
-          <div class="block-text">CONTACTS</div>
-        </div>
-      </a>
-      <a href="test/jqrgd.html" class="block-link">
-        <div class="block">
-          <div class="block-icon">
-            <i class="fas fa-flask"></i>
-          </div>
-          <div class="block-text">JQRGD TEST</div>
-        </div>
-      </a>
+<!-- ════ HOME ════ -->
+<section id="page-home" class="page active">
+  <div class="home-nav" style="display:none">
+    <div class="nav-btns">
+      <button id="btn-back" onclick="proxyBack()" title="Back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button id="btn-fwd" onclick="proxyForward()" title="Forward">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="refresh-btn" onclick="proxyRefresh()" title="Refresh">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      </button>
     </div>
+    <div class="home-url-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="nav-url" placeholder="Search or type in url" onkeydown="if(event.key==='Enter')proxyNavigate(this.value)">
+    </div>
+  </div>
+  <div class="home-hero">
+    <h1>Browse with Proxy</h1>
+    <div class="home-search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="home-search" placeholder="Search or type in url" onkeydown="if(event.key==='Enter')proxyNavigate(this.value)">
+    </div>
+  </div>
+  <div class="home-cards">
+    <div class="home-card" data-nav="games" onclick="navigate('games')">
+      <svg viewBox="0 0 24 24"><path d="M6 12h4m-2-2v4m5-1h.01M17 11h.01M15 5H9a7 7 0 000 14h6a7 7 0 000-14z" fill="#fff" stroke="none"/></svg>
+      <h2>Games</h2>
+    </div>
+    <div class="home-card" onclick="navigate('apps')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <h2>Apps</h2>
+    </div>
+    <div class="home-card" data-nav="unblocks" onclick="navigate('unblocks')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/></svg>
+      <h2>Unblocks</h2>
+    </div>
+  </div>
+  <div class="home-iframe-wrap"><iframe id="proxy-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
+</section>
 
-    <p>
-      <span class="announcement-link">Announcements (Click to reopen)</span
-      ><br /><br />If you want to join me and make the website together, click
-      <a
-        href="#"
-        data-path="/join/"
-        target="_blank"
-        style="color: #4d8cff; text-decoration: underline"
-        >here</a
-      >!
-    </p>
-
-    <!-- === Footer === -->
-    <footer class="site-footer">
-      <div class="footer-content">
-        <p class="footer-copyright">© Copyright JimmyQrg 2026</p>
-        <a href="https://www.github.com/jimmyqrg/" target="_blank" rel="noopener noreferrer" class="footer-github-link">
-          <i class="fab fa-github"></i>
-        </a>
-      </div>
-    </footer>
-
-    <!-- === Announcement Modal === -->
-    <div class="modal-overlay" id="announcementModal">
-      <div class="modal-content" id="announcementContent">
-        <span class="close-btn" id="closeModal">&times;</span>
-        <h2 style="text-align:center;">📢 Announcements</h2>
-      <p>Welcome to <strong>JimmyQrg</strong>! Check here for updates, new game releases, and important information.</p>
-      <p>More informations and updates can be found 
-        <a href="https://docs.google.com/document/d/1Xv3x76SwL2CkZPIJq0uMNBt_YQNRfWrR5H5mXILuxfw/edit?tab=t.w5htvyo8czbl" target="_blank" style="color:#4d8cff; text-decoration:underline;">here</a>.</p>
-      <hr style="border: 1px solid rgba(255,255,255,0.3);">
-      <p>✨ Latest updates:</p>
-        <ul>
-          <li>Added Big Flappy Towers Tiny Square</li>
-          <li>Added Territorial.io</li>
-          <li>Added Five Nights At Freddy's & Epstein's 1~4 (FNAF)</li>
-          <li>Added Bomb Pass</li>
-          <li>Added Boom Slingers</li>
-        </ul>
-        <!-- <p>🚀Future Update</p>
-        <ul>
-          <li></li>
-        </ul> -->
-      <p>⏱️History</p>
-        <ul>
-          <!-- <li>Fixed in total <b>1165</b> bugs</li> -->
-          <li>Added in total <b>108</b> games</li>
-        </ul>
+<!-- ════ GAMES ════ -->
+<section id="page-games" class="page">
+  <div class="games-toolbar">
+    <div class="dropdown" id="games-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown()">
+        <span id="dd-label">All Games</span>
+        <svg viewBox="0 0 16 8"><path d="M1 1l7 6 7-6"/></svg>
+      </button>
+      <div class="dropdown-menu">
+        <button onclick="setGameTab('all')" class="selected">All Games</button>
+        <hr>
+        <button onclick="setGameTab('collections')">Collections</button>
+        <button onclick="setGameTab('pending')">Pending</button>
       </div>
     </div>
-
-    <!-- === SETTINGS MODAL === -->
-    <div class="modal-overlay" id="settingsModal">
-      <div class="modal-content" id="settingsContent">
-        <span class="close-btn" id="closeSettings">&times;</span>
-
-        <h2 style="text-align: center">⚙️ Settings</h2>
-
-        <!-- ========== APPEARANCE ========== -->
-        <h3>🎨 Appearance</h3>
-
-        <!-- Enable Cursor -->
-        <label><b>Cursor</b></label><br />
-        <p style="margin-top: 10px; opacity: 0.8">
-          Show the custom cursor on all pages. (except in games)
-        </p>
-        <input
-          type="checkbox"
-          id="enableCursor"
-          style="margin-top: 10px"
-        />
-        <label for="enableCursor" style="margin-left: 8px; cursor: pointer;">
-          Enable cursor
-        </label>
-
-        <br /><br /><br />
-        
-        <!-- Main Page Cloak -->
-        <label><b>Use cloak for main page</b></label><br />
-        <p style="margin-top: 10px; opacity: 0.8">
-          When enabled, the main page title will show "Home | Schoology" and use the Schoology icon.<br />
-          This applies to all pages except game files.
-        </p>
-        <input
-          type="checkbox"
-          id="mainPageCloak"
-          style="margin-top: 10px"
-        />
-        <label for="mainPageCloak" style="margin-left: 8px; cursor: pointer;">
-          Enable main page cloak
-        </label>
-
-        <br /><br /><br />
-
-        Game tab cloak
-        <label><b>Game tab cloak</b></label
-        ><br /><br />
-
-        <!-- Title -->
-        <p><b>Tab Name</b></p>
-        <input
-          id="cloakTitle"
-          type="text"
-          class="styled-input"
-          placeholder="Enter tab title"
-          style="margin-top: 5px"
-        />
-
-        <br /><br />
-
-        <!-- Icons -->
-        <p><b>Tab Icon</b></p>
-
-        <div
-          id="cloakIconContainer"
-          style="
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-          "
-        >
-          <!-- Preset icons -->
-          <img
-            class="cloakIconOption"
-            data-src="https://jimmyqrg.github.io/cloak-images/default.png"
-            src="cloak-images/default.png"
-            draggable="false"
-          />
-          <img
-            class="cloakIconOption"
-            data-src="https://jimmyqrg.github.io/cloak-images/docs.png"
-            src="cloak-images/docs.png"
-            draggable="false"
-          />
-          <img
-            class="cloakIconOption"
-            data-src="https://jimmyqrg.github.io/cloak-images/drive.png"
-            src="cloak-images/drive.png"
-            draggable="false"
-          />
-          <img
-            class="cloakIconOption"
-            data-src="https://jimmyqrg.github.io/cloak-images/forms.png"
-            src="cloak-images/forms.png"
-            draggable="false"
-          />
-          <img
-            class="cloakIconOption"
-            data-src="https://jimmyqrg.github.io/cloak-images/pausd.png"
-            src="cloak-images/pausd.png"
-            draggable="false"
-          />
-          <img
-            class="cloakIconOption"
-            data-src="https://jimmyqrg.github.io/cloak-images/schoology.png"
-            src="cloak-images/schoology.png"
-            draggable="false"
-          />
-
-          <!-- Custom upload -->
-          <label
-            id="customCloakLabel"
-            style="
-              width: 100%;
-              height: 100px;
-              border: 2px dashed #aaa;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              border-radius: 10px;
-              cursor: pointer;
-            "
-          >
-            <span style="opacity: 0.6">Custom Icon</span>
-            <input
-              id="customCloakInput"
-              type="file"
-              accept="image/*"
-              style="display: none"
-            />
-          </label>
-        </div>
-
-        <br />
-
-        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
-
-        <!-- ========== GAME SETTINGS ========== -->
-        <h3>🎮 Game Settings</h3>
-
-        <!-- Open Game Type -->
-        <label><b>Open Game Type</b></label><br />
-        <p style="margin-top: 10px; opacity: 0.8">
-          Choose how games open when you click on them.
-        </p>
-        <select
-          id="openGameType"
-          class="styled-select"
-          style="margin-top: 8px"
-        >
-          <option value="popup">Popup Window</option>
-          <option value="newtab">New Tab</option>
-          <option value="sametab">Same Tab</option>
-        </select>
-
-        <br /><br /><br />
-
-        <!-- Open in popup -->
-        <label><b>Open the website in loader mode</b></label>
-        <button
-          class="btn"
-          onclick="openGame('https://pausd.schoology.com/?page=extend')"
-        >
-          OPEN
-        </button>
-
-        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
-
-        <!-- ========== ANNOUNCEMENTS ========== -->
-        <h3>📢 Announcements</h3>
-
-        <!-- Auto popup setting -->
-        <label><b>Auto pop up announcements:</b></label
-        ><br />
-        <select
-          id="announcementSetting"
-          class="styled-select"
-          style="margin-top: 8px"
-        >
-          <option value="always">Always</option>
-          <option value="big">Only when there is a big announcement</option>
-        </select>
-
-        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
-
-        <!-- ========== SECURITY & EMERGENCY ========== -->
-        <h3>🔒 Security & Emergency</h3>
-
-        <!-- Panic Key -->
-        <label><b>Panic Key</b></label
-        ><br />
-        <p style="margin-top: 10px; opacity: 0.8">
-          A key that auto-redirect to an website right when you press it. This
-          will exit the website immediately in an emergency.<br /><br />THIS
-          WORKS IN PAGES ONLY, NOT IN GAMES.<br />
-        </p>
-        <p>Customize key</p>
-        <button id="panicKeyBtn" class="btn customizeKey"></button><br />
-        <p>Customize website</p>
-        <input
-          type="text"
-          id="panicLinkInput"
-          class="styled-input"
-          style="margin-top: 5px"
-          placeholder="https://example.com"
-        />
-        <br /><br /><br />
-
-        <!-- Access code -->
-        <label><b>Access code:</b></label>
-        <p style="margin-top: 10px; opacity: 0.8">
-          For interaction in construction zone
-        </p>
-        <input
-          id="accessCode"
-          type="password"
-          class="styled-input"
-          placeholder="Enter code"
-          style="margin-top: 5px"
-        />
-        <button id="authorizeBtn" class="btn" style="margin-top: 15px">
-          AUTHORIZE
-        </button>
-        <button id="unauthorizeBtn" class="btn" style="margin-top: 10px">
-          UNAUTHORIZE
-        </button>
-
-        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
-
-        <!-- ========== INSTALL APP ========== -->
-        <h3>📲 Install App</h3>
-        
-        <p style="opacity: 0.8; margin-bottom: 15px;">
-          Install this website as an app on your device for quick access and offline use.
-        </p>
-        
-        <button id="installAppBtn" class="install-btn" style="display: none;">
-          <i class="fas fa-download"></i>
-          <span>Install App</span>
-        </button>
-        
-        <p id="installStatus" class="install-status"></p>
-
-        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
-
-        <!-- Lisence -->
-        <label><b>Lisence</b></label>
-        <p style="margin-top: 10px;">
-          All rights held by <b>ikunbeautiful@gmail.com</b><br />No part of this
-          website may be copied, reused, redistributed, modified, or
-          commercially exploited
-          <b>without prior written permission from the owner</b>.
-        </p>
-        <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
-        <div style="text-align:center; margin-bottom:10px;">
-          <a href="#" id="privacyPolicyLink" style="color:#4d8cff; text-decoration:underline; cursor:pointer; font-weight:bold;">PRIVACY POLICY</a>
-        </div>
-          <!-- === PRIVACY POLICY MODAL === -->
-          <div class="modal-overlay" id="privacyPolicyModal" style="display:none;">
-            <div class="modal-content" id="privacyPolicyContent">
-              <span class="close-btn" id="closePrivacyPolicy">&times;</span>
-              <h2 style="text-align:center;">Privacy Policy</h2>
-              <p>This website does not collect personal information from users. No registration, login, or account creation is required. We do not ask for your name, email, or any identifying information.</p>
-              <p>However, third-party services such as Google AdSense may collect data for advertising and analytics purposes. These services may use cookies or similar technologies to personalize ads and measure performance. Please refer to <a href="https://policies.google.com/technologies/ads" target="_blank" style="color:#4d8cff;">Google's Privacy Policy</a> for more details.</p>
-              <p>Settings and preferences (such as appearance, panic key, and announcement popups) are stored locally in your browser and are never sent to our servers.</p>
-              <p>By using this site, you agree to the use of cookies and local storage for the purposes described above. If you do not agree, please discontinue use of the site.</p>
-              <p>For questions or concerns, contact: <b>ikunbeautiful@gmail.com</b></p>
-            </div>
-          </div>
-          <script>
-            // Privacy Policy Modal Logic
-            document.addEventListener("DOMContentLoaded", function () {
-              const privacyLink = document.getElementById("privacyPolicyLink");
-              const privacyModal = document.getElementById("privacyPolicyModal");
-              const privacyContent = document.getElementById("privacyPolicyContent");
-              const closePrivacy = document.getElementById("closePrivacyPolicy");
-              let isPrivacyOpen = false;
-              let isPrivacyAnimating = false;
-              function openPrivacy() {
-                if (isPrivacyOpen || isPrivacyAnimating) return;
-                isPrivacyAnimating = true;
-                isPrivacyOpen = true;
-                privacyModal.style.display = "flex";
-                setTimeout(() => {
-                  privacyModal.classList.add("show");
-                  privacyContent.classList.add("show", "active");
-                  isPrivacyAnimating = false;
-                }, 10);
-              }
-              function closePrivacyModal() {
-                if (!isPrivacyOpen || isPrivacyAnimating) return;
-                isPrivacyAnimating = true;
-                privacyModal.classList.remove("show");
-                privacyContent.classList.remove("show", "active");
-                privacyContent.classList.add("hide");
-                privacyModal.classList.add("hide");
-                setTimeout(() => {
-                  privacyModal.style.display = "none";
-                  privacyContent.classList.remove("hide");
-                  isPrivacyOpen = false;
-                  isPrivacyAnimating = false;
-                }, 400);
-              }
-              privacyLink.addEventListener("click", function (e) {
-                e.preventDefault();
-                openPrivacy();
-              });
-              closePrivacy.addEventListener("click", function (e) {
-                e.stopPropagation();
-                closePrivacyModal();
-              });
-              privacyContent.addEventListener("click", function (e) {
-                e.stopPropagation();
-              });
-              window.addEventListener("click", function (e) {
-                if (e.target === privacyModal && !isPrivacyAnimating) {
-                  closePrivacyModal();
-                }
-              });
-            });
-          </script>
-      </div>
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="games-search" placeholder="Search for games" oninput="filterGames()">
     </div>
-
-    <script>
-      /* --- Big Announcement flag --- */
-
-      let hasBigAnnouncement = false;
-
-      // Wait for DOM to be ready
-      document.addEventListener("DOMContentLoaded", function () {
-        // Update all links with data-path attribute
-        document.querySelectorAll("a[data-path]").forEach((link) => {
-          const path = link.getAttribute("data-path");
-          link.href = `https://${currentDomain}${path}`;
-        });
-
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker
-            .register("/sw.js?v=7", { scope: "/" })
-            .then((registration) => {
-              console.log("Service Worker registered with scope:", registration.scope);
-              // Check for updates
-              registration.addEventListener('updatefound', () => {
-                console.log('Service Worker update found');
-              });
-            })
-            .catch((err) =>
-              console.error("Service Worker registration failed:", err)
-            );
-        }
-
-        /* --- Announcement Modal Controls --- */
-        const modal = document.getElementById("announcementModal");
-        const content = document.getElementById("announcementContent");
-        const openBtn = document.querySelector(".announcement-link");
-        const closeBtn = document.getElementById("closeModal");
-
-        let isAnnouncementModalOpen = false;
-        let isAnnouncementModalAnimating = false;
-
-        function openModal() {
-          if (isAnnouncementModalOpen || isAnnouncementModalAnimating) return;
-          isAnnouncementModalAnimating = true;
-          isAnnouncementModalOpen = true;
-          
-          modal.classList.remove("hide");
-          content.classList.remove("hide");
-          modal.style.display = "flex";
-          setTimeout(() => {
-            modal.classList.add("show");
-            content.classList.add("show", "active");
-            isAnnouncementModalAnimating = false;
-          }, 10);
-        }
-
-        function closeModal() {
-          if (!isAnnouncementModalOpen || isAnnouncementModalAnimating) return;
-          isAnnouncementModalAnimating = true;
-          
-          modal.classList.remove("show");
-          content.classList.remove("show", "active");
-          content.classList.add("hide");
-          modal.classList.add("hide");
-          setTimeout(() => {
-            modal.style.display = "none";
-            content.classList.remove("hide");
-            isAnnouncementModalOpen = false;
-            isAnnouncementModalAnimating = false;
-          }, 400);
-        }
-
-        /* === Auto Popup Logic === */
-        const autoSetting =
-          localStorage.getItem("autoAnnouncement") || "always";
-
-        if (autoSetting === "always") {
-          window.addEventListener("load", openModal);
-        } else if (autoSetting === "big" && hasBigAnnouncement) {
-          window.addEventListener("load", openModal);
-        }
-
-        openBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          openModal();
-        });
-        
-        closeBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          closeModal();
-        });
-
-        content.addEventListener("click", (e) => {
-          e.stopPropagation();
-        });
-
-        window.addEventListener("click", (e) => {
-          if (e.target === modal && !isAnnouncementModalAnimating) {
-            closeModal();
-          }
-        });
-
-        /* === SETTINGS MODAL === */
-        const settingsBtn = document.getElementById("settingsBtn");
-        const settingsModal = document.getElementById("settingsModal");
-        const settingsContent = document.getElementById("settingsContent");
-        const closeSettings = document.getElementById("closeSettings");
-
-        let isSettingsModalOpen = false;
-        let isSettingsModalAnimating = false;
-
-        function openSettingsModal() {
-          if (isSettingsModalOpen || isSettingsModalAnimating) return;
-          isSettingsModalAnimating = true;
-          isSettingsModalOpen = true;
-          
-          settingsModal.classList.remove("hide");
-          settingsContent.classList.remove("hide");
-          settingsModal.style.display = "flex";
-          setTimeout(() => {
-            settingsModal.classList.add("show");
-            settingsContent.classList.add("show", "active");
-            isSettingsModalAnimating = false;
-          }, 10);
-        }
-
-        function closeSettingsModal() {
-          if (!isSettingsModalOpen || isSettingsModalAnimating) return;
-          isSettingsModalAnimating = true;
-          
-          settingsModal.classList.remove("show");
-          settingsContent.classList.remove("show", "active");
-          settingsContent.classList.add("hide");
-          settingsModal.classList.add("hide");
-          setTimeout(() => {
-            settingsModal.style.display = "none";
-            settingsContent.classList.remove("hide");
-            isSettingsModalOpen = false;
-            isSettingsModalAnimating = false;
-          }, 400);
-        }
-
-        settingsBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          if (isSettingsModalOpen) {
-            closeSettingsModal();
-          } else {
-            openSettingsModal();
-          }
-        });
-
-        closeSettings.addEventListener("click", (e) => {
-          e.stopPropagation();
-          closeSettingsModal();
-        });
-
-        settingsContent.addEventListener("click", (e) => {
-          e.stopPropagation();
-        });
-
-        window.addEventListener("click", (e) => {
-          if (e.target === settingsModal && !isSettingsModalAnimating) {
-            closeSettingsModal();
-          }
-        });
-
-        /* === SETTINGS FUNCTIONALITY === */
-        const announcementSetting = document.getElementById(
-          "announcementSetting"
-        );
-        announcementSetting.value = autoSetting;
-
-        announcementSetting.addEventListener("change", () => {
-          localStorage.setItem("autoAnnouncement", announcementSetting.value);
-        });
-
-
-        /* === Main Page Cloak Setting === */
-        const mainPageCloakCheckbox = document.getElementById("mainPageCloak");
-        const mainPageCloakEnabled = localStorage.getItem("mainPageCloak") === "true";
-        if (mainPageCloakCheckbox) {
-          mainPageCloakCheckbox.checked = mainPageCloakEnabled;
-          mainPageCloakCheckbox.addEventListener("change", () => {
-            localStorage.setItem("mainPageCloak", mainPageCloakCheckbox.checked ? "true" : "false");
-            // Reload page to apply changes
-            window.location.reload();
-          });
-        }
-
-        /* --- Access Code System --- */
-        const authorizeBtn = document.getElementById("authorizeBtn");
-        const unauthorizeBtn = document.getElementById("unauthorizeBtn");
-
-        authorizeBtn.addEventListener("click", () => {
-          const code = document.getElementById("accessCode").value;
-          if (code === "asdfghjkl;'") {
-            localStorage.setItem("user", "authorized");
-            alert("Access granted.");
-          } else {
-            alert("Incorrect code.");
-          }
-        });
-
-        unauthorizeBtn.addEventListener("click", () => {
-          localStorage.setItem("user", "normal");
-          alert("User unauthorized.");
-        });
-
-        // ---------- Persistent Panic Key Logic ----------
-        const PANIC_KEY_STORAGE = "panicKey";
-        const PANIC_LINK_STORAGE = "panicKeyLink";
-
-        // Default: Right Shift
-        let panicKey = localStorage.getItem(PANIC_KEY_STORAGE) || "ShiftRight";
-        let isRecording = false;
-        let previousKey = panicKey;
-
-        const customizeKey = document.getElementById("panicKeyBtn");
-        const linkInput = document.getElementById("panicLinkInput");
-
-        // Display current key
-        customizeKey.textContent = panicKey;
-
-        // Load saved link
-        linkInput.value = localStorage.getItem(PANIC_LINK_STORAGE) || "https://pausd.schoology.com";
-
-        // Save link on input
-        linkInput.addEventListener("input", () => {
-          localStorage.setItem(PANIC_LINK_STORAGE, linkInput.value);
-        });
-
-        // Start listening for key press
-        customizeKey.addEventListener("click", (e) => {
-          e.stopPropagation();
-          if (isRecording) return;
-
-          isRecording = true;
-          previousKey = panicKey;
-
-          customizeKey.textContent = ""; // blank for recording
-          customizeKey.style.opacity = "0.6";
-        });
-
-        // Key recorder
-        document.addEventListener(
-          "keydown",
-          (e) => {
-            if (!isRecording) return;
-
-            // Stop this event from triggering the redirect listener
-            e.stopImmediatePropagation();
-
-            panicKey = e.code;
-            localStorage.setItem(PANIC_KEY_STORAGE, panicKey);
-
-            customizeKey.textContent = panicKey;
-            customizeKey.style.opacity = "1";
-            isRecording = false;
-          },
-          true
-        ); // Use capture phase to ensure it runs first
-
-        // Cancel recording on outside click
-        document.addEventListener("click", () => {
-          if (!isRecording) return;
-
-          // Restore the old key
-          customizeKey.textContent = previousKey;
-          customizeKey.style.opacity = "1";
-          isRecording = false;
-        });
-
-        // Function to fix/normalize redirect links
-        function fixRedirectLink(link) {
-          if (!link) return "https://pausd.schoology.com";
-
-          // If it's already a full URL with protocol, use it as is
-          if (link.startsWith("http://") || link.startsWith("https://")) {
-            return link;
-          }
-
-          // If it starts with a path (e.g., "jqrg-games/eaglercraft")
-          // or is a relative path, prepend the base URL
-          if (link.startsWith("/") || link.includes("/")) {
-            // Remove leading slash if present
-            const cleanPath = link.startsWith("/") ? link.substring(1) : link;
-            const domain = currentDomain || "jimmyqrg.github.io";
-            return `https://${domain}/${cleanPath}`;
-          }
-
-          // If it's just a domain (e.g., "www.schooloqy.com"), add protocol
-          if (link.includes(".") && !link.includes("/")) {
-            return `https://${link}`;
-          }
-
-          // Default fallback
-          return "https://pausd.schoology.com";
-        }
-
-        // Listen for panic key press to redirect
-        document.addEventListener("keydown", (e) => {
-          // Don't trigger redirect while recording a new key
-          if (isRecording) return;
-
-          // Always check localStorage directly to get the latest values
-          const currentPanicKey =
-            localStorage.getItem(PANIC_KEY_STORAGE) || "ShiftRight";
-          const currentPanicLink =
-            localStorage.getItem(PANIC_LINK_STORAGE) || "";
-
-          // Fix the redirect link if it's incorrect
-          const redirectLink = fixRedirectLink(currentPanicLink);
-
-          // Match the key code (e.code)
-          if (e.code === currentPanicKey) {
-            // Immediately redirect
-            window.location.href = redirectLink;
-          }
-        });
-
-        // === PWA Install Button ===
-        let deferredPrompt = null;
-        let installBtnListenerAdded = false;
-        const installAppBtn = document.getElementById("installAppBtn");
-        const installStatus = document.getElementById("installStatus");
-
-        // Function to handle install button click
-        async function handleInstallClick() {
-          if (!deferredPrompt) {
-            if (installStatus) {
-              installStatus.textContent =
-                "Install prompt not available. Please use your browser's menu to install.";
-              installStatus.style.display = "block";
-              installStatus.style.color = "#ff4d4d";
-            }
-            return;
-          }
-
-          // Show the install prompt
-          deferredPrompt.prompt();
-
-          // Wait for the user to respond
-          const { outcome } = await deferredPrompt.userChoice;
-
-          if (outcome === "accepted") {
-            if (installStatus) {
-              installStatus.textContent = "✓ Installation started!";
-              installStatus.style.display = "block";
-              installStatus.style.color = "#4dff4d";
-            }
-          } else {
-            if (installStatus) {
-              installStatus.textContent = "Installation cancelled.";
-              installStatus.style.display = "block";
-              installStatus.style.color = "#ffaa4d";
-            }
-          }
-
-          // Clear the deferred prompt and hide button
-          deferredPrompt = null;
-          if (installAppBtn) installAppBtn.style.display = "none";
-        }
-
-        // Check if app is already installed
-        function checkIfInstalled() {
-          // Check if running in standalone mode (installed)
-          if (
-            window.matchMedia("(display-mode: standalone)").matches ||
-            window.navigator.standalone === true
-          ) {
-            if (installStatus) {
-              installStatus.textContent = "✓ App is already installed";
-              installStatus.className = "install-status success";
-            }
-            if (installAppBtn) installAppBtn.style.display = "none";
-            return true;
-          }
-          return false;
-        }
-
-        // Check on load
-        if (checkIfInstalled()) {
-          // App is already installed
-        } else {
-          // Listen for the beforeinstallprompt event
-          window.addEventListener("beforeinstallprompt", (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-
-            // Show install button
-            if (installAppBtn) installAppBtn.style.display = "inline-flex";
-            if (installStatus) installStatus.textContent = "";
-
-            // Add click listener only once
-            if (!installBtnListenerAdded) {
-              installBtnListenerAdded = true;
-
-              if (installAppBtn) {
-                installAppBtn.addEventListener("click", handleInstallClick);
-              }
-            }
-          });
-
-          // Handle app installed event (fires after installation)
-          window.addEventListener("appinstalled", () => {
-            if (installStatus) {
-              installStatus.textContent = "✓ App installed successfully!";
-              installStatus.className = "install-status success";
-            }
-            if (installAppBtn) installAppBtn.style.display = "none";
-            deferredPrompt = null;
-          });
-
-          // Fallback instructions if prompt doesn't appear
-          setTimeout(() => {
-            if (
-              !deferredPrompt &&
-              installAppBtn &&
-              installAppBtn.style.display !== "none"
-            ) {
-              const isMobile =
-                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-                  navigator.userAgent
-                );
-              if (installStatus) {
-                if (isMobile) {
-                  installStatus.textContent =
-                    'Use your browser menu (⋮ or ⋯) and select "Add to Home Screen" or "Install App"';
-                } else {
-                  installStatus.textContent =
-                    'Use your browser menu (⋮) and select "Install [App Name]"';
-                }
-                installStatus.className = "install-status warning";
-              }
-            }
-          }, 2000);
-        }
-      }); // End DOMContentLoaded
-    </script>
-  </body>
+  </div>
+  <div id="games-container" class="games-grid"></div>
+</section>
+
+<!-- ════ APPS ════ -->
+<section id="page-apps" class="page">
+  <div class="games-toolbar">
+    <div class="search-bar" style="flex:1">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="apps-search" placeholder="Search for apps" oninput="filterApps()">
+    </div>
+  </div>
+  <div id="apps-container" class="apps-grid"></div>
+</section>
+
+<!-- ════ UNBLOCKS ════ -->
+<section id="page-unblocks" class="page">
+  <div id="unblocks-container"></div>
+</section>
+
+<!-- ════ CONTACTS ════ -->
+<section id="page-contacts" class="page">
+  <div class="section-title">Get in Touch</div>
+  <div id="contacts-container" class="contacts-grid"></div>
+</section>
+
+</div><!-- .main -->
+</div><!-- .body-row -->
+</div><!-- #app -->
+
+<script src="/js/openGame.js"></script>
+<script>
+const PROXY_BASE = 'https://rammerhead.fly.dev/unblocker.html';
+function proxyUrl(url, raw) {
+  return PROXY_BASE + '?' + (raw ? 'raw=true&' : '') + 'url=' + encodeURIComponent(url);
+}
+
+/* ── Navigation ── */
+let currentPage = 'home';
+function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.sidebar nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.nav === page);
+  });
+  window.history.replaceState(null, '', '#' + page);
+}
+
+window.addEventListener('hashchange', () => {
+  const h = location.hash.slice(1);
+  if (['home','games','apps','unblocks','contacts'].includes(h)) navigate(h);
+});
+if (location.hash) {
+  const h = location.hash.slice(1);
+  if (['home','games','apps','unblocks','contacts'].includes(h)) navigate(h);
+}
+
+/* ── Proxy / Home ── */
+function isUrl(s) {
+  return /^https?:\/\//i.test(s) || /^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}/i.test(s);
+}
+function proxyNavigate(input) {
+  if (!input.trim()) return;
+  let url;
+  if (isUrl(input.trim())) {
+    url = input.trim();
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  } else {
+    url = 'https://duckduckgo.com/?q=' + encodeURIComponent(input.trim());
+  }
+  document.getElementById('proxy-frame').src = proxyUrl(url);
+  document.getElementById('nav-url').value = input.trim();
+  document.getElementById('page-home').classList.add('browsing');
+  document.querySelector('.home-nav').style.display = '';
+}
+function proxyBack() { try { document.getElementById('proxy-frame').contentWindow.history.back(); } catch(e){} }
+function proxyForward() { try { document.getElementById('proxy-frame').contentWindow.history.forward(); } catch(e){} }
+function proxyRefresh() { try { var f = document.getElementById('proxy-frame'); f.src = f.src; } catch(e){} }
+
+/* ══════════ DATA ══════════ */
+const GAMES = [
+  {n:"Bridd Jump",img:"bridd-jump",url:"/jqrg-games/games/bridd-jump/",tags:["featured","touch","jqrg"]},
+  {n:"Parkoreen",img:"parkoreen",url:"/parkoreen/",tags:["featured","touch","jqrg"]},
+  {n:"A Dance of Fire and Ice",img:"a-dance-of-fire-and-ice",url:"/a-dance-of-fire-and-ice",tags:["featured","touch"]},
+  {n:"Angry Birds",img:"angry-birds",url:"/jqrg-games/games/angry-birds/",tags:["featured","touch"]},
+  {n:"Brotato",img:"brotato",url:"/jqrg-games/games/brotato/",tags:["featured","touch"]},
+  {n:"Cookie Clicker",img:"cookie-clicker",url:"/jqrg-games/games/cookie-clicker/",tags:["featured","touch"]},
+  {n:"Count Master",img:"count-master",url:"/jqrg-games/games/count-master/",tags:["featured","touch"]},
+  {n:"Drift Boss",img:"drift-boss",url:"/jqrg-games/games/drift-boss/",tags:["featured","touch"]},
+  {n:"Drive Mad",img:"drive-mad",url:"/jqrg-games/games/drive-mad/",tags:["featured","touch"]},
+  {n:"Level Devil",img:"level-devil",url:"/jqrg-games/games/level-devil/",tags:["featured","touch"]},
+  {n:"Sound Effect Buttons",img:"sound-buttons",url:"/jqrg-games/games/sound-buttons/",tags:["featured","touch"]},
+  {n:"Stickman Hook",img:"stickman-hook",url:"/jqrg-games/games/stickman-hook/",tags:["featured","touch"]},
+  {n:"Temple Run 2",img:"temple-run-2",url:"/jqrg-games/games/temple-run-2/",tags:["featured","touch"]},
+  {n:"Tomb of the Mask",img:"tomb-of-the-mask",url:"/jqrg-games/games/tomb-of-the-mask/",tags:["featured","touch"]},
+  {n:"10 Minutes Till Dawn",img:"10-minutes-till-dawn",url:"/jqrg-games/games/10-minutes-till-dawn/",tags:["featured"]},
+  {n:"Amenda The Adventurer",img:"amenda",url:"/jqrg-games/games/amenda/",tags:["featured"]},
+  {n:"Asriel Dreemurr Fight",img:"asriel",url:"/jqrg-games/games/asriel/",tags:["featured"]},
+  {n:"Undertale",img:"undertale",url:"/jqrg-games/games/undertale/",tags:["featured"]},
+  {n:"Deltarune",img:"deltarune",url:"/jqrg-games/games/deltarune/",tags:["featured"]},
+  {n:"Backrooms",img:"backrooms",url:"/jqrg-games/games/backrooms/",tags:["featured"]},
+  {n:"Brawl Star Simulator",img:"brawl-star",url:"/jqrg-games/games/brawl-star/",tags:["featured"]},
+  {n:"Browser Quest",img:"browser-quest",url:"/jqrg-games/games/browser-quest/",tags:["featured"]},
+  {n:"Five Nights At Freddy's",img:"fnaf",url:"/jqrg-games/games/fnaf/",tags:["featured"]},
+  {n:"Friday Night Funkin",img:"fnf",url:"/jqrg-games/games/fnf/",tags:["featured"]},
+  {n:"Half Life",img:"half-life",url:"/jqrg-games/games/half-life/",tags:["featured"]},
+  {n:"Hollow Knight",img:"hollow-knight",url:"/jqrg-games/games/hollow-knight/",tags:["featured"]},
+  {n:"SilkSong",img:"silksong",url:"/jqrg-games/games/silksong/",tags:["featured"]},
+  {n:"Hypper Sandbox",img:"hypper-sandbox",url:"/jqrg-games/games/hypper-sandbox/",tags:["featured"]},
+  {n:"Iron Lung",img:"iron-lungs",url:"/jqrg-games/games/iron-lungs/",tags:["featured"]},
+  {n:"Karlson",img:"karlson",url:"/jqrg-games/games/karlson/",tags:["featured"]},
+  {n:"Plant VS Zombies",img:"pvs",url:"/jqrg-games/games/pvs/",tags:["featured"]},
+  {n:"Minecraft",img:"minecraft",url:"/jqrg-games/games/mcraft/",tags:["featured"]},
+  {n:"Slope",img:"slope",url:"/jqrg-games/games/slope/",tags:["featured"]},
+  {n:"Solar Smash",img:"solar-smash",url:"/jqrg-games/games/solar-smash/",tags:["featured"]},
+  {n:"Stickman Arena",img:"stickman-arena",url:"/jqrg-games/games/stickman-arena/",tags:["featured"]},
+  {n:"Survival Race",img:"survival-race",url:"/jqrg-games/games/survival-race/",tags:["featured"]},
+  {n:"Tag",img:"tag",url:"/jqrg-games/games/tag/",tags:["featured"]},
+  {n:"That's Not My Neighbor",img:"thatsnotmyneighbor",url:"/jqrg-games/games/thatsnotmyneighbor/",tags:["featured"]},
+  {n:"There Is No Game",img:"there-is-no-game",url:"/jqrg-games/games/there-is-no-game/",tags:["featured"]},
+  {n:"We Become What We Behold",img:"we-become-what-we-behold",url:"/jqrg-games/games/we-become-what-we-behold/",tags:["featured"]},
+  {n:"Vex",img:"vex",url:"/jqrg-games/games/vex/",tags:["featured"]},
+  {n:"Infinite Wordle",img:"wordle",url:"/wordle/",tags:["touch","jqrg"]},
+  {n:"2048",img:"2048",url:"/jqrg-games/games/2048/",tags:["touch"]},
+  {n:"Among Us",img:"among-us",url:"/jqrg-games/games/among-us/",tags:["touch"]},
+  {n:"Candy Jump",img:"candy-jump",url:"/jqrg-games/games/candy-jump/",tags:["touch"]},
+  {n:"Crazy Cattle",img:"crazy-cattle",url:"/jqrg-games/games/crazy-cattle/",tags:["touch"]},
+  {n:"Crossy Road",img:"crossy-road",url:"/jqrg-games/games/crossy-road/",tags:["touch"]},
+  {n:"CurveBall 3D",img:"curveball",url:"/jqrg-games/games/curveball/",tags:["touch"]},
+  {n:"Dino",img:"dino",url:"/dino/",tags:["touch"]},
+  {n:"Flappy Bird",img:"flappy-bird",url:"/jqrg-games/games/flappy-bird/",tags:["touch"]},
+  {n:"Flappy Dunk",img:"flappy-dunk",url:"/jqrg-games/games/flappy-dunk/",tags:["touch"]},
+  {n:"Geometry Dash Lite",img:"geo-dash",url:"/jqrg-games/games/geo-dash/",tags:["touch"]},
+  {n:"Infinite Wordle (No Detection)",img:"wordle-noletterdetection",url:"/wordle/no-word-detection/",tags:["touch"]},
+  {n:"Eaglercraft",img:"eaglercraft",url:"/jqrg-games/eaglercraft/eaglercraft.html",tags:["touch"]},
+  {n:"SkyBall",img:"skyball",url:"/jqrg-games/games/skyball/",tags:["touch"]},
+  {n:"Subway Surfers",img:"subway-surfers",url:"/jqrg-games/games/subway-surfers/",tags:["touch"]},
+  {n:"Subway Surfers Beijing",img:"subway-surfers-beijing",url:"/jqrg-games/games/subway-surfers-beijing/",tags:["touch"]},
+  {n:"Subway Surfers Houston",img:"subway-surfers-houston",url:"/jqrg-games/games/subway-surfers-houston/",tags:["touch"]},
+  {n:"Subway Surfers Monaco",img:"subway-surfers-monaco",url:"/jqrg-games/games/subway-surfers-monaco/",tags:["touch"]},
+  {n:"Subway Surfers Newyork",img:"subway-surfers-newyork",url:"/jqrg-games/games/subway-surfers-newyork/",tags:["touch"]},
+  {n:"Uno",img:"uno",url:"/jqrg-games/games/uno/",tags:["touch"]},
+  {n:"Bomb Pass",img:"bomb-pass",url:"/jqrg-games/games/bomb-pass/",tags:["jqrg"]},
+  {n:"CatGun Island",img:"catgun-island",url:"/jqrg-games/games/catgun-island/",tags:["jqrg"]},
+  {n:"1v1.lol",img:"1v1.lol",url:"/jqrg-games/games/1v1-lol/",tags:[]},
+  {n:"3D Car Simulator",img:"3d-car-simulator",url:"/jqrg-games/games/3d-car-simulator/",tags:[]},
+  {n:"Bitplanes",img:"bitplanes",url:"/jqrg-games/games/bitplanes/",tags:[]},
+  {n:"Celeste",img:"celeste",url:"/jqrg-games/games/celeste/",tags:[]},
+  {n:"Mega Flowey Fight",img:"flowey",url:"/jqrg-games/games/flowey/",tags:[]},
+  {n:"Gaster Boss Fight",img:"gaster",url:"/jqrg-games/games/gaster-fight/",tags:[]},
+  {n:"Last Breath",img:"last-breath",url:"/jqrg-games/games/sans-last-breath/",tags:[]},
+  {n:"Sans CJS Fight",img:"sans-cjs",url:"/jqrg-games/games/sans-cjs/",tags:[]},
+  {n:"Sans CJS Fight (Invincible)",img:"sans-cjs-i",url:"/jqrg-games/games/sans-cjs-i/",tags:[]},
+  {n:"Sans Fight Frisk Mode",img:"sans-frisk-mode",url:"/jqrg-games/games/sans-frisk-mode/",tags:[]},
+  {n:"Sans Fight Hell Mode",img:"sans-hell-mode",url:"/jqrg-games/games/sans-hell/",tags:[]},
+  {n:"Underfell Sans",img:"sans-underfell",url:"/jqrg-games/games/sans-underfell/",tags:[]},
+  {n:"Underfell Sans (Invincible)",img:"sans-underfell-i",url:"/jqrg-games/games/sans-underfell-i/",tags:[]},
+  {n:"Sans Simulator",img:"sans",url:"/jqrg-games/games/sans/",tags:[]},
+  {n:"Sans Simulator Invincible",img:"sans-i",url:"/jqrg-games/games/sans-i/",tags:[]},
+  {n:"Undertale Yellow",img:"undertale-y",url:"/jqrg-games/games/undertale-y/",tags:[]},
+  {n:"Underswap Papyrus Fight",img:"underswap-papyrus",url:"/jqrg-games/games/underswap-papyrus/",tags:[]},
+  {n:"Bottle Flip 3D",img:"bottle-flip-3d",url:"/jqrg-games/games/bottle-flip-3d/",tags:[]},
+  {n:"Bad Parenting 1",img:"bad-parenting-1",url:"/jqrg-games/games/bad-parenting-1/",tags:[]},
+  {n:"Boom Slingers",img:"boom-slingers",url:"/jqrg-games/games/boom-slingers/",tags:[]},
+  {n:"Doodle Jump",img:"doodle-jump",url:"/jqrg-games/games/doodle-jump/",tags:[]},
+  {n:"Escape Road",img:"escape-road",url:"/jqrg-games/games/escape-road/",tags:[]},
+  {n:"Hacked Client (DRAGONX)",img:"hacks",url:"/jqrg-games/eaglercraft/hacks/",tags:[]},
+  {n:"Hex GL",img:"hex-gl",url:"/jqrg-games/games/hex-gl/",tags:[]},
+  {n:"Hollow Knight (Alt)",img:"hollow-knight",url:"/jqrg-games/games/hollow-knight-/",tags:[]},
+  {n:"Melon Playground",img:"melon-playground",url:"/jqrg-games/games/melon-playground/",tags:[]},
+  {n:"OvO",img:"ovo",url:"/jqrg-games/games/ovo/",tags:[]},
+  {n:"OvO 2",img:"ovo2",url:"/jqrg-games/games/ovo2/",tags:[]},
+  {n:"Pacman",img:"pacman",url:"/jqrg-games/games/pacman/",tags:[]},
+  {n:"Paper.io 2",img:"paperio2",url:"/jqrg-games/games/paperio2/",tags:[]},
+  {n:"Portals",img:"portal",url:"/jqrg-games/games/portal/",tags:[]},
+  {n:"Retro Bowl",img:"retro-bowl",url:"/jqrg-games/games/retro-bowl/",tags:[]},
+  {n:"Slope 2",img:"slope-2-players",url:"/jqrg-games/games/slope-2/",tags:[]},
+  {n:"Slope 3",img:"slope-3",url:"/jqrg-games/games/slope-3/",tags:[]},
+  {n:"Snow Rider",img:"snow-rider",url:"/jqrg-games/games/snow-rider/",tags:[]},
+  {n:"Sound Effects Player",img:"sound-effect-player",url:"/sound-effects",tags:[]},
+  {n:"People Play",img:"tg-playground",url:"/jqrg-games/games/tg-playground/",tags:[]},
+  {n:"Trigger Rally",img:"trigger-rally",url:"/jqrg-games/games/trigger-rally/",tags:[]},
+  {n:"Tanuki Sunset",img:"tanuki-sunset",url:"/jqrg-games/games/tanuki-sunset/",tags:[]},
+  {n:"Territorial.io",img:"territorial",url:"/jqrg-games/games/territorial/",tags:[]},
+  {n:"Tunnel Rush",img:"tunnel-rush",url:"/jqrg-games/games/tunnel-rush/",tags:[]},
+  {n:"Zombie Derby",img:"zombie-derby-pixel-survival",url:"/jqrg-games/games/zombie-derby-pixel-survival/",tags:[]},
+];
+
+const COLLECTIONS = [
+  {n:"Eaglercraft",img:"/game-images/collections/eaglercraft.png",url:"/jqrg-games/eaglercraft/"},
+  {n:"Geometry Dash (Scratch)",img:"/game-images/collections/geo-dash-scratch.png",url:"/scratch/jqrg-games/geometry-dash"},
+  {n:"Scratch Games",img:"/game-images/collections/scratch.png",url:"/scratch/jqrg-games/"},
+  {n:"Undertale Games",img:"/game-images/collections/undertale.png",url:"/jqrg-games/undertale"},
+];
+
+const PENDING = [
+  {n:"Shell Shocker",img:"shell-shocker",url:"/jqrg-games/games/shell-shocker/"},
+  {n:"Magic Tiles 3",img:"magic-tiles-3",url:"/jqrg-games/games/magic-tiles-3/"},
+  {n:"World's Most Confusing Button Game",img:"wmcbg",url:"/wmcbg/"},
+  {n:"Stickman Rebirth",img:"stickman-rebirth",url:"/jqrg-games/games/stickman-rebirth/"},
+];
+
+const APPS = [
+  {n:"TikTok",img:"tiktok",url:"tiktok.com",proxy:true,raw:true},
+  {n:"YouTube",img:"youtube",url:"youtube.com",proxy:true,raw:true},
+  {n:"GN Math",img:"gn-math",url:"/unblocks/gn-math.html",proxy:false},
+  {n:"Deepseek",img:"deepseek",url:"chat.deepseek.com",proxy:true,raw:true},
+  {n:"GitHub",img:"github",url:"github.com",proxy:true,raw:true},
+  {n:"Twitch",img:"twitch",url:"twitch.tv",proxy:true,raw:true},
+  {n:"Instagram",img:"instagram",url:"instagram.com",proxy:true,raw:true},
+  {n:"JimmyQrg Tools",img:"jtools",url:"/tools/",proxy:false},
+];
+
+const UNBLOCKS = [
+  {n:"Unlinewize Proxy",img:"unlinewize",url:"https://rammerhead.fly.dev"},
+  {n:"Rammerhead Proxy",img:"rammerhead",url:"https://noblock.jimmyqrg.com"},
+  {n:"HackWize Proxy",img:"hackwize",url:"/proxy/"},
+  {n:"JimmyQrg Info",img:"jinfo",url:"/info/"},
+];
+
+const CONTACTS = [
+  {n:"JimmyQrg Chat",desc:"Chat with us",url:"https://jchat.fly.dev",icon:"chat"},
+  {n:"Discord Server",desc:"Join our community",url:"https://discord.com/invite/UWY8p8mn",icon:"discord"},
+  {n:"Report Bugs",desc:"Help us fix issues",url:"https://docs.google.com/forms/d/e/1FAIpQLScYdbpe_9Q3w2kpAfy-ntLAoCMtf9wg2vkfHOt6xrYwMvDFNg/viewform?usp=header",icon:"bug"},
+  {n:"Game Suggestions",desc:"Suggest new games",url:"https://docs.google.com/forms/d/e/1FAIpQLSceujZ8Li1ycYrRIK9MR9GUqI1OkANZiMoO1guu9hytfU5hlg/viewform?usp=header",icon:"suggest"},
+  {n:"Join Developers",desc:"Help build JQRG",url:"https://docs.google.com/forms/d/e/1FAIpQLSc0GRyWHqAmI5d0ZQnkLt9Zf3KPVOVHPFuii8ovOmonSeC6Jg/viewform?usp=header",icon:"dev"},
+];
+
+/* ══════════ RENDER ══════════ */
+
+function gameTileHTML(g, imgBase) {
+  var src = imgBase ? imgBase : '/game-images/games/' + g.img + '.png';
+  var escaped = g.url.replace(/'/g, "\\'");
+  return '<div class="game-tile" onclick="openGame(\'' + escaped + '\')">' +
+    '<img src="' + src + '" alt="' + g.n + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+    '<div class="tile-label">' + g.n + '</div></div>';
+}
+
+var gameTab = 'all';
+function renderGames() {
+  var c = document.getElementById('games-container');
+  var q = (document.getElementById('games-search').value || '').toLowerCase();
+  var html = '';
+  if (gameTab === 'all') {
+    var filtered = GAMES.filter(function(g){ return g.n.toLowerCase().includes(q); });
+    if (!filtered.length) html = '<div class="games-empty">No games found</div>';
+    else filtered.forEach(function(g){ html += gameTileHTML(g); });
+  } else if (gameTab === 'collections') {
+    var filtered = COLLECTIONS.filter(function(g){ return g.n.toLowerCase().includes(q); });
+    if (!filtered.length) html = '<div class="games-empty">No collections found</div>';
+    else filtered.forEach(function(g){ html += gameTileHTML(g, g.img); });
+  } else if (gameTab === 'pending') {
+    var filtered = PENDING.filter(function(g){ return g.n.toLowerCase().includes(q); });
+    if (!filtered.length) html = '<div class="games-empty">No pending games</div>';
+    else filtered.forEach(function(g){ html += gameTileHTML(g); });
+  }
+  c.innerHTML = html;
+}
+
+function filterGames() { renderGames(); }
+
+function setGameTab(tab) {
+  gameTab = tab;
+  var labels = {all:'All Games',collections:'Collections',pending:'Pending'};
+  document.getElementById('dd-label').textContent = labels[tab];
+  document.getElementById('games-dropdown').classList.remove('open');
+  document.querySelectorAll('#games-dropdown .dropdown-menu button').forEach(function(b){ b.classList.remove('selected'); });
+  if (event && event.target) event.target.classList.add('selected');
+  renderGames();
+}
+
+function toggleDropdown() {
+  document.getElementById('games-dropdown').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#games-dropdown')) {
+    document.getElementById('games-dropdown').classList.remove('open');
+  }
+});
+
+function renderApps() {
+  var c = document.getElementById('apps-container');
+  var q = (document.getElementById('apps-search').value || '').toLowerCase();
+  var filtered = APPS.filter(function(a){ return a.n.toLowerCase().includes(q); });
+  var html = '';
+  filtered.forEach(function(a) {
+    var href, onclick;
+    if (a.proxy) {
+      href = proxyUrl('https://' + a.url, !!a.raw);
+      onclick = "window.open('" + href.replace(/'/g, "\\'") + "','_blank')";
+    } else {
+      onclick = "window.open('" + a.url.replace(/'/g, "\\'") + "','_blank')";
+    }
+    html += '<div class="app-tile" onclick="' + onclick + '">' +
+      '<img src="/game-images/apps/' + a.img + '.png" alt="' + a.n + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+      '<div class="tile-label">' + a.n + '</div></div>';
+  });
+  if (!filtered.length) html = '<div class="games-empty">No apps found</div>';
+  c.innerHTML = html;
+}
+function filterApps() { renderApps(); }
+
+function renderUnblocks() {
+  var c = document.getElementById('unblocks-container');
+  var html = '<div class="section-title">Proxies &amp; Tools</div><div class="unblocks-grid">';
+  UNBLOCKS.forEach(function(u) {
+    var target = u.url.startsWith('http') ? '_blank' : '_self';
+    html += '<div class="unblock-tile" onclick="window.open(\'' + u.url + '\',\'' + target + '\')">' +
+      '<img src="/game-images/unblocks/' + u.img + '.png" alt="' + u.n + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+      '<span>' + u.n + '</span></div>';
+  });
+  html += '</div>';
+  c.innerHTML = html;
+}
+
+function renderContacts() {
+  var c = document.getElementById('contacts-container');
+  var icons = {
+    chat:'<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
+    discord:'<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
+    bug:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+    suggest:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+    dev:'<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+  };
+  var html = '';
+  CONTACTS.forEach(function(ct) {
+    var escaped = ct.url.replace(/'/g, "\\'");
+    html += '<div class="contact-tile" onclick="window.open(\'' + escaped + '\',\'_blank\')">' +
+      '<div class="ct-icon"><svg viewBox="0 0 24 24">' + icons[ct.icon] + '</svg></div>' +
+      '<div class="ct-info"><strong>' + ct.n + '</strong><small>' + ct.desc + '</small></div></div>';
+  });
+  c.innerHTML = html;
+}
+
+function openSettings() {}
+
+/* ── Init ── */
+renderGames();
+renderApps();
+renderUnblocks();
+renderContacts();
+</script>
+</body>
 </html>
