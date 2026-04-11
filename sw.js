@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jqrg-pwa-v10';
+const CACHE_NAME = 'jqrg-pwa-v11';
 
 // Complete list of all source files to pre-cache
 const urlsToCache = [
@@ -31,14 +31,10 @@ const urlsToCache = [
   '/css/info.css',
 
   // ============ JS FILES ============
-  '/js/authority.js',
-  '/js/blacklist.js',
   '/js/cursor.js',
   '/js/mainPageCloak.js',
   '/js/openGame.js',
   '/js/panicKey.js',
-  '/js/preventOpen.js',
-  '/js/style.js',
 
   // ============ CLOAK IMAGES ============
   '/cloak-images/default.png',

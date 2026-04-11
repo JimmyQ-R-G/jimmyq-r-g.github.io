@@ -9,9 +9,395 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/main.css">
 <script src="/js/mainPageCloak.js"></script>
 <script src="/js/panicKey.js"></script>
+<style>
+/* ── Reset ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* ── Tokens ── */
+:root{
+  --bg-deep:#0e0514;
+  --bg-card:rgba(0,0,0,0.3);
+  --border:rgba(255,255,255,0.5);
+  --border-light:rgba(255,255,255,0.15);
+  --text:#fff;
+  --text-dim:rgba(255,255,255,0.6);
+  --pill-bg:rgba(255,255,255,0.1);
+  --dropdown-bg:rgba(13,5,18,0.75);
+  --search-pill-bg:rgba(14,5,20,0.75);
+  --accent-purple:rgba(136,65,214,1);
+  --sidebar-w:54px;
+  --top-bar-h:54px;
+  --radius:20px;
+  --radius-sm:13px;
+}
+
+html,body{
+  height:100%;overflow:hidden;
+  font-family:'Oxanium',sans-serif;
+  color:var(--text);background:#000;
+}
+
+/* ══ BACKGROUND ══ */
+.bg{
+  position:fixed;inset:0;z-index:0;
+  background:conic-gradient(from 90deg,#342c8a,#211f39,#5b2d7d,#000,#352f72);
+  filter:blur(32px);opacity:.7;
+}
+.bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.3),rgba(0,0,0,.6));
+}
+
+/* ══ SHELL (L-shaped frame) ══ */
+#app{
+  position:relative;z-index:1;
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+}
+
+.top-bar{
+  height:var(--top-bar-h);min-height:var(--top-bar-h);
+  background:var(--bg-deep);
+  border:1.5px solid var(--border);
+  border-bottom:none;
+  border-radius:var(--radius) var(--radius) 0 0;
+  display:flex;align-items:center;
+  padding:0 16px;gap:12px;
+  margin:8px 8px 0 8px;
+}
+
+.body-row{
+  display:flex;flex:1;min-height:0;
+  margin:0 8px 8px 8px;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:var(--bg-deep);
+  border:1.5px solid var(--border);
+  border-top:none;
+  border-right:1.5px solid var(--border);
+  border-radius:0 0 0 var(--radius);
+  display:flex;flex-direction:column;align-items:center;
+  padding:10px 0 14px;gap:6px;
+}
+
+.sidebar .logo{
+  width:34px;height:34px;cursor:pointer;margin-bottom:4px;flex-shrink:0;
+  filter:drop-shadow(0 0 13px var(--accent-purple));
+}
+.sidebar .logo svg{width:100%;height:100%;display:block}
+
+.sidebar .jq-mark{
+  width:20px;height:24px;margin-bottom:6px;
+  filter:drop-shadow(0 0 23px #fff);flex-shrink:0;
+}
+.sidebar .jq-mark svg{width:100%;height:100%;display:block}
+
+.sidebar nav{
+  display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;
+}
+.sidebar nav button{
+  width:38px;height:38px;border:0;background:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;transition:background .2s;
+}
+.sidebar nav button:hover{background:rgba(255,255,255,.08)}
+.sidebar nav button svg{
+  width:20px;height:20px;stroke:var(--text);stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;
+  opacity:.55;transition:opacity .2s,filter .2s;
+}
+.sidebar nav button.active svg{
+  opacity:1;
+  filter:drop-shadow(0 0 6.75px #fff) drop-shadow(0 0 6.75px #fff);
+}
+.sidebar nav button[data-nav="games"] svg{fill:var(--text);stroke:none}
+.sidebar nav button.active[data-nav="games"] svg{fill:var(--text);stroke:none}
+
+/* ══ TOP BAR CONTENTS ══ */
+.top-bar .brand{
+  font-size:14px;font-weight:400;letter-spacing:.5px;
+  white-space:nowrap;opacity:.85;flex-shrink:0;margin-right:4px;
+}
+.top-bar .settings-top{
+  width:34px;height:34px;border:0;background:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:8px;margin-left:auto;flex-shrink:0;
+}
+.top-bar .settings-top:hover{background:rgba(255,255,255,.08)}
+.top-bar .settings-top svg{
+  width:20px;height:20px;stroke:var(--text);stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:.7;
+}
+
+/* ══ MAIN CONTENT AREA ══ */
+.main{
+  flex:1;display:flex;flex-direction:column;min-width:0;
+  overflow:hidden;
+  border-bottom:1.5px solid var(--border);
+  border-right:1.5px solid var(--border);
+  border-radius:0 0 var(--radius) 0;
+}
+
+/* ══ PAGES ══ */
+.page{
+  display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding:0;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent;
+}
+.page.active{display:flex;flex-direction:column}
+.page::-webkit-scrollbar{width:6px}
+.page::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
+
+/* ══ HOME PAGE ══ */
+#page-home{align-items:center;justify-content:flex-start;padding-top:10px;gap:20px}
+
+.home-nav{display:flex;align-items:center;gap:10px;width:100%;padding:0 10px}
+.home-nav .nav-btns{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.home-nav .nav-btns button{
+  width:32px;height:32px;border:0;background:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:6px;transition:background .15s;
+}
+.home-nav .nav-btns button:hover{background:rgba(255,255,255,.08)}
+.home-nav .nav-btns button svg{
+  width:18px;height:18px;stroke:var(--text);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;
+}
+.home-url-bar{
+  flex:1;height:38px;border-radius:19px;
+  background:var(--pill-bg);
+  display:flex;align-items:center;padding:0 16px;gap:10px;
+}
+.home-url-bar svg{
+  width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
+}
+.home-url-bar input{
+  flex:1;background:0;border:0;outline:0;color:var(--text);
+  font-family:inherit;font-size:14px;
+}
+.home-url-bar input::placeholder{color:var(--text-dim)}
+
+.home-hero{
+  display:flex;flex-direction:column;align-items:center;gap:28px;
+  padding:40px 20px 20px;width:100%;max-width:900px;
+}
+.home-hero h1{font-size:52px;font-weight:400;text-align:center}
+
+.home-search-bar{
+  width:100%;max-width:676px;height:57px;
+  border-radius:28.5px;
+  background:var(--search-pill-bg);
+  border:1.5px solid #fff;
+  display:flex;align-items:center;padding:0 24px;gap:12px;
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+}
+.home-search-bar svg{
+  width:20px;height:20px;stroke:var(--text-dim);stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
+}
+.home-search-bar input{
+  flex:1;background:0;border:0;outline:0;color:var(--text);
+  font-family:inherit;font-size:20px;
+}
+.home-search-bar input::placeholder{color:var(--text-dim)}
+
+.home-cards{
+  display:flex;gap:24px;flex-wrap:wrap;justify-content:center;
+  padding:10px 0 40px;
+}
+.home-card{
+  width:300px;height:220px;border-radius:var(--radius);
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;
+}
+.home-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.home-card svg{
+  width:64px;height:64px;stroke:#fff;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;
+}
+.home-card[data-nav="games"] svg{fill:#fff;stroke:none}
+.home-card h2{font-size:36px;font-weight:400}
+
+.home-iframe-wrap{display:none;flex:1;width:100%;border-radius:12px;overflow:hidden;min-height:0}
+.home-iframe-wrap iframe{width:100%;height:100%;border:0}
+#page-home.browsing .home-hero{display:none}
+#page-home.browsing .home-cards{display:none}
+#page-home.browsing .home-iframe-wrap{display:flex}
+#page-home.browsing .home-nav{display:flex}
+
+/* ══ GAMES PAGE ══ */
+#page-games{padding:10px 16px;gap:12px}
+
+.games-toolbar{display:flex;gap:12px;align-items:center;flex-shrink:0}
+
+.search-bar{
+  flex:1;height:38px;border-radius:19px;
+  background:var(--pill-bg);
+  display:flex;align-items:center;padding:0 16px;gap:10px;
+}
+.search-bar svg{
+  width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
+}
+.search-bar input{
+  flex:1;background:0;border:0;outline:0;color:var(--text);
+  font-family:inherit;font-size:16px;
+}
+.search-bar input::placeholder{color:var(--text-dim)}
+
+/* Dropdown */
+.dropdown{position:relative;flex-shrink:0}
+.dropdown-btn{
+  height:43px;min-width:180px;border-radius:var(--radius-sm);
+  background:var(--dropdown-bg);
+  border:1px solid var(--border);
+  color:var(--text);font-family:inherit;font-size:16px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;gap:10px;cursor:pointer;
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+}
+.dropdown-btn svg{width:16px;height:8px;fill:#fff;stroke:none;transition:transform .2s}
+.dropdown.open .dropdown-btn svg{transform:rotate(180deg)}
+
+.dropdown-menu{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--dropdown-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:6px 0;
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  z-index:50;display:none;
+}
+.dropdown.open .dropdown-menu{display:block}
+.dropdown-menu button{
+  display:block;width:100%;text-align:left;padding:8px 16px;
+  background:0;border:0;color:var(--text);font-family:inherit;font-size:15px;
+  cursor:pointer;transition:background .15s;
+}
+.dropdown-menu button:hover{background:rgba(255,255,255,.08)}
+.dropdown-menu button.selected{opacity:.5}
+.dropdown-menu hr{border:0;border-top:1px solid var(--border);margin:4px 12px}
+
+/* Game grid */
+.games-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:14px;padding-bottom:20px;
+}
+.game-tile{
+  aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;
+  position:relative;transition:transform .15s;background:#1a1024;
+}
+.game-tile:hover{transform:scale(1.04)}
+.game-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.game-tile .tile-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:8px 10px;font-size:12px;font-weight:500;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.games-empty{text-align:center;padding:60px 20px;opacity:.5;font-size:18px}
+
+/* ══ APPS PAGE ══ */
+#page-apps{padding:10px 16px;gap:12px}
+
+.apps-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:14px;padding-bottom:20px;
+}
+.app-tile{
+  aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;
+  position:relative;transition:transform .15s;background:#1a1024;
+}
+.app-tile:hover{transform:scale(1.04)}
+.app-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.app-tile .tile-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:8px 10px;font-size:12px;font-weight:500;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* ══ UNBLOCKS PAGE ══ */
+#page-unblocks{padding:10px 16px;gap:12px}
+
+.section-title{
+  font-size:14px;text-transform:uppercase;letter-spacing:2px;
+  opacity:.5;padding:10px 0 4px;
+}
+.unblocks-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:14px;padding-bottom:10px;
+}
+.unblock-tile{
+  height:120px;border-radius:14px;overflow:hidden;cursor:pointer;
+  position:relative;transition:transform .15s;
+  background:var(--bg-card);border:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;padding:16px;
+}
+.unblock-tile:hover{transform:scale(1.03);border-color:var(--border)}
+.unblock-tile img{width:48px;height:48px;border-radius:10px;object-fit:cover}
+.unblock-tile span{font-size:14px;font-weight:500;text-align:center}
+
+/* ══ CONTACTS PAGE ══ */
+#page-contacts{padding:10px 16px;gap:12px}
+
+.contacts-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;padding-bottom:20px;
+}
+.contact-tile{
+  height:100px;border-radius:14px;overflow:hidden;cursor:pointer;
+  background:var(--bg-card);border:1px solid var(--border-light);
+  display:flex;align-items:center;gap:16px;padding:0 20px;
+  transition:transform .15s,border-color .15s;
+}
+.contact-tile:hover{transform:scale(1.02);border-color:var(--border)}
+.contact-tile .ct-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.contact-tile .ct-icon svg{
+  width:22px;height:22px;stroke:#fff;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;
+}
+.contact-tile .ct-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.contact-tile .ct-info strong{font-size:15px;font-weight:500}
+.contact-tile .ct-info small{
+  font-size:11px;opacity:.45;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:700px){
+  .top-bar{margin:4px 4px 0;padding:0 10px;height:48px;min-height:48px}
+  .body-row{margin:0 4px 4px}
+  .sidebar{width:44px;min-width:44px;padding:8px 0 10px}
+  .sidebar .logo{width:28px;height:28px}
+  .sidebar .jq-mark{width:16px;height:20px}
+  .sidebar nav button{width:32px;height:32px}
+  .sidebar nav button svg{width:16px;height:16px}
+  .home-hero h1{font-size:32px}
+  .home-search-bar{height:48px}
+  .home-search-bar input{font-size:16px}
+  .home-cards{flex-direction:column;align-items:center}
+  .home-card{width:100%;max-width:320px;height:140px}
+  .home-card h2{font-size:28px}
+  .games-grid,.apps-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .games-toolbar{flex-direction:column;align-items:stretch}
+}
+</style>
 </head>
 <body>
 <div class="bg"></div>
@@ -32,7 +418,6 @@
 
 <!-- Sidebar (vertical part of L-shape) -->
 <aside class="sidebar">
-  <!-- Diamond logo with conic gradient -->
   <div class="logo" onclick="navigate('home')">
     <svg viewBox="6 8 40 50" fill="none">
       <defs>
@@ -54,7 +439,6 @@
     </svg>
   </div>
 
-  <!-- JQ lettermark -->
   <div class="jq-mark">
     <svg viewBox="18 16 14 26" fill="none">
       <path d="M26.994 18H30.202c.693 0 1.141.111 1.345.332.224.22.336.682.336 1.384v18.333c0 .702-.112 1.164-.336 1.385-.203.22-.652.331-1.345.331H26.994V18ZM20.546 33.052h3.85c.285 0 .459.04.52.12.061.08.092.251.092.512v2.348c0 .321.04.552.122.692.102.12.336.181.703.181h.244v2.86h-1.436c-1.487 0-2.618-.251-3.392-.753-.754-.501-1.13-1.374-1.13-2.619v-2.709c0-.421.142-.632.427-.632Z" fill="white"/>
@@ -83,7 +467,7 @@
 <!-- ═══ MAIN CONTENT ═══ -->
 <div class="main">
 
-<!-- ════ HOME ════ -->
+<!-- HOME -->
 <section id="page-home" class="page active">
   <div class="home-nav" style="display:none">
     <div class="nav-btns">
@@ -126,7 +510,7 @@
   <div class="home-iframe-wrap"><iframe id="proxy-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
 </section>
 
-<!-- ════ GAMES ════ -->
+<!-- GAMES -->
 <section id="page-games" class="page">
   <div class="games-toolbar">
     <div class="dropdown" id="games-dropdown">
@@ -149,7 +533,7 @@
   <div id="games-container" class="games-grid"></div>
 </section>
 
-<!-- ════ APPS ════ -->
+<!-- APPS -->
 <section id="page-apps" class="page">
   <div class="games-toolbar">
     <div class="search-bar" style="flex:1">
@@ -160,12 +544,12 @@
   <div id="apps-container" class="apps-grid"></div>
 </section>
 
-<!-- ════ UNBLOCKS ════ -->
+<!-- UNBLOCKS -->
 <section id="page-unblocks" class="page">
   <div id="unblocks-container"></div>
 </section>
 
-<!-- ════ CONTACTS ════ -->
+<!-- CONTACTS -->
 <section id="page-contacts" class="page">
   <div class="section-title">Get in Touch</div>
   <div id="contacts-container" class="contacts-grid"></div>
@@ -177,30 +561,30 @@
 
 <script src="/js/openGame.js"></script>
 <script>
-const PROXY_BASE = 'https://rammerhead.fly.dev/unblocker.html';
+var PROXY_BASE = 'https://rammerhead.fly.dev/unblocker.html';
 function proxyUrl(url, raw) {
   return PROXY_BASE + '?' + (raw ? 'raw=true&' : '') + 'url=' + encodeURIComponent(url);
 }
 
 /* ── Navigation ── */
-let currentPage = 'home';
+var currentPage = 'home';
 function navigate(page) {
   currentPage = page;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.sidebar nav button').forEach(b => {
+  document.querySelectorAll('.sidebar nav button').forEach(function(b){
     b.classList.toggle('active', b.dataset.nav === page);
   });
   window.history.replaceState(null, '', '#' + page);
 }
 
-window.addEventListener('hashchange', () => {
-  const h = location.hash.slice(1);
-  if (['home','games','apps','unblocks','contacts'].includes(h)) navigate(h);
+window.addEventListener('hashchange', function() {
+  var h = location.hash.slice(1);
+  if (['home','games','apps','unblocks','contacts'].indexOf(h) !== -1) navigate(h);
 });
 if (location.hash) {
-  const h = location.hash.slice(1);
-  if (['home','games','apps','unblocks','contacts'].includes(h)) navigate(h);
+  var h = location.hash.slice(1);
+  if (['home','games','apps','unblocks','contacts'].indexOf(h) !== -1) navigate(h);
 }
 
 /* ── Proxy / Home ── */
@@ -209,7 +593,7 @@ function isUrl(s) {
 }
 function proxyNavigate(input) {
   if (!input.trim()) return;
-  let url;
+  var url;
   if (isUrl(input.trim())) {
     url = input.trim();
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
@@ -226,7 +610,7 @@ function proxyForward() { try { document.getElementById('proxy-frame').contentWi
 function proxyRefresh() { try { var f = document.getElementById('proxy-frame'); f.src = f.src; } catch(e){} }
 
 /* ══════════ DATA ══════════ */
-const GAMES = [
+var GAMES = [
   {n:"Bridd Jump",img:"bridd-jump",url:"/jqrg-games/games/bridd-jump/",tags:["featured","touch","jqrg"]},
   {n:"Parkoreen",img:"parkoreen",url:"/parkoreen/",tags:["featured","touch","jqrg"]},
   {n:"A Dance of Fire and Ice",img:"a-dance-of-fire-and-ice",url:"/a-dance-of-fire-and-ice",tags:["featured","touch"]},
@@ -334,21 +718,21 @@ const GAMES = [
   {n:"Zombie Derby",img:"zombie-derby-pixel-survival",url:"/jqrg-games/games/zombie-derby-pixel-survival/",tags:[]},
 ];
 
-const COLLECTIONS = [
+var COLLECTIONS = [
   {n:"Eaglercraft",img:"/game-images/collections/eaglercraft.png",url:"/jqrg-games/eaglercraft/"},
   {n:"Geometry Dash (Scratch)",img:"/game-images/collections/geo-dash-scratch.png",url:"/scratch/jqrg-games/geometry-dash"},
   {n:"Scratch Games",img:"/game-images/collections/scratch.png",url:"/scratch/jqrg-games/"},
   {n:"Undertale Games",img:"/game-images/collections/undertale.png",url:"/jqrg-games/undertale"},
 ];
 
-const PENDING = [
+var PENDING = [
   {n:"Shell Shocker",img:"shell-shocker",url:"/jqrg-games/games/shell-shocker/"},
   {n:"Magic Tiles 3",img:"magic-tiles-3",url:"/jqrg-games/games/magic-tiles-3/"},
   {n:"World's Most Confusing Button Game",img:"wmcbg",url:"/wmcbg/"},
   {n:"Stickman Rebirth",img:"stickman-rebirth",url:"/jqrg-games/games/stickman-rebirth/"},
 ];
 
-const APPS = [
+var APPS = [
   {n:"TikTok",img:"tiktok",url:"tiktok.com",proxy:true,raw:true},
   {n:"YouTube",img:"youtube",url:"youtube.com",proxy:true,raw:true},
   {n:"GN Math",img:"gn-math",url:"/unblocks/gn-math.html",proxy:false},
@@ -359,14 +743,14 @@ const APPS = [
   {n:"JimmyQrg Tools",img:"jtools",url:"/tools/",proxy:false},
 ];
 
-const UNBLOCKS = [
+var UNBLOCKS = [
   {n:"Unlinewize Proxy",img:"unlinewize",url:"https://rammerhead.fly.dev"},
   {n:"Rammerhead Proxy",img:"rammerhead",url:"https://noblock.jimmyqrg.com"},
   {n:"HackWize Proxy",img:"hackwize",url:"/proxy/"},
   {n:"JimmyQrg Info",img:"jinfo",url:"/info/"},
 ];
 
-const CONTACTS = [
+var CONTACTS = [
   {n:"JimmyQrg Chat",desc:"Chat with us",url:"https://jchat.fly.dev",icon:"chat"},
   {n:"Discord Server",desc:"Join our community",url:"https://discord.com/invite/UWY8p8mn",icon:"discord"},
   {n:"Report Bugs",desc:"Help us fix issues",url:"https://docs.google.com/forms/d/e/1FAIpQLScYdbpe_9Q3w2kpAfy-ntLAoCMtf9wg2vkfHOt6xrYwMvDFNg/viewform?usp=header",icon:"bug"},
@@ -390,15 +774,15 @@ function renderGames() {
   var q = (document.getElementById('games-search').value || '').toLowerCase();
   var html = '';
   if (gameTab === 'all') {
-    var filtered = GAMES.filter(function(g){ return g.n.toLowerCase().includes(q); });
+    var filtered = GAMES.filter(function(g){ return g.n.toLowerCase().indexOf(q) !== -1; });
     if (!filtered.length) html = '<div class="games-empty">No games found</div>';
     else filtered.forEach(function(g){ html += gameTileHTML(g); });
   } else if (gameTab === 'collections') {
-    var filtered = COLLECTIONS.filter(function(g){ return g.n.toLowerCase().includes(q); });
+    var filtered = COLLECTIONS.filter(function(g){ return g.n.toLowerCase().indexOf(q) !== -1; });
     if (!filtered.length) html = '<div class="games-empty">No collections found</div>';
     else filtered.forEach(function(g){ html += gameTileHTML(g, g.img); });
   } else if (gameTab === 'pending') {
-    var filtered = PENDING.filter(function(g){ return g.n.toLowerCase().includes(q); });
+    var filtered = PENDING.filter(function(g){ return g.n.toLowerCase().indexOf(q) !== -1; });
     if (!filtered.length) html = '<div class="games-empty">No pending games</div>';
     else filtered.forEach(function(g){ html += gameTileHTML(g); });
   }
@@ -429,12 +813,12 @@ document.addEventListener('click', function(e) {
 function renderApps() {
   var c = document.getElementById('apps-container');
   var q = (document.getElementById('apps-search').value || '').toLowerCase();
-  var filtered = APPS.filter(function(a){ return a.n.toLowerCase().includes(q); });
+  var filtered = APPS.filter(function(a){ return a.n.toLowerCase().indexOf(q) !== -1; });
   var html = '';
   filtered.forEach(function(a) {
-    var href, onclick;
+    var onclick;
     if (a.proxy) {
-      href = proxyUrl('https://' + a.url, !!a.raw);
+      var href = proxyUrl('https://' + a.url, !!a.raw);
       onclick = "window.open('" + href.replace(/'/g, "\\'") + "','_blank')";
     } else {
       onclick = "window.open('" + a.url.replace(/'/g, "\\'") + "','_blank')";
@@ -452,7 +836,7 @@ function renderUnblocks() {
   var c = document.getElementById('unblocks-container');
   var html = '<div class="section-title">Proxies &amp; Tools</div><div class="unblocks-grid">';
   UNBLOCKS.forEach(function(u) {
-    var target = u.url.startsWith('http') ? '_blank' : '_self';
+    var target = u.url.indexOf('http') === 0 ? '_blank' : '_self';
     html += '<div class="unblock-tile" onclick="window.open(\'' + u.url + '\',\'' + target + '\')">' +
       '<img src="/game-images/unblocks/' + u.img + '.png" alt="' + u.n + '" loading="lazy" onerror="this.style.display=\'none\'">' +
       '<span>' + u.n + '</span></div>';
