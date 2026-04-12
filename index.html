@@ -122,7 +122,7 @@ html,body{
 
 .main{
   flex:1;display:flex;flex-direction:column;min-width:0;
-  overflow:hidden;
+  overflow:hidden;position:relative;
   border-left:1.5px solid var(--border);
   border-top:1.5px solid var(--border);
   border-top-left-radius:24px;
@@ -348,14 +348,14 @@ html,body{
 
 /* ══ GAME OVERLAY (in-page game/app loading with toolbar) ══ */
 #game-overlay{
-  display:none;position:fixed;inset:0;z-index:800;
+  display:none;position:absolute;inset:0;z-index:800;
   background:var(--bg-deep);
 }
 #game-overlay.active{display:flex}
 #game-overlay iframe{flex:1;border:0;min-width:0;min-height:0}
 
 #game-toolbar{
-  display:flex;align-items:center;gap:0;
+  display:flex;align-items:stretch;gap:0;
   background:rgba(14,5,20,.92);
   backdrop-filter:blur(12px);
   border:0;flex-shrink:0;
@@ -364,11 +364,18 @@ html,body{
 }
 #game-toolbar button{
   border:0;background:0;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   color:rgba(255,255,255,.55);
   transition:color .25s,background .25s,transform .25s;
-  padding:0;flex-shrink:0;
+  padding:4px 0;flex-shrink:0;
 }
+#game-toolbar button span{
+  font-size:9px;font-weight:600;letter-spacing:.02em;
+  opacity:0;max-height:0;overflow:hidden;
+  transition:opacity .25s ease,max-height .25s ease;
+  white-space:nowrap;line-height:1;
+}
+#game-toolbar.expanded button span{opacity:1;max-height:16px}
 #game-toolbar button:hover{color:#fff;background:rgba(255,255,255,.08)}
 #game-toolbar button.active-fav{color:#fbbf24}
 #game-toolbar .tb-expand{position:relative;z-index:2}
@@ -380,10 +387,11 @@ html,body{
   flex-direction:column;width:38px;
   border-right:1px solid rgba(255,255,255,.08);
 }
-#game-overlay[data-pos="left"] #game-toolbar button{width:38px;height:38px;border-radius:6px}
-#game-overlay[data-pos="left"] #game-toolbar button svg{width:18px;height:18px}
+#game-overlay[data-pos="left"] #game-toolbar.expanded{width:72px}
+#game-overlay[data-pos="left"] #game-toolbar button{width:100%;min-height:38px;border-radius:6px}
+#game-overlay[data-pos="left"] #game-toolbar button svg{width:18px;height:18px;flex-shrink:0}
 #game-overlay[data-pos="left"] #game-toolbar .tb-btns{flex-direction:column;max-height:0;opacity:0}
-#game-overlay[data-pos="left"] #game-toolbar.expanded .tb-btns{max-height:300px;opacity:1}
+#game-overlay[data-pos="left"] #game-toolbar.expanded .tb-btns{max-height:500px;opacity:1}
 
 /* Right */
 #game-overlay[data-pos="right"]{flex-direction:row-reverse}
@@ -391,10 +399,11 @@ html,body{
   flex-direction:column;width:38px;
   border-left:1px solid rgba(255,255,255,.08);
 }
-#game-overlay[data-pos="right"] #game-toolbar button{width:38px;height:38px;border-radius:6px}
-#game-overlay[data-pos="right"] #game-toolbar button svg{width:18px;height:18px}
+#game-overlay[data-pos="right"] #game-toolbar.expanded{width:72px}
+#game-overlay[data-pos="right"] #game-toolbar button{width:100%;min-height:38px;border-radius:6px}
+#game-overlay[data-pos="right"] #game-toolbar button svg{width:18px;height:18px;flex-shrink:0}
 #game-overlay[data-pos="right"] #game-toolbar .tb-btns{flex-direction:column;max-height:0;opacity:0}
-#game-overlay[data-pos="right"] #game-toolbar.expanded .tb-btns{max-height:300px;opacity:1}
+#game-overlay[data-pos="right"] #game-toolbar.expanded .tb-btns{max-height:500px;opacity:1}
 
 /* Top */
 #game-overlay[data-pos="top"]{flex-direction:column}
@@ -402,10 +411,11 @@ html,body{
   flex-direction:row;height:38px;
   border-bottom:1px solid rgba(255,255,255,.08);
 }
-#game-overlay[data-pos="top"] #game-toolbar button{width:38px;height:38px;border-radius:6px}
-#game-overlay[data-pos="top"] #game-toolbar button svg{width:18px;height:18px}
+#game-overlay[data-pos="top"] #game-toolbar.expanded{height:56px}
+#game-overlay[data-pos="top"] #game-toolbar button{height:100%;min-width:56px;border-radius:6px}
+#game-overlay[data-pos="top"] #game-toolbar button svg{width:18px;height:18px;flex-shrink:0}
 #game-overlay[data-pos="top"] #game-toolbar .tb-btns{flex-direction:row;max-width:0;opacity:0}
-#game-overlay[data-pos="top"] #game-toolbar.expanded .tb-btns{max-width:300px;opacity:1}
+#game-overlay[data-pos="top"] #game-toolbar.expanded .tb-btns{max-width:600px;opacity:1}
 
 /* Bottom */
 #game-overlay[data-pos="bottom"]{flex-direction:column-reverse}
@@ -413,10 +423,11 @@ html,body{
   flex-direction:row;height:38px;
   border-top:1px solid rgba(255,255,255,.08);
 }
-#game-overlay[data-pos="bottom"] #game-toolbar button{width:38px;height:38px;border-radius:6px}
-#game-overlay[data-pos="bottom"] #game-toolbar button svg{width:18px;height:18px}
+#game-overlay[data-pos="bottom"] #game-toolbar.expanded{height:56px}
+#game-overlay[data-pos="bottom"] #game-toolbar button{height:100%;min-width:56px;border-radius:6px}
+#game-overlay[data-pos="bottom"] #game-toolbar button svg{width:18px;height:18px;flex-shrink:0}
 #game-overlay[data-pos="bottom"] #game-toolbar .tb-btns{flex-direction:row;max-width:0;opacity:0}
-#game-overlay[data-pos="bottom"] #game-toolbar.expanded .tb-btns{max-width:300px;opacity:1}
+#game-overlay[data-pos="bottom"] #game-toolbar.expanded .tb-btns{max-width:600px;opacity:1}
 
 /* ══ AUTO CLICKER MODAL ══ */
 #ac-modal{
@@ -607,13 +618,6 @@ html,body{
 .game-tile img,.app-tile img{position:relative;z-index:1}
 .game-tile .tile-label,.app-tile .tile-label,.collection-tile .tile-label{z-index:2}
 
-/* ══ MOUSE TRAIL CANVAS ══ */
-#trail-canvas{
-  position:fixed;inset:0;z-index:1;
-  pointer-events:none;
-  opacity:.55;
-}
-
 /* ══ PARTICLE CANVAS ══ */
 #particle-canvas{
   position:fixed;inset:0;z-index:0;
@@ -673,7 +677,7 @@ html,body{
 <body>
 <script>if(localStorage.getItem('enableCursor')!=='false')document.body.classList.add('custom-cursor-enabled');</script>
 <canvas id="particle-canvas"></canvas>
-<canvas id="trail-canvas"></canvas>
+
 <div class="bg"></div>
 <div class="bg-effects"></div>
 
@@ -783,7 +787,7 @@ html,body{
       <h2>Unblocks</h2>
     </div>
   </div>
-  <div class="home-iframe-wrap"><iframe id="proxy-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
+  <div class="home-iframe-wrap"><iframe id="proxy-frame"></iframe></div>
 </section>
 
 <section id="page-games" class="page">
@@ -792,51 +796,58 @@ html,body{
 
 <section id="page-apps" class="page">
   <div id="apps-container" class="apps-grid"></div>
-  <div class="page-iframe-wrap"><iframe id="apps-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
+  <div class="page-iframe-wrap"><iframe id="apps-frame"></iframe></div>
 </section>
 
 <section id="page-unblocks" class="page">
   <div id="unblocks-container"></div>
-  <div class="page-iframe-wrap"><iframe id="unblocks-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe></div>
+  <div class="page-iframe-wrap"><iframe id="unblocks-frame"></iframe></div>
 </section>
 
 <section id="page-contacts" class="page">
   <div id="contacts-container"></div>
 </section>
 
-        </div>
-            </div>
-          </div>
-
 <!-- Game / App Overlay -->
 <div id="game-overlay" data-pos="left">
   <div id="game-toolbar">
     <button class="tb-expand" title="Toggle toolbar" onclick="toggleToolbar()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span>Menu</span>
     </button>
     <div class="tb-btns">
       <button title="Back" onclick="closeGameOverlay()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Back</span>
       </button>
       <button id="tb-fav" title="Add to favorites" onclick="toggleFavorite()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Star</span>
       </button>
       <button title="Refresh" onclick="refreshGameFrame()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span>Refresh</span>
       </button>
       <button title="Auto Clicker" onclick="openAutoClicker()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M4 10l4.5 4.5"/><circle cx="12" cy="12" r="2"/></svg>
+        <span>Clicker</span>
       </button>
       <button title="Fullscreen" onclick="fullscreenGame()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        <span>Fullscreen</span>
       </button>
       <button title="Open in about:blank" onclick="openAboutBlank()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span>Blank Tab</span>
       </button>
     </div>
   </div>
-  <iframe id="game-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" allowfullscreen></iframe>
+  <iframe id="game-frame" allowfullscreen></iframe>
 </div>
+
+        </div>
+            </div>
+          </div>
 
 <!-- Auto Clicker Modal -->
 <div id="ac-modal">
@@ -1384,7 +1395,6 @@ function openSettings(){
   var mainCloakTitle=localStorage.getItem('mainCloakTitle')||'Home | Schoology';
   var mainCloakIcon=localStorage.getItem('mainCloakIcon')||'/cloak-images/schoology.png';
   var cursorEnabled=localStorage.getItem('enableCursor')!=='false';
-  var trailEnabled=localStorage.getItem('mouseTrail')!=='false';
   var cloakSite=localStorage.getItem('cloakSite')||'Google Classroom';
   var cloakMethod=localStorage.getItem('cloakMethod')||'about:blank';
   var autoCloak=localStorage.getItem('autoCloak')||'none';
@@ -1400,10 +1410,6 @@ function openSettings(){
     '<div class="setting-row">'+
       '<span class="setting-label">Cursor</span>'+
       '<div class="toggle-switch'+(cursorEnabled?' active':'')+'" onclick="this.classList.toggle(\'active\');var on=this.classList.contains(\'active\');localStorage.setItem(\'enableCursor\',on);if(on){document.body.classList.add(\'custom-cursor-enabled\')}else{document.body.classList.remove(\'custom-cursor-enabled\')};window.dispatchEvent(new Event(\'cursorSettingChanged\'))"></div>'+
-    '</div>'+
-    '<div class="setting-row">'+
-      '<span class="setting-label">Mouse Trail</span>'+
-      '<div class="toggle-switch'+(trailEnabled?' active':'')+'" onclick="this.classList.toggle(\'active\');localStorage.setItem(\'mouseTrail\',this.classList.contains(\'active\'));window.dispatchEvent(new Event(\'mouseTrailSettingChanged\'))"></div>'+
     '</div>'+
     '<hr class="setting-divider">'+
 
@@ -1641,6 +1647,7 @@ var _goCurrentUrl='';
 var _goSourcePage='';
 
 function applyToolbarPos(){
+  if(!_goOverlay) return;
   var pos=localStorage.getItem('gameToolbarPosition')||'left';
   _goOverlay.setAttribute('data-pos',pos);
 }
@@ -1655,13 +1662,14 @@ function loadGameInPage(url,sourcePage){
   updateFavBtn();
 }
 function closeGameOverlay(){
+  if(!_goOverlay) return;
   _goOverlay.classList.remove('active');
-  _goFrame.src='';
+  if(_goFrame) _goFrame.src='';
   _goCurrentUrl='';
   stopAutoClicker();
 }
 function toggleToolbar(){
-  _goToolbar.classList.toggle('expanded');
+  if(_goToolbar) _goToolbar.classList.toggle('expanded');
 }
 function refreshGameFrame(){
   if(_goFrame.src) _goFrame.src=_goFrame.src;
@@ -1675,7 +1683,7 @@ function openAboutBlank(){
   if(!url) return;
   var w=window.open('about:blank','_blank');
   if(w){
-    w.document.write('<html><head><title>Loading...</title></head><body style="margin:0;overflow:hidden"><iframe src="'+url+'" style="width:100%;height:100%;border:0" allowfullscreen sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"></iframe></body></html>');
+    w.document.write('<html><head><title>Loading...</title></head><body style="margin:0;overflow:hidden"><iframe src="'+url+'" style="width:100%;height:100%;border:0" allowfullscreen></iframe></body></html>');
     w.document.close();
   }
 }
@@ -2012,91 +2020,6 @@ document.addEventListener('keydown',function(e){
   (function loop(){updateEffects();requestAnimationFrame(loop)})();
 })();
 
-// ══ MOUSE TRAIL (grid of squares with ring-shaped reveal) ══
-(function(){
-  var canvas=document.getElementById('trail-canvas');
-  if(!canvas) return;
-  var ctx=canvas.getContext('2d');
-  var CELL=6;
-  var OUTER=48;
-  var INNER=16;
-  var FADE_SPEED=0.025;
-  var cols,rows;
-  var grid=[];
-  var mx=-9999,my=-9999;
-
-  function isEnabled(){return localStorage.getItem('mouseTrail')!=='false'}
-
-  function resize(){
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-    cols=Math.ceil(canvas.width/CELL);
-    rows=Math.ceil(canvas.height/CELL);
-    var newGrid=new Float32Array(cols*rows);
-    for(var i=0;i<newGrid.length;i++) newGrid[i]=grid[i]||0;
-    grid=newGrid;
-  }
-  resize();
-  window.addEventListener('resize',resize);
-
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
-  document.addEventListener('mouseleave',function(){mx=-9999;my=-9999});
-
-  var colors=[
-    [168,85,247],
-    [0,250,255],
-    [255,61,142],
-    [4,0,255]
-  ];
-
-  function draw(){
-    if(!isEnabled()){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      canvas.style.display='none';
-      requestAnimationFrame(draw);
-      return;
-    }
-    canvas.style.display='';
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    var outerSq=OUTER*OUTER;
-    var innerSq=INNER*INNER;
-
-    for(var r=0;r<rows;r++){
-      for(var c=0;c<cols;c++){
-        var idx=r*cols+c;
-        var cx=c*CELL+CELL*0.5;
-        var cy=r*CELL+CELL*0.5;
-        var dx=cx-mx, dy=cy-my;
-        var distSq=dx*dx+dy*dy;
-
-        if(distSq<=outerSq && distSq>=innerSq){
-          grid[idx]=1;
-        }else{
-          grid[idx]-=FADE_SPEED;
-          if(grid[idx]<0) grid[idx]=0;
-        }
-
-        if(grid[idx]>0){
-          var a=grid[idx];
-          var ci=((c+r)%colors.length+colors.length)%colors.length;
-          var col=colors[ci];
-          ctx.fillStyle='rgba('+col[0]+','+col[1]+','+col[2]+','+(a*0.6)+')';
-          ctx.fillRect(c*CELL,r*CELL,CELL-1,CELL-1);
-        }
-      }
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
-
-  window.addEventListener('mouseTrailSettingChanged',function(){
-    if(!isEnabled()){
-      grid=new Float32Array(cols*rows);
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-    }
-  });
-})();
     </script>
 <script src="/js/cursor.js"></script>
   </body>
