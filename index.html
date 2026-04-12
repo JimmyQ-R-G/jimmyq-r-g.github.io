@@ -134,10 +134,28 @@ html,body{
 }
 
 /* ══ TOP BAR ══ */
-.top-bar .brand{
-  font-size:14px;font-weight:400;letter-spacing:.5px;
-  white-space:nowrap;opacity:.85;flex-shrink:0;margin-right:4px;
+.top-bar .brand-wrap{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer;
+  margin-right:4px;
 }
+.top-bar .brand-logo{
+  width:22px;height:30px;flex-shrink:0;position:relative;
+  filter:drop-shadow(0 0 8px var(--accent-purple));
+  transition:transform .35s ease,filter .35s ease;
+}
+.top-bar .brand-logo .logo-shape{width:100%;height:100%}
+.top-bar .brand-logo .jq-letter{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.top-bar .brand-logo .jq-letter svg{width:56%;height:56%;display:block}
+.top-bar .brand-wrap:hover .brand-logo{transform:scale(1.1);filter:drop-shadow(0 0 14px var(--accent-purple)) drop-shadow(0 0 4px #fff)}
+.top-bar .brand-text{
+  font-size:14px;font-weight:500;letter-spacing:.5px;
+  white-space:nowrap;opacity:.85;
+  transition:opacity .3s ease;
+}
+.top-bar .brand-wrap:hover .brand-text{opacity:1}
 .top-bar .settings-top{
   width:34px;height:34px;border:0;background:0;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
@@ -553,7 +571,17 @@ html,body{
 <div id="app" data-page="home">
 
 <header class="top-bar">
-  <span class="brand">JimmyQRG</span>
+  <div class="brand-wrap" onclick="navigate('home')">
+    <div class="brand-logo">
+      <div class="logo-shape"></div>
+      <div class="jq-letter">
+        <svg viewBox="18 16 14 26" fill="none">
+          <path d="M26.994 18H30.202c.693 0 1.141.111 1.345.332.224.22.336.682.336 1.384v18.333c0 .702-.112 1.164-.336 1.385-.203.22-.652.331-1.345.331H26.994V18ZM20.546 33.052h3.85c.285 0 .459.04.52.12.061.08.092.251.092.512v2.348c0 .321.04.552.122.692.102.12.336.181.703.181h.244v2.86h-1.436c-1.487 0-2.618-.251-3.392-.753-.754-.501-1.13-1.374-1.13-2.619v-2.709c0-.421.142-.632.427-.632Z" fill="white"/>
+        </svg>
+      </div>
+    </div>
+    <span class="brand-text">JimmyQrg</span>
+  </div>
 
   <div class="tb-section tb-home">
     <div class="nav-btns">
