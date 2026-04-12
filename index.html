@@ -139,16 +139,17 @@ html,body{
 .top-bar .settings-top{
   width:34px;height:34px;border:0;background:0;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  border-radius:8px;margin-left:auto;flex-shrink:0;
+  border-radius:8px;flex-shrink:0;
   transition:background .35s ease;
 }
+.top-bar .settings-top:first-of-type{margin-left:auto}
 .top-bar .settings-top:hover{background:rgba(255,255,255,.08)}
 .top-bar .settings-top svg{
   width:20px;height:20px;stroke:var(--text);stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:.7;
   transition:transform .5s ease,opacity .35s ease;
 }
-.top-bar .settings-top:hover svg{transform:rotate(45deg);opacity:1}
+.top-bar .settings-top:hover svg{opacity:1}
 
 .tb-section{display:none;flex:1;align-items:center;gap:10px;min-width:0}
 #app[data-page="home"] .tb-home,
@@ -547,6 +548,9 @@ html,body{
     </div>
   </div>
 
+  <button class="settings-top" title="Announcements" onclick="openAnnouncement()">
+    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+  </button>
   <button class="settings-top" title="Settings" onclick="openSettings()">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
   </button>
@@ -634,6 +638,33 @@ html,body{
       <button class="modal-close" onclick="closeSettings()">&times;</button>
     </div>
     <div class="modal-body" id="settings-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="announcement-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Announcements</h3>
+      <button class="modal-close" onclick="closeAnnouncement()">&times;</button>
+    </div>
+    <div class="modal-body" id="announcement-body">
+      <p>Welcome to <strong>JimmyQrg</strong>! Check here for updates, new game releases, and important information.</p>
+      <p>More information and updates can be found
+        <a href="https://docs.google.com/document/d/1Xv3x76SwL2CkZPIJq0uMNBt_YQNRfWrR5H5mXILuxfw/edit?tab=t.w5htvyo8czbl" target="_blank" style="color:var(--accent-purple);text-decoration:underline">here</a>.</p>
+      <hr style="border:1px solid var(--border-light);margin:16px 0">
+      <p style="font-weight:500">Latest updates:</p>
+      <ul style="margin:8px 0 12px 20px;opacity:.85;line-height:1.7">
+        <li>Added Big Flappy Towers Tiny Square</li>
+        <li>Added Territorial.io</li>
+        <li>Added Five Nights At Freddy's & Epstein's 1~4 (FNAF)</li>
+        <li>Added Bomb Pass</li>
+        <li>Added Boom Slingers</li>
+      </ul>
+      <p style="font-weight:500">History:</p>
+      <ul style="margin:8px 0 0 20px;opacity:.85;line-height:1.7">
+        <li>Added in total <b>108</b> games</li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -1023,6 +1054,7 @@ function openSettings(){
   var cloakMethod=localStorage.getItem('cloakMethod')||'about:blank';
   var autoCloak=localStorage.getItem('autoCloak')||'none';
   var closePrevention=localStorage.getItem('closePreventionEnabled')!=='false';
+  var autoAnnounce=localStorage.getItem('autoAnnouncement')||'always';
 
   function selOpt(val,cur){return val===cur?' selected':''}
 
@@ -1127,6 +1159,21 @@ function openSettings(){
     '</div>'+
     '<hr class="setting-divider">'+
 
+    '<div class="setting-section-title">Announcements</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Auto Pop Up</span>'+
+      '<select class="setting-select" onchange="localStorage.setItem(\'autoAnnouncement\',this.value)">'+
+        '<option value="always"'+(autoAnnounce==='always'?' selected':'')+'>Always</option>'+
+        '<option value="big"'+(autoAnnounce==='big'?' selected':'')+'>Only big announcements</option>'+
+        '<option value="never"'+(autoAnnounce==='never'?' selected':'')+'>Never</option>'+
+      '</select>'+
+    '</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">View Announcements</span>'+
+      '<button class="setting-btn" onclick="closeSettings();openAnnouncement()">Open</button>'+
+    '</div>'+
+    '<hr class="setting-divider">'+
+
     '<div class="setting-section-title">Legal</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">DMCA</span>'+
@@ -1146,6 +1193,26 @@ document.addEventListener('click',function(e){
   var modal=document.getElementById('settings-modal');
   if(e.target===modal) closeSettings();
 });
+
+var hasBigAnnouncement=false;
+function openAnnouncement(){
+  document.getElementById('announcement-modal').classList.add('open');
+}
+function closeAnnouncement(){
+  document.getElementById('announcement-modal').classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  var modal=document.getElementById('announcement-modal');
+  if(e.target===modal) closeAnnouncement();
+});
+(function(){
+  var setting=localStorage.getItem('autoAnnouncement')||'always';
+  if(setting==='always'){
+    window.addEventListener('load',openAnnouncement);
+  }else if(setting==='big'&&hasBigAnnouncement){
+    window.addEventListener('load',openAnnouncement);
+  }
+})();
 
 var recordingPanicKey=false;
 function recordPanicKey(btn){
