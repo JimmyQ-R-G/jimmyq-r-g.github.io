@@ -13,27 +13,27 @@
   const cloakEnabled = localStorage.getItem('mainPageCloak') === 'true';
   
   if (cloakEnabled) {
-    // Apply cloak immediately
-    document.title = 'Home | Schoology';
+    const cloakTitle = localStorage.getItem('mainCloakTitle') || 'Home | Schoology';
+    const cloakIconSrc = localStorage.getItem('mainCloakIcon') || '/cloak-images/schoology.png';
+
+    document.title = cloakTitle;
     
-    // Update or create favicon link
     let favicon = document.querySelector('link[rel="icon"]');
     if (!favicon) {
       favicon = document.createElement('link');
       favicon.rel = 'icon';
       document.head.appendChild(favicon);
     }
-    favicon.href = '/cloak-images/schoology.png';
+    favicon.href = cloakIconSrc;
     favicon.type = 'image/png';
     
-    // Also handle shortcut icon
     let shortcutIcon = document.querySelector('link[rel="shortcut icon"]');
     if (!shortcutIcon) {
       shortcutIcon = document.createElement('link');
       shortcutIcon.rel = 'shortcut icon';
       document.head.appendChild(shortcutIcon);
     }
-    shortcutIcon.href = '/cloak-images/schoology.png';
+    shortcutIcon.href = cloakIconSrc;
     shortcutIcon.type = 'image/png';
   }
 })();
