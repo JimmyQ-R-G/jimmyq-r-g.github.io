@@ -2,32 +2,435 @@
 <html lang="en">
 
 <head>
-  <script src="/js/panicKey.js"></script>
-  <script src="/js/openGame.js"></script>
-
-    <base href="https://cdn.jsdelivr.net/gh/genizy/soundboard@main/">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5521219086088837" crossorigin="anonymous"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-"></script>
-    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WX5VS54ZDW"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-WX5VS54ZDW');
+    </script>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soundboard</title>
-    <script src="sounds.js" type="module"></script>
-    <script src="main.js" type="module"></script>
-    <link href="style.css" rel="stylesheet">
+    <script>
+        (function(){
+            var CDN='https://cdn.jsdelivr.net/gh/genizy/soundboard@main/';
+            var _Audio=window.Audio;
+            window.Audio=function(src){
+                if(src&&typeof src==='string'&&!src.startsWith('http')&&!src.startsWith('data:')&&!src.startsWith('blob:'))src=CDN+src;
+                return new _Audio(src);
+            };
+            window.Audio.prototype=_Audio.prototype;
+            var _fetch=window.fetch;
+            window.fetch=function(url,opts){
+                if(typeof url==='string'&&!url.startsWith('http')&&!url.startsWith('data:')&&!url.startsWith('blob:')&&!url.startsWith('/'))url=CDN+url;
+                return _fetch.call(this,url,opts);
+            };
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/genizy/soundboard@main/sounds.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/gh/genizy/soundboard@main/main.js" type="module"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      /* Custom Cursor */
-      * {
-        cursor: url('/cursor/cursor.png') 24 24, auto !important;
-      }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0a0612;
+  --surface:rgba(255,255,255,.04);
+  --surface-hover:rgba(255,255,255,.08);
+  --border:rgba(255,255,255,.08);
+  --border-hover:rgba(168,85,247,.35);
+  --accent:#a855f7;
+  --accent-light:#c084fc;
+  --accent-dim:rgba(168,85,247,.25);
+  --text:#e2e0eb;
+  --text-muted:rgba(255,255,255,.45);
+  --glass:rgba(14,5,20,.7);
+  --radius:14px;
+  --radius-sm:10px;
+}
+
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  margin:0;padding:0;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%,rgba(168,85,247,.12) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%,rgba(99,40,200,.1) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(60,20,120,.08) 0%,transparent 70%);
+}
+
+#controls{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  padding:12px 20px;
+  background:rgba(10,6,18,.85);
+  backdrop-filter:blur(20px) saturate(1.4);
+  -webkit-backdrop-filter:blur(20px) saturate(1.4);
+  border-bottom:1px solid var(--border);
+}
+
+.control-button{
+  padding:8px 16px;border:1px solid var(--border);
+  border-radius:var(--radius-sm);font-weight:600;font-size:.8rem;
+  cursor:pointer;font-family:inherit;letter-spacing:.01em;
+  background:var(--surface);color:var(--text-muted);
+  backdrop-filter:blur(8px);
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+.control-button:hover{
+  background:var(--surface-hover);border-color:var(--border-hover);
+  color:var(--text);transform:translateY(-1px);
+  box-shadow:0 4px 16px rgba(168,85,247,.15);
+}
+.control-button:active{transform:translateY(0);box-shadow:none}
+
+.favorites-toggle{
+  background:rgba(250,204,21,.08);color:#fbbf24;border-color:rgba(250,204,21,.2);
+}
+.favorites-toggle:hover{
+  background:rgba(250,204,21,.16);border-color:rgba(250,204,21,.4);color:#fde68a;
+}
+
+.overlap-toggle{
+  background:var(--surface);color:var(--text-muted);border-color:var(--border);
+}
+
+.stop-button{
+  background:rgba(239,68,68,.08);color:#f87171;border-color:rgba(239,68,68,.2);
+}
+.stop-button:hover{
+  background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.4);color:#fca5a5;
+}
+
+.tts-toggle{
+  background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(99,40,200,.12));
+  color:var(--accent-light);border-color:rgba(168,85,247,.25);
+}
+.tts-toggle:hover{
+  background:linear-gradient(135deg,rgba(168,85,247,.22),rgba(99,40,200,.22));
+  border-color:rgba(168,85,247,.5);
+}
+.tts-toggle-active{
+  background:linear-gradient(135deg,var(--accent),#7c3aed);
+  color:#fff;border-color:transparent;
+}
+
+#searchInput{
+  padding:8px 16px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  background:var(--surface);color:var(--text);
+  font-family:inherit;font-size:.85rem;
+  flex:1;min-width:140px;
+  backdrop-filter:blur(8px);
+  transition:border-color .25s,box-shadow .25s;
+}
+#searchInput::placeholder{color:var(--text-muted)}
+#searchInput:focus{
+  outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-dim);
+}
+
+#soundboard{
+  display:flex;flex-wrap:wrap;gap:28px;
+  justify-content:center;
+  padding:90px 24px 40px;
+}
+
+.sound-wrapper{
+  display:flex;flex-direction:column;align-items:center;
+  width:120px;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.sound-wrapper:hover{
+  transform:scale(1.08) translateY(-4px);
+  filter:none;
+}
+
+.sound-button-img{
+  all:unset;cursor:pointer;
+  width:96px;height:96px;position:relative;
+}
+
+.sound-image{
+  width:100%;height:100%;
+  background-color:var(--btn-color);
+  background-image:url('https://cdn.jsdelivr.net/gh/genizy/soundboard@155ea6666132bde6f7f14c413431e0fd7eaeaba9/button.png');
+  background-size:cover;background-position:center;
+  background-blend-mode:multiply;
+  border-radius:22px;
+  transition:transform .15s cubic-bezier(.4,0,.2,1),box-shadow .3s,filter .2s;
+  box-shadow:
+    0 0 12px color-mix(in srgb,var(--btn-color) 40%,transparent),
+    0 4px 20px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,255,255,.1);
+}
+.sound-wrapper:hover .sound-image{
+  box-shadow:
+    0 0 24px color-mix(in srgb,var(--btn-color) 60%,transparent),
+    0 8px 30px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+.sound-image.pressed{
+  background-image:url('https://cdn.jsdelivr.net/gh/genizy/soundboard@155ea6666132bde6f7f14c413431e0fd7eaeaba9/button_pressed.png');
+  transform:scale(0.92);
+  box-shadow:
+    0 0 20px color-mix(in srgb,var(--btn-color) 70%,transparent),
+    0 2px 8px rgba(0,0,0,.6),
+    inset 0 -1px 0 rgba(255,255,255,.05);
+}
+
+.sound-label{
+  margin-top:10px;text-align:center;
+  font-size:.78rem;font-weight:500;
+  color:var(--text-muted);
+  word-break:break-word;line-height:1.35;
+  transition:color .25s;
+}
+.sound-wrapper:hover .sound-label{color:var(--text)}
+
+.right-click-panel{
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  padding:8px 4px;z-index:1001;
+  border-radius:var(--radius-sm);
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.right-click-panel-label{
+  font-weight:600;font-size:.82rem;margin-bottom:4px;
+  padding:4px 10px;color:var(--text);
+}
+.right-click-panel-button{
+  padding:6px 10px;border-radius:6px;
+  cursor:pointer;font-size:.8rem;color:var(--text-muted);
+  transition:background .15s,color .15s;
+}
+.right-click-panel-button:hover{
+  background:var(--surface-hover);color:var(--text);
+}
+
+/* TTS Panel */
+#ttsPanel{
+  position:fixed;top:64px;right:20px;
+  width:380px;max-width:calc(100vw - 40px);
+  z-index:999;
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(1.5);
+  -webkit-backdrop-filter:blur(24px) saturate(1.5);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:0 12px 48px rgba(0,0,0,.6),0 0 0 1px rgba(168,85,247,.08);
+  display:flex;flex-direction:column;gap:14px;
+  font-family:inherit;
+  animation:tts-slide-in .25s cubic-bezier(.34,1.56,.64,1);
+}
+#ttsPanel.hidden{display:none}
+
+@keyframes tts-slide-in{
+  from{opacity:0;transform:translateY(-12px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.tts-panel-header{display:flex;justify-content:space-between;align-items:center}
+.tts-title{
+  font-size:.88rem;font-weight:700;
+  color:var(--accent-light);letter-spacing:.06em;text-transform:uppercase;
+}
+.tts-close{
+  background:none;border:none;color:var(--text-muted);
+  cursor:pointer;font-size:1rem;line-height:1;
+  padding:4px 8px;border-radius:6px;
+  transition:color .15s,background .15s;
+}
+.tts-close:hover{color:#fff;background:rgba(255,255,255,.08)}
+
+.tts-textarea{
+  width:100%;min-height:80px;
+  background:rgba(0,0,0,.3);color:var(--text);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 12px;font-size:.85rem;resize:vertical;
+  box-sizing:border-box;font-family:inherit;
+  transition:border-color .25s,box-shadow .25s;
+}
+.tts-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.tts-textarea::placeholder{color:var(--text-muted)}
+
+.tts-controls-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+.tts-control-group{display:flex;flex-direction:column;gap:5px}
+.tts-control-group.full-width{grid-column:1/-1}
+
+.tts-label{
+  font-size:.7rem;font-weight:600;
+  color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.tts-val{
+  font-size:.78rem;color:var(--accent-light);
+  font-variant-numeric:tabular-nums;
+  background:rgba(168,85,247,.1);padding:1px 7px;border-radius:5px;
+}
+
+.tts-select{
+  background:rgba(0,0,0,.3);color:var(--text);
+  border:1px solid var(--border);border-radius:8px;
+  padding:6px 28px 6px 8px;font-size:.82rem;
+  cursor:pointer;width:100%;font-family:inherit;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a855f7' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  transition:border-color .25s;
+}
+.tts-select:focus{outline:none;border-color:var(--accent)}
+.tts-select option{background:#1a0e2e}
+
+.tts-slider{
+  -webkit-appearance:none;width:100%;height:4px;
+  border-radius:2px;background:rgba(255,255,255,.1);
+  cursor:pointer;outline:none;
+}
+.tts-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;
+  border-radius:50%;background:var(--accent);cursor:pointer;
+  box-shadow:0 0 8px rgba(168,85,247,.5);
+  transition:transform .15s,box-shadow .15s;
+}
+.tts-slider::-webkit-slider-thumb:hover{
+  transform:scale(1.3);box-shadow:0 0 14px rgba(168,85,247,.7);
+}
+.tts-slider::-moz-range-thumb{
+  width:14px;height:14px;border-radius:50%;
+  background:var(--accent);border:none;cursor:pointer;
+}
+
+.tts-status{
+  font-size:.78rem;padding:6px 10px;border-radius:8px;
+  background:rgba(0,0,0,.25);border:1px solid var(--border);
+  color:var(--text-muted);
+  transition:background .3s,color .3s,border-color .3s;
+}
+.tts-status--speaking{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.25);color:#4ade80}
+.tts-status--paused{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25);color:#fbbf24}
+.tts-status--done{background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.25);color:var(--accent-light)}
+.tts-status--error{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25);color:#f87171}
+.tts-status--warn{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25);color:#fbbf24}
+.tts-status--idle{background:rgba(0,0,0,.25);border-color:var(--border);color:var(--text-muted)}
+
+.tts-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tts-btn{
+  flex:1;min-width:56px;padding:8px 10px;
+  border:none;border-radius:var(--radius-sm);
+  font-weight:600;font-size:.76rem;cursor:pointer;
+  font-family:inherit;white-space:nowrap;
+  transition:filter .2s,transform .15s,opacity .2s;
+}
+.tts-btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important;filter:none!important}
+.tts-btn:not(:disabled):hover{filter:brightness(1.15);transform:translateY(-1px)}
+
+.tts-btn-speak{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+.tts-btn-pause{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a0e00}
+.tts-btn-resume{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
+.tts-btn-stop{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.tts-btn-reset{background:var(--surface);color:var(--text-muted);border:1px solid var(--border)}
+
+.tts-speaking-display{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(0,0,0,.25);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;
+}
+.tts-speaking-display.hidden{display:none}
+.tts-speaking-label{
+  font-size:.7rem;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;
+}
+.tts-current-word{
+  font-size:1.05rem;font-weight:700;
+  color:var(--accent-light);letter-spacing:.02em;
+  transition:color .1s;
+}
+@keyframes word-pop-anim{
+  0%{transform:scale(1);color:#fff}
+  40%{transform:scale(1.25);color:var(--accent-light)}
+  100%{transform:scale(1);color:var(--accent-light)}
+}
+.tts-current-word.word-pop{animation:word-pop-anim .25s ease-out forwards}
+
+@media(max-width:600px){
+  #controls{padding:10px 12px;gap:6px}
+  .control-button{padding:6px 12px;font-size:.75rem}
+  #soundboard{gap:18px;padding:80px 14px 30px}
+  .sound-wrapper{width:100px}
+  .sound-button-img{width:80px;height:80px}
+  .sound-image{border-radius:18px}
+  .sound-label{font-size:.72rem}
+  #ttsPanel{top:60px;right:10px;left:10px;width:auto}
+  .tts-controls-grid{grid-template-columns:1fr}
+  .tts-control-group.full-width{grid-column:1}
+}
     </style>
 </head>
 
 <body>
     <div id="controls">
-        <button id="toggleFavorites" class="control-button favorites-toggle">⭐ Favorites: OFF</button>
-        <button id="toggleButton" class="control-button overlap-toggle">🔇 Overlap: OFF</button>
-        <button id="stopButton" class="control-button stop-button">⏹️ Stop All Sounds</button>
+        <button id="toggleFavorites" class="control-button favorites-toggle">&#11088; Favorites: OFF</button>
+        <button id="toggleButton" class="control-button overlap-toggle">&#128263; Overlap: OFF</button>
+        <button id="stopButton" class="control-button stop-button">&#9209;&#65039; Stop All Sounds</button>
         <input id="searchInput" type="text" placeholder="Search sounds...">
+        <button id="ttsToggle" class="control-button tts-toggle">&#128483;&#65039; Text-to-Speech</button>
+    </div>
+    <div id="ttsPanel" class="tts-panel hidden">
+        <div class="tts-panel-header">
+            <span class="tts-title">&#127897;&#65039; Text-to-Speech</span>
+            <button id="ttsClose" class="tts-close">&#10005;</button>
+        </div>
+        <textarea id="ttsText" class="tts-textarea" placeholder="Type something to speak..."></textarea>
+        <div class="tts-controls-grid">
+            <div class="tts-control-group full-width">
+                <label class="tts-label">Voice</label>
+                <select id="ttsVoice" class="tts-select"></select>
+            </div>
+            <div class="tts-control-group">
+                <label class="tts-label">Volume <span id="ttsVolumeVal" class="tts-val">1.0</span></label>
+                <input type="range" id="ttsVolume" class="tts-slider" min="0" max="1" step="0.05" value="1">
+            </div>
+            <div class="tts-control-group">
+                <label class="tts-label">Rate <span id="ttsRateVal" class="tts-val">1.0</span></label>
+                <input type="range" id="ttsRate" class="tts-slider" min="0.1" max="10" step="0.1" value="1">
+            </div>
+            <div class="tts-control-group">
+                <label class="tts-label">Pitch <span id="ttsPitchVal" class="tts-val">1.0</span></label>
+                <input type="range" id="ttsPitch" class="tts-slider" min="0" max="2" step="0.05" value="1">
+            </div>
+            <div class="tts-control-group">
+                <label class="tts-label">Filter by Lang</label>
+                <select id="ttsLangFilter" class="tts-select"></select>
+            </div>
+        </div>
+        <div id="ttsStatus" class="tts-status">Ready</div>
+        <div class="tts-actions">
+            <button id="ttsSpeak" class="tts-btn tts-btn-speak">&#9654; Speak</button>
+            <button id="ttsPause" class="tts-btn tts-btn-pause" disabled>&#9208; Pause</button>
+            <button id="ttsResume" class="tts-btn tts-btn-resume" disabled>&#9654; Resume</button>
+            <button id="ttsStop" class="tts-btn tts-btn-stop" disabled>&#9209; Stop</button>
+            <button id="ttsReset" class="tts-btn tts-btn-reset">&#8634; Reset</button>
+        </div>
+        <div id="ttsSpeaking" class="tts-speaking-display hidden">
+            <span class="tts-speaking-label">Now speaking:</span>
+            <span id="ttsCurrentWord" class="tts-current-word"></span>
+        </div>
     </div>
     <div id="soundboard"></div>
 </body>

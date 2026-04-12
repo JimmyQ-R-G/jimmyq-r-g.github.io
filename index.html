@@ -97,11 +97,6 @@ html,body{
 }
 .sidebar .logo:hover{transform:scale(1.12);filter:drop-shadow(0 0 20px var(--accent-purple)) drop-shadow(0 0 6px #fff)}
 .sidebar .logo svg{width:100%;height:100%;display:block}
-.sidebar .jq-mark{
-  width:20px;height:24px;margin-bottom:6px;flex-shrink:0;
-  filter:drop-shadow(0 0 23px #fff);
-}
-.sidebar .jq-mark svg{width:100%;height:100%;display:block}
 .sidebar nav{
   display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;
 }
@@ -135,27 +130,13 @@ html,body{
 
 /* ══ TOP BAR ══ */
 .top-bar .brand-wrap{
-  display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer;
-  margin-right:4px;
-}
-.top-bar .brand-logo{
-  width:22px;height:30px;flex-shrink:0;position:relative;
-  filter:drop-shadow(0 0 8px var(--accent-purple));
+  flex-shrink:0;cursor:pointer;margin-right:4px;
+  display:flex;align-items:center;
   transition:transform .35s ease,filter .35s ease;
+  filter:drop-shadow(0 0 6px rgba(136,65,214,.6));
 }
-.top-bar .brand-logo .logo-shape{width:100%;height:100%}
-.top-bar .brand-logo .jq-letter{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-}
-.top-bar .brand-logo .jq-letter svg{width:56%;height:56%;display:block}
-.top-bar .brand-wrap:hover .brand-logo{transform:scale(1.1);filter:drop-shadow(0 0 14px var(--accent-purple)) drop-shadow(0 0 4px #fff)}
-.top-bar .brand-text{
-  font-size:14px;font-weight:500;letter-spacing:.5px;
-  white-space:nowrap;opacity:.85;
-  transition:opacity .3s ease;
-}
-.top-bar .brand-wrap:hover .brand-text{opacity:1}
+.top-bar .brand-wrap:hover{transform:scale(1.06);filter:drop-shadow(0 0 14px var(--accent-purple)) drop-shadow(0 0 4px #fff)}
+.top-bar .brand-svg{height:28px;width:auto;display:block}
 .top-bar .settings-top{
   width:34px;height:34px;border:0;background:0;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
@@ -547,7 +528,6 @@ html,body{
   .top-bar{padding:0 10px;height:48px;min-height:48px}
   .sidebar{width:44px;min-width:44px;padding:8px 0 10px}
   .sidebar .logo{width:28px;height:38px}
-  .sidebar .jq-mark{width:16px;height:20px}
   .sidebar nav button{width:32px;height:32px}
   .sidebar nav button svg{width:16px;height:16px}
   .home-hero h1{font-size:32px}
@@ -572,15 +552,14 @@ html,body{
 
 <header class="top-bar">
   <div class="brand-wrap" onclick="navigate('home')">
-    <div class="brand-logo">
-      <div class="logo-shape"></div>
-      <div class="jq-letter">
-        <svg viewBox="18 16 14 26" fill="none">
-          <path d="M26.994 18H30.202c.693 0 1.141.111 1.345.332.224.22.336.682.336 1.384v18.333c0 .702-.112 1.164-.336 1.385-.203.22-.652.331-1.345.331H26.994V18ZM20.546 33.052h3.85c.285 0 .459.04.52.12.061.08.092.251.092.512v2.348c0 .321.04.552.122.692.102.12.336.181.703.181h.244v2.86h-1.436c-1.487 0-2.618-.251-3.392-.753-.754-.501-1.13-1.374-1.13-2.619v-2.709c0-.421.142-.632.427-.632Z" fill="white"/>
-        </svg>
-      </div>
-    </div>
-    <span class="brand-text">JimmyQrg</span>
+    <svg class="brand-svg" viewBox="6 14 168 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="brand-diamond-clip"><path d="M42.334 28L29.964 40.37V55.845H22.478V40.37L10.107 28L26.221 11.887L42.334 28ZM16.498 28.027L26.221 37.749L35.942 28.027L26.221 18.324L16.498 28.027Z"/></clipPath>
+      </defs>
+      <foreignObject x="6" y="8" width="40" height="52" clip-path="url(#brand-diamond-clip)"><div xmlns="http://www.w3.org/1999/xhtml" style="background:conic-gradient(from 90deg,#00FAFF 0deg,#A500FF 117.7deg,#FF3D8E 211.2deg,#0400FF 315deg,#00FAFF 360deg);width:100%;height:100%"></div></foreignObject>
+      <path d="M26.994 18H30.202c.693 0 1.141.111 1.345.332.224.22.336.682.336 1.384v18.333c0 .702-.112 1.164-.336 1.385-.203.22-.652.331-1.345.331H26.994V18ZM20.546 33.052h3.85c.285 0 .459.04.52.12.061.08.092.251.092.512v2.348c0 .321.04.552.122.692.102.12.336.181.703.181h.244v2.86h-1.436c-1.487 0-2.618-.251-3.392-.753-.754-.501-1.13-1.374-1.13-2.619v-2.709c0-.421.142-.632.427-.632Z" fill="white"/>
+      <path d="M60.44 32.328V29.76H62.456V32.544C62.456 33.632 63 34.176 64.088 34.176H67.832C68.92 34.176 69.464 33.632 69.464 32.544V21.264H64.04V19.44H71.48V32.328C71.48 34.776 70.256 36 67.808 36H64.112C61.664 36 60.44 34.776 60.44 32.328ZM75.3084 21.192V18.936H77.4204V21.192H75.3084ZM75.4044 36V23.52H77.3244V36H75.4044ZM81.17 36V23.52H95.33C97.73 23.52 98.93 24.72 98.93 27.12V36H97.01V26.88C97.01 25.76 96.45 25.2 95.33 25.2H91.01V36H89.09V25.2H83.09V36H81.17ZM102.686 36V23.52H116.846C119.246 23.52 120.446 24.72 120.446 27.12V36H118.526V26.88C118.526 25.76 117.966 25.2 116.846 25.2H112.526V36H110.606V25.2H104.606V36H102.686ZM122.761 23.856L122.977 23.52H124.633L128.281 34.32H128.761L132.409 23.52H134.065L134.281 23.856L128.425 40.8H126.769L126.553 40.464L128.161 36H126.961L122.761 23.856ZM136.67 32.328V23.112C136.67 20.664 137.894 19.44 140.342 19.44H145.958C148.406 19.44 149.63 20.664 149.63 23.112V32.352C149.63 34.576 148.582 35.768 146.486 35.928L148.118 39.12L147.854 39.6H146.15L144.326 36H140.342C137.894 36 136.67 34.776 136.67 32.328ZM138.686 32.544C138.686 33.632 139.23 34.176 140.318 34.176H145.982C147.07 34.176 147.614 33.632 147.614 32.544V22.896C147.614 21.808 147.07 21.264 145.982 21.264H140.318C139.23 21.264 138.686 21.808 138.686 22.896V32.544ZM153.379 36V24.96C153.939 24 154.979 23.52 156.499 23.52H158.899L159.859 24.24V25.2H156.763C156.091 25.2 155.603 25.384 155.299 25.752V36H153.379ZM162.212 32.4V27.12C162.212 24.72 163.412 23.52 165.812 23.52H172.532V37.2C172.532 39.6 171.332 40.8 168.932 40.8H164.132L163.172 40.08V39.12H168.932C170.052 39.12 170.612 38.56 170.612 37.44V36H165.812C163.412 36 162.212 34.8 162.212 32.4ZM164.132 32.64C164.132 33.76 164.692 34.32 165.812 34.32H170.612V25.2H165.812C164.692 25.2 164.132 25.76 164.132 26.88V32.64Z" fill="white"/>
+    </svg>
   </div>
 
   <div class="tb-section tb-home">
@@ -632,11 +611,6 @@ html,body{
 
 <div class="body-row">
 <aside class="sidebar">
-  <div class="jq-mark" onclick="navigate('home')" style="cursor:pointer">
-    <svg viewBox="18 16 14 26" fill="none">
-      <path d="M26.994 18H30.202c.693 0 1.141.111 1.345.332.224.22.336.682.336 1.384v18.333c0 .702-.112 1.164-.336 1.385-.203.22-.652.331-1.345.331H26.994V18ZM20.546 33.052h3.85c.285 0 .459.04.52.12.061.08.092.251.092.512v2.348c0 .321.04.552.122.692.102.12.336.181.703.181h.244v2.86h-1.436c-1.487 0-2.618-.251-3.392-.753-.754-.501-1.13-1.374-1.13-2.619v-2.709c0-.421.142-.632.427-.632Z" fill="white"/>
-    </svg>
-  </div>
   <nav>
     <button data-nav="home" class="active" onclick="navigate('home')" title="Home">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
