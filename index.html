@@ -473,6 +473,31 @@ html,body{
   pointer-events:none;
 }
 
+/* ══ BACKGROUND EFFECTS (mouse-tracking blobs) ══ */
+.bg-effects{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.bg-effect{
+  position:absolute;width:200px;height:200px;border-radius:50%;
+  opacity:.15;filter:blur(35px);
+  transition:transform 1s cubic-bezier(.23,1,.32,1);pointer-events:none;
+}
+.bg-effect-1{background:radial-gradient(circle,#0077FF 0%,rgba(0,119,255,0) 70%)}
+.bg-effect-2{background:radial-gradient(circle,#3D88FF 0%,rgba(61,136,255,0) 70%)}
+.bg-effect-3{background:radial-gradient(circle,#6A99FF 0%,rgba(106,153,255,0) 70%)}
+.bg-effect-4{background:radial-gradient(circle,#88AAFF 0%,rgba(136,170,255,0) 70%)}
+.bg-effect-5{background:radial-gradient(circle,#AA00FF 0%,rgba(170,0,255,0) 70%)}
+.bg-effect-diamond{
+  position:absolute;width:150px;height:150px;transform:rotate(45deg);
+  opacity:.12;filter:blur(25px);
+  transition:transform 1.2s cubic-bezier(.23,1,.32,1);pointer-events:none;
+  border-radius:20%;
+}
+.bg-effect-diamond-1{background:linear-gradient(135deg,#0077FF,rgba(0,119,255,.3))}
+.bg-effect-diamond-2{background:linear-gradient(135deg,#4D88FF,rgba(77,136,255,.3))}
+.bg-effect-diamond-3{background:linear-gradient(135deg,#7D99FF,rgba(125,153,255,.3))}
+.bg-effect-diamond-4{background:linear-gradient(135deg,#AA00FF,rgba(170,0,255,.3))}
+
 /* ══ KEYFRAME ANIMATIONS ══ */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeInPage{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -503,6 +528,7 @@ html,body{
 <script>if(localStorage.getItem('enableCursor')!=='false')document.body.classList.add('custom-cursor-enabled');</script>
 <canvas id="particle-canvas"></canvas>
 <div class="bg"></div>
+<div class="bg-effects"></div>
 
 <div id="app" data-page="home">
 
@@ -1165,7 +1191,6 @@ function openSettings(){
       '<select class="setting-select" onchange="localStorage.setItem(\'autoAnnouncement\',this.value)">'+
         '<option value="always"'+(autoAnnounce==='always'?' selected':'')+'>Always</option>'+
         '<option value="big"'+(autoAnnounce==='big'?' selected':'')+'>Only big announcements</option>'+
-        '<option value="never"'+(autoAnnounce==='never'?' selected':'')+'>Never</option>'+
       '</select>'+
     '</div>'+
     '<div class="setting-row">'+
@@ -1305,75 +1330,137 @@ renderApps();
 renderUnblocks();
 renderContacts();
 
+// Glowing particles
 (function(){
   var canvas=document.getElementById('particle-canvas');
   var ctx=canvas.getContext('2d');
-  var mx=window.innerWidth/2, my=window.innerHeight/2;
+  var mx=window.innerWidth/2,my=window.innerHeight/2;
   var particles=[];
   var PARTICLE_COUNT=60;
-  var colors=['rgba(168,85,247,','rgba(99,102,241,','rgba(236,72,153,','rgba(59,130,246,'];
+  var glowColors=[
+    {r:168,g:85,b:247},
+    {r:99,g:102,b:241},
+    {r:236,g:72,b:153},
+    {r:59,g:130,b:246},
+    {r:170,g:0,b:255},
+    {r:0,g:119,b:255}
+  ];
 
-  function resize(){
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-  }
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
   resize();
   window.addEventListener('resize',resize);
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
 
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX; my=e.clientY;
-  });
-
-  function Particle(){
-    this.reset();
-  }
+  function Particle(){this.reset()}
   Particle.prototype.reset=function(){
     this.x=Math.random()*canvas.width;
     this.y=Math.random()*canvas.height;
     this.size=Math.random()*2.5+0.5;
     this.speedX=(Math.random()-0.5)*0.3;
     this.speedY=(Math.random()-0.5)*0.3;
-    this.color=colors[Math.floor(Math.random()*colors.length)];
-    this.alpha=Math.random()*0.5+0.1;
+    var c=glowColors[Math.floor(Math.random()*glowColors.length)];
+    this.r=c.r;this.g=c.g;this.b=c.b;
+    this.alpha=Math.random()*0.5+0.15;
     this.life=Math.random()*300+200;
     this.maxLife=this.life;
+    this.glowSize=this.size*(3+Math.random()*4);
   };
   Particle.prototype.update=function(){
-    var dx=mx-this.x;
-    var dy=my-this.y;
+    var dx=mx-this.x,dy=my-this.y;
     var dist=Math.sqrt(dx*dx+dy*dy);
-    if(dist<200){
-      this.x+=dx*0.003;
-      this.y+=dy*0.003;
-    }
-    this.x+=this.speedX;
-    this.y+=this.speedY;
-    this.life--;
-    if(this.life<=0||this.x<-10||this.x>canvas.width+10||this.y<-10||this.y>canvas.height+10){
-      this.reset();
-    }
+    if(dist<200){this.x+=dx*0.003;this.y+=dy*0.003}
+    this.x+=this.speedX;this.y+=this.speedY;this.life--;
+    if(this.life<=0||this.x<-10||this.x>canvas.width+10||this.y<-10||this.y>canvas.height+10)this.reset();
   };
   Particle.prototype.draw=function(){
-    var fadeFactor=this.life<50?this.life/50:1;
+    var f=this.life<50?this.life/50:1;
+    var a=this.alpha*f;
+    ctx.save();
+    ctx.shadowColor='rgba('+this.r+','+this.g+','+this.b+','+a+')';
+    ctx.shadowBlur=this.glowSize;
     ctx.beginPath();
     ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fillStyle=this.color+(this.alpha*fadeFactor)+')';
+    ctx.fillStyle='rgba('+this.r+','+this.g+','+this.b+','+a+')';
     ctx.fill();
+    ctx.fill();
+    ctx.restore();
   };
 
-  for(var i=0;i<PARTICLE_COUNT;i++){
-    particles.push(new Particle());
-  }
-
+  for(var i=0;i<PARTICLE_COUNT;i++)particles.push(new Particle());
   function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(var i=0;i<particles.length;i++){
-      particles[i].update();
-      particles[i].draw();
-    }
+    for(var i=0;i<particles.length;i++){particles[i].update();particles[i].draw()}
     requestAnimationFrame(animate);
   }
   animate();
+})();
+
+// Mouse-tracking background blobs (from gh-pages)
+(function(){
+  var container=document.querySelector('.bg-effects');
+  if(!container)return;
+  var effects=[];
+  var numCircles=5,numDiamonds=4;
+  var baseRadius=Math.min(window.innerWidth,window.innerHeight)*0.4;
+  var currentBaseRadius=baseRadius;
+  var mouseX=window.innerWidth/2,mouseY=window.innerHeight/2;
+
+  for(var i=0;i<numCircles;i++){
+    var el=document.createElement('div');
+    el.className='bg-effect bg-effect-'+(i+1);
+    container.appendChild(el);
+    var off=i%2===0?50:-50;
+    effects.push({el:el,angle:(i/numCircles)*Math.PI*2,baseOffset:off,isDiamond:false,towardMouse:i%2===0});
+  }
+  for(var i=0;i<numDiamonds;i++){
+    var el=document.createElement('div');
+    el.className='bg-effect-diamond bg-effect-diamond-'+(i+1);
+    container.appendChild(el);
+    var off=i%2===0?30:-30;
+    effects.push({el:el,angle:(i/numDiamonds)*Math.PI*2+Math.PI/4,baseOffset:off,isDiamond:true,towardMouse:i%2!==0});
+  }
+
+  function updateEffects(){
+    var cx=window.innerWidth/2,cy=window.innerHeight/2;
+    var dx=mouseX-cx,dy=mouseY-cy;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    var maxDist=Math.sqrt(cx*cx+cy*cy);
+    var norm=dist/maxDist;
+    var targetR=baseRadius*(1+(norm-0.5)*0.7);
+    currentBaseRadius+=(targetR-currentBaseRadius)*0.08;
+    var mouseAngle=Math.atan2(dy,dx);
+
+    for(var i=0;i<effects.length;i++){
+      var e=effects[i];
+      var angle=e.angle;
+      if(e.towardMouse){
+        var d=mouseAngle-angle;
+        while(d>Math.PI)d-=Math.PI*2;
+        while(d<-Math.PI)d+=Math.PI*2;
+        angle+=d*0.15;
+      }else{
+        var d=(mouseAngle+Math.PI)-angle;
+        while(d>Math.PI)d-=Math.PI*2;
+        while(d<-Math.PI)d+=Math.PI*2;
+        angle+=d*0.12;
+      }
+      e.angle=angle;
+      var r=e.isDiamond?currentBaseRadius*0.7+e.baseOffset:currentBaseRadius+e.baseOffset;
+      var x=cx+Math.cos(angle)*r;
+      var y=cy+Math.sin(angle)*r;
+      var sz=e.isDiamond?75:100;
+      e.el.style.left=(x-sz)+'px';
+      e.el.style.top=(y-sz)+'px';
+    }
+  }
+
+  document.addEventListener('mousemove',function(ev){mouseX=ev.clientX;mouseY=ev.clientY});
+  window.addEventListener('resize',function(){
+    baseRadius=Math.min(window.innerWidth,window.innerHeight)*0.4;
+    currentBaseRadius=baseRadius;
+  });
+
+  (function loop(){updateEffects();requestAnimationFrame(loop)})();
 })();
 </script>
 <script src="/js/cursor.js"></script>
