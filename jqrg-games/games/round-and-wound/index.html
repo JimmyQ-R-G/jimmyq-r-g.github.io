@@ -2,6 +2,7 @@
 <!-- Created with https://packager.turbowarp.org/ -->
 <html>
 <head>
+  <base href="/jqrg-games/games/round-and-wound/">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <!-- We only include this to explicitly loosen the CSP of various packager environments. It does not provide any security. -->
@@ -279,7 +280,7 @@
             storage.AssetType.Sound,
             storage.AssetType.Font
           ].filter(i => i),
-          (asset) => new URL('./assets/' + asset.assetId + '.' + asset.dataFormat, location).href
+          (asset) => new URL('./assets/' + asset.assetId + '.' + asset.dataFormat, document.baseURI).href
         );
         return () => new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
