@@ -1,22 +1,13 @@
-const CACHE_NAME = 'jqrg-pwa-v13';
+const CACHE_NAME = 'jqrg-pwa-v14';
 
 // Complete list of all source files to pre-cache
 const urlsToCache = [
   // ============ ROOT FILES ============
   '/',
   '/index.html',
-  '/loader/index.html',
   '/403.html',
   '/404.html',
   '/404-building.html',
-  '/404-safe.html',
-  '/67.html',
-  '/goguardian-.html',
-  '/html-opener.html',
-  '/interesting.html',
-  '/linewize-.html',
-  '/nostalgia.html',
-  '/manifest.json',
   '/appmanifest.json',
   '/jq.ico',
   '/info.ico',
@@ -29,7 +20,6 @@ const urlsToCache = [
 
   // ============ CSS FILES ============
   '/css/main.css',
-  '/css/info.css',
 
   // ============ JS FILES ============
   '/js/cursor.js',
@@ -190,8 +180,6 @@ const urlsToCache = [
   '/info/chr-bk/index.html',
 
   // ============ JQRG-GAMES PAGES ============
-  '/jqrg-games/',
-  '/jqrg-games/index.html',
   '/jqrg-games/infinite-campus.png',
   '/jqrg-games/aF7kL2pQ9mXr8HsVzT1wYcB5jDn4GqE0Uo.html',
   '/jqrg-games/J4mT9vQ2xZpL6rFwK1bHs8yC0nAeR7uYdG.html',
@@ -239,8 +227,6 @@ const urlsToCache = [
   '/jqrg-games/undertale/simulators/underswap/background.png',
 
   // ============ JQRG-GAMES GAME FILES ============
-  '/jqrg-games/games/',
-  '/jqrg-games/games/index.html',
   '/jqrg-games/games/10-minutes-till-dawn/',
   '/jqrg-games/games/1v1-lol/',
   '/jqrg-games/games/2048/',
