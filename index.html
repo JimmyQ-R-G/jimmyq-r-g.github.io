@@ -1055,6 +1055,116 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 }
 #ac-modal.open .ac-panel{animation:acSlideIn .35s cubic-bezier(.34,1.56,.64,1)}
 
+/* ══ ADDITIONAL ANIMATIONS (5 more per element) ══ */
+
+/* --- Sidebar: glow on active, ripple on click, icon bounce, label fade, separator pulse --- */
+.sidebar nav button.active{
+  background:rgba(136,65,214,.12);
+  box-shadow:0 0 14px rgba(136,65,214,.2);
+}
+.sidebar nav button.active svg{filter:drop-shadow(0 0 6px rgba(136,65,214,.5))}
+.sidebar nav button:hover svg{animation:iconBounce .4s ease}
+@keyframes iconBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.sidebar .logo{transition:transform .5s cubic-bezier(.34,1.56,.64,1),filter .5s ease}
+.sidebar .logo:active{transform:scale(.85)}
+
+/* --- Top bar: brand glow pulse, settings spin, nav button press depth --- */
+.top-bar .brand-wrap{transition:transform .4s cubic-bezier(.34,1.56,.64,1),filter .4s ease}
+.top-bar .brand-wrap:active{transform:scale(.92)}
+.tb-section .nav-btns button:hover{
+  box-shadow:0 0 10px rgba(255,255,255,.08);
+}
+.tb-section .nav-btns button:hover svg{
+  filter:drop-shadow(0 0 3px rgba(255,255,255,.3));
+}
+.top-bar .settings-top:hover{
+  box-shadow:0 0 8px rgba(136,65,214,.15);
+}
+
+/* --- Search/URL bar: glow ring on focus, icon rotate, placeholder shimmer, border pulse --- */
+@keyframes searchGlow{0%,100%{box-shadow:0 0 12px rgba(136,65,214,.3)}50%{box-shadow:0 0 20px rgba(136,65,214,.45)}}
+.url-bar:focus-within,.search-bar:focus-within{animation:searchGlow 2s ease infinite}
+.url-bar:focus-within svg,.search-bar:focus-within svg{
+  transform:scale(1.1) rotate(-8deg);
+}
+.home-search-bar:focus-within{animation:searchGlow 2s ease infinite}
+.home-search-bar:focus-within svg{transform:scale(1.1) rotate(-8deg)}
+
+/* --- Game/App tiles: image zoom, label slide up, glow border, pressed sink --- */
+.game-tile img,.app-tile img{transition:transform .5s cubic-bezier(.25,.46,.45,.94),filter .4s ease}
+.game-tile:hover img,.app-tile:hover img{transform:scale(1.06);filter:brightness(1.08)}
+.game-tile:hover,.app-tile:hover{
+  box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 0 1px rgba(136,65,214,.2);
+}
+.game-tile:hover .tile-label,.app-tile:hover .tile-label{
+  transform:translateY(-2px);
+}
+.game-tile .tile-label,.app-tile .tile-label{transition:opacity .35s ease,font-size .35s ease,padding .35s ease,text-shadow .35s ease,transform .35s ease}
+
+/* --- Dropdown: open/close smooth height, button glow, item slide --- */
+.dropdown-btn{transition:border-color .3s ease,box-shadow .3s ease,transform .2s ease,background .3s ease}
+.dropdown-btn:active{transform:scale(.96)}
+.dropdown-btn:hover{background:rgba(255,255,255,.05)}
+.dropdown-menu{transform-origin:top center}
+.dropdown-menu button{
+  transition:background .2s ease,padding-left .25s ease,color .2s ease;
+}
+.dropdown-menu button:hover{padding-left:20px;color:#fff}
+
+/* --- Home cards: border glow, content lift, icon pulse --- */
+.home-card:hover{
+  border-color:rgba(136,65,214,.3);
+  box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 20px rgba(136,65,214,.1);
+}
+.home-card p{transition:opacity .4s ease,transform .3s ease}
+.home-card:hover p{opacity:.9;transform:translateY(-1px)}
+@keyframes cardIconPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(255,255,255,.15))}50%{filter:drop-shadow(0 0 16px rgba(255,255,255,.35))}}
+.home-card:hover svg{animation:cardIconPulse 1.5s ease infinite}
+
+/* --- Unblock/Contact tiles: border glow, image rotate hint, text glow --- */
+.unblock-tile:hover,.contact-tile:hover{
+  box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 0 1px rgba(136,65,214,.15);
+}
+.unblock-tile:hover span,.contact-tile:hover span{
+  text-shadow:0 0 10px rgba(255,255,255,.15);
+}
+.unblock-tile:hover img,.contact-tile:hover img{
+  filter:brightness(1.1) saturate(1.1);
+}
+
+/* --- Toggle switches: ring on hover, knob glow when active --- */
+.toggle-switch:hover::after{box-shadow:0 0 6px rgba(255,255,255,.2)}
+.toggle-switch.active:hover{box-shadow:0 0 0 4px rgba(136,65,214,.15)}
+.filter-toggle:hover::after{box-shadow:0 0 6px rgba(255,255,255,.2)}
+.filter-toggle.active:hover{box-shadow:0 0 0 4px rgba(136,65,214,.15)}
+
+/* --- Modal: backdrop blur animate, panel bounce, close button glow --- */
+.modal-overlay.open{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.modal-close:hover{box-shadow:0 0 12px rgba(255,255,255,.1)}
+@keyframes modalPanelIn{0%{opacity:0;transform:scale(.92) translateY(20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+.modal-overlay.open .modal{animation:modalPanelIn .4s cubic-bezier(.34,1.56,.64,1)}
+
+/* --- Game toolbar: expand glow, button icon spin hint --- */
+#game-toolbar{transition:width .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s ease}
+#game-toolbar.expanded{box-shadow:-2px 0 20px rgba(0,0,0,.4)}
+#game-toolbar button:hover{
+  background:rgba(255,255,255,.1);
+  box-shadow:0 0 8px rgba(255,255,255,.05);
+}
+
+/* --- Page transition: smooth content entrance --- */
+@keyframes pageSlideIn{0%{opacity:0;transform:translateX(12px)}100%{opacity:1;transform:translateX(0)}}
+.page.active{animation:pageSlideIn .35s ease}
+
+/* --- Setting rows: subtle slide in on hover --- */
+.setting-row:hover{transform:translateX(2px)}
+.setting-section-title{position:relative}
+.setting-section-title::after{
+  content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;
+  background:var(--accent-purple);transition:width .4s ease;
+}
+.setting-section-title:hover::after{width:100%}
+
 /* --- Pulse for active keybtn recording --- */
 @keyframes pulse{
   0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,.3)}
@@ -1112,7 +1222,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
     </div>
     <div class="search-bar">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="games-search" placeholder="Search for games" oninput="filterGames()">
+      <input type="text" id="games-search" placeholder="Search for games" oninput="filterGames()" onkeydown="if(event.key==='Enter')searchFromBar('games')">
       <div class="search-filter-wrap">
         <button class="search-filter-btn" onclick="toggleSearchFilter(event)" title="Filter by tag">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
@@ -1125,7 +1235,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
   <div class="tb-section tb-apps">
     <div class="search-bar">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="apps-search" placeholder="Search for apps" oninput="filterApps()">
+      <input type="text" id="apps-search" placeholder="Search for apps" oninput="filterApps()" onkeydown="if(event.key==='Enter')searchFromBar('apps')">
     </div>
   </div>
 
@@ -1410,21 +1520,143 @@ function navigate(page){
   document.querySelectorAll('.sidebar nav button').forEach(function(b){
     b.classList.toggle('active',b.dataset.nav===page);
   });
-  window.history.replaceState(null,'','#'+page);
+  updateUrl();
 
   if(savedRect&&morphTarget){
     morphSearchBar(savedRect,morphTarget);
   }
 }
 
-window.addEventListener('hashchange',function(){
-  var h=location.hash.slice(1);
-  if(['home','games','apps','unblocks','contacts'].indexOf(h)!==-1) navigate(h);
-});
-if(location.hash){
-  var h=location.hash.slice(1);
-  if(['home','games','apps','unblocks','contacts'].indexOf(h)!==-1) navigate(h);
+var VALID_TABS=['home','games','apps','unblocks','contacts'];
+
+function searchFromBar(tab){
+  closeGameOverlay();
+  var searchId=tab+'-search';
+  var input=document.getElementById(searchId);
+  if(input) input.blur();
+  if(tab==='games') renderGames();
+  else if(tab==='apps') renderApps();
+  updateUrl();
 }
+
+function updateUrl(){
+  var params=new URLSearchParams();
+  params.set('tab',currentPage);
+  var pageId='default';
+  if(_goOverlay&&_goOverlay.classList.contains('active')&&_goCurrentUrl){
+    pageId=urlToPageId(_goCurrentUrl,_goSourcePage)||'default';
+  }
+  var searchId=(currentPage==='games'||currentPage==='apps')?currentPage+'-search':'';
+  var searchEl=searchId?document.getElementById(searchId):null;
+  var q=searchEl?searchEl.value.trim():'';
+  if(q&&pageId==='default'){
+    params.set('page','search');
+    params.set('q',q);
+  }else{
+    params.set('page',pageId);
+  }
+  window.history.replaceState(null,'','?'+params.toString());
+}
+
+function urlToPageId(url,source){
+  if(source==='games'||!source||source===''){
+    var all=GAMES.concat(PENDING);
+    for(var i=0;i<all.length;i++){
+      if(all[i].url===url) return all[i].img;
+    }
+    for(var i=0;i<COLLECTIONS.length;i++){
+      if(COLLECTIONS[i].url===url) return COLLECTIONS[i].img||COLLECTIONS[i].n.toLowerCase().replace(/\s+/g,'-');
+    }
+  }
+  if(source==='apps'){
+    for(var i=0;i<APPS.length;i++){
+      var loadUrl=APPS[i].proxy?proxyUrl('https://'+APPS[i].url,!!APPS[i].raw):APPS[i].url;
+      if(loadUrl===url||APPS[i].url===url) return APPS[i].img;
+    }
+  }
+  if(source==='unblocks'){
+    for(var i=0;i<UNBLOCKS.length;i++){
+      if(UNBLOCKS[i].url===url) return UNBLOCKS[i].img;
+    }
+  }
+  return null;
+}
+
+function pageIdToAction(pageId){
+  if(!pageId||pageId==='default') return null;
+  for(var i=0;i<GAMES.length;i++){
+    if(GAMES[i].img===pageId) return {type:'game',item:GAMES[i]};
+  }
+  for(var i=0;i<PENDING.length;i++){
+    if(PENDING[i].img===pageId) return {type:'game',item:PENDING[i]};
+  }
+  for(var i=0;i<COLLECTIONS.length;i++){
+    var cid=COLLECTIONS[i].img||COLLECTIONS[i].n.toLowerCase().replace(/\s+/g,'-');
+    if(cid===pageId) return {type:'game',item:COLLECTIONS[i]};
+  }
+  for(var i=0;i<APPS.length;i++){
+    if(APPS[i].img===pageId) return {type:'app',item:APPS[i]};
+  }
+  for(var i=0;i<UNBLOCKS.length;i++){
+    if(UNBLOCKS[i].img===pageId) return {type:'unblock',item:UNBLOCKS[i]};
+  }
+  return null;
+}
+
+function restoreFromUrl(){
+  var params=new URLSearchParams(window.location.search);
+  var hash=window.location.hash.slice(1);
+
+  if(hash&&VALID_TABS.indexOf(hash)!==-1){
+    window.history.replaceState(null,'','?tab='+hash+'&page=default');
+    params=new URLSearchParams(window.location.search);
+  }
+
+  var tab=params.get('tab');
+  var pageId=params.get('page');
+
+  if(!tab||VALID_TABS.indexOf(tab)===-1){
+    updateUrl();
+    return;
+  }
+
+  if(tab!==currentPage) navigate(tab);
+
+  if(pageId==='search'){
+    var q=params.get('q')||'';
+    if(q){
+      if(tab==='games'){
+        var el=document.getElementById('games-search');
+        if(el){el.value=q;renderGames()}
+      }else if(tab==='apps'){
+        var el=document.getElementById('apps-search');
+        if(el){el.value=q;renderApps()}
+      }
+    }
+  }else if(pageId&&pageId!=='default'){
+    var action=pageIdToAction(pageId);
+    if(action){
+      if(action.type==='game'){
+        if(action.item.wo){
+          window.open(action.item.url,'_blank');
+        }else{
+          loadGameInPage(action.item.url,'games');
+        }
+      }else if(action.type==='app'){
+        var loadUrl=action.item.proxy?proxyUrl('https://'+action.item.url,!!action.item.raw):action.item.url;
+        loadGameInPage(loadUrl,'apps');
+      }else if(action.type==='unblock'&&action.item.inPage){
+        loadGameInPage(action.item.url,'unblocks');
+      }
+    }
+  }
+
+  if(!pageId){
+    updateUrl();
+  }
+}
+
+restoreFromUrl();
 
 function isUrl(s){
   return /^https?:\/\//i.test(s)||/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}/i.test(s);
@@ -1741,7 +1973,7 @@ function renderGames(){
   c.innerHTML=html;
   staggerTiles(c);
 }
-function filterGames(){renderGames()}
+function filterGames(){renderGames();updateUrl()}
 
 var activeTagFilters=[];
 var TAG_FILTERS={'featured':'Featured','touch':'Touch Friendly','jqrg':'JimmyQrg Originals'};
@@ -1815,13 +2047,13 @@ function renderApps(){
       '<div class="skeleton skeleton-tile"></div>'+
       '<img src="/game-images/apps/'+a.img+'.png" alt="'+a.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
       '<div class="tile-shadow"></div>'+
-      '<div class="tile-label">'+a.n+'</div></div>';
+      '<div class="tile-label">'+highlightMatch(a.n,q)+'</div></div>';
   });
   if(!filtered.length) html='<div class="games-empty">No apps found</div>';
   c.innerHTML=html;
   staggerTiles(c);
 }
-function filterApps(){renderApps()}
+function filterApps(){renderApps();updateUrl()}
 
 function renderUnblocks(){
   var c=document.getElementById('unblocks-container');
@@ -2175,6 +2407,7 @@ function loadGameInPage(url,sourcePage){
   var favBtn=document.getElementById('tb-fav');
   if(favBtn) favBtn.style.display=(_goSourcePage==='apps'||_goSourcePage==='unblocks')?'none':'';
   updateFavBtn();
+  updateUrl();
 }
 function closeGameOverlay(){
   if(!_goOverlay) return;
@@ -2182,6 +2415,7 @@ function closeGameOverlay(){
   if(_goFrame) _goFrame.src='';
   _goCurrentUrl='';
   stopAutoClicker();
+  updateUrl();
 }
 function toggleToolbar(){
   if(_goToolbar) _goToolbar.classList.toggle('expanded');
