@@ -540,9 +540,9 @@ html,body{
   cursor:pointer;font-family:inherit;transition:filter .2s,transform .15s;
 }
 #ac-modal .ac-actions button:hover{filter:brightness(1.15);transform:translateY(-1px)}
-#ac-modal .ac-btn-start{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
-#ac-modal .ac-btn-stop{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
-#ac-modal .ac-btn-save{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+#ac-modal .ac-btn-save{background:linear-gradient(135deg,var(--accent-purple),#7c3aed);color:#fff}
+#ac-modal .ac-btn-stop{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+#ac-modal #ac-enabled{width:18px;height:18px;accent-color:var(--accent-purple);cursor:pointer}
 
 /* ══ UNBLOCKS / CONTACTS ══ */
 #page-unblocks,#page-contacts{padding:10px 16px;gap:12px}
@@ -1438,6 +1438,10 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
       <span class="ac-title">Auto Clicker</span>
       <button class="ac-close" onclick="closeAutoClicker()">&times;</button>
     </div>
+    <div class="ac-row" style="margin-top:4px">
+      <span style="min-width:auto;opacity:1;font-size:13px;font-weight:600">Enable Auto Clicker</span>
+      <input type="checkbox" id="ac-enabled">
+    </div>
     <div class="ac-status off" id="ac-status-badge">Inactive</div>
     <div>
       <label>Clicks Per Second (CPS)</label>
@@ -1456,27 +1460,21 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
       <select id="ac-click-btn"><option value="0">Left</option><option value="2">Right</option></select>
     </div>
     <div class="ac-section">
-      <label>Drag Click</label>
-      <div class="ac-row" style="margin-top:4px">
-        <span style="min-width:auto;opacity:1;font-size:13px">Enabled</span>
-        <input type="checkbox" id="ac-drag-enabled">
-      </div>
-      <div id="ac-drag-opts" style="display:none;margin-top:8px;flex-direction:column;gap:8px">
-        <div><label>Drag Duration (ms)</label><input type="number" id="ac-drag-dur" value="50" min="10" max="500"></div>
-        <div><label>Rest Duration (ms)</label><input type="number" id="ac-drag-rest" value="50" min="10" max="500"></div>
-        <div><label>Duration Random Offset (ms)</label><input type="number" id="ac-drag-offset" value="10" min="0" max="100"></div>
-      </div>
-    </div>
-    <div class="ac-section">
-      <label>Hold Key (click while held)</label>
-      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
-        <button class="ac-keybtn" id="ac-key-hold" onclick="recordACKey('hold')">F6</button>
+      <label>Activation Keys</label>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="flex:1;font-size:12px;opacity:.7">Toggle Key</span>
+          <button class="ac-keybtn" id="ac-key-toggle" onclick="recordACKey('toggle')">F6</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="flex:1;font-size:12px;opacity:.7">Stop Key</span>
+          <button class="ac-keybtn" id="ac-key-stop" onclick="recordACKey('stop')">Escape</button>
+        </div>
       </div>
     </div>
     <div class="ac-actions">
-      <button class="ac-btn-start" onclick="startAutoClicker()">Start</button>
-      <button class="ac-btn-stop" onclick="stopAutoClicker()">Stop</button>
-      <button class="ac-btn-save" onclick="saveACSettings()">Save</button>
+      <button class="ac-btn-save" onclick="saveACSettings();closeAutoClicker()">Save</button>
+      <button class="ac-btn-stop" onclick="cancelACSettings()">Cancel</button>
     </div>
   </div>
 </div>
@@ -2648,15 +2646,14 @@ function updateFavBtn(){
 
 // ══ AUTO CLICKER ══
 var acSettings={
-  cps:10,offset:2,clickType:'single',clickBtn:0,
-  dragEnabled:false,dragDur:50,dragRest:50,dragOffset:10,
-  holdKey:'F6'
+  enabled:false,cps:10,offset:2,clickType:'single',clickBtn:0,
+  toggleKey:'F6',stopKey:'Escape'
 };
 var acRunning=false;
 var acIntervalId=null;
 var acRecordingKey=null;
-var acDragPhase=null;
-var acDragTimeout=null;
+var acMouseHeld=false;
+var acLastMousePos={x:0,y:0};
 
 function loadACSettings(){
   try{var s=JSON.parse(localStorage.getItem('autoClickerSettings'));if(s)acSettings=Object.assign(acSettings,s)}catch(e){}
@@ -2664,30 +2661,30 @@ function loadACSettings(){
 loadACSettings();
 
 function saveACSettings(){
+  acSettings.enabled=document.getElementById('ac-enabled').checked;
   acSettings.cps=parseFloat(document.getElementById('ac-cps').value)||10;
   acSettings.offset=parseFloat(document.getElementById('ac-offset').value)||0;
   acSettings.clickType=document.getElementById('ac-click-type').value;
   acSettings.clickBtn=parseInt(document.getElementById('ac-click-btn').value);
-  acSettings.dragEnabled=document.getElementById('ac-drag-enabled').checked;
-  acSettings.dragDur=parseInt(document.getElementById('ac-drag-dur').value)||50;
-  acSettings.dragRest=parseInt(document.getElementById('ac-drag-rest').value)||50;
-  acSettings.dragOffset=parseInt(document.getElementById('ac-drag-offset').value)||10;
+  acSettings.toggleKey=document.getElementById('ac-key-toggle').textContent;
+  acSettings.stopKey=document.getElementById('ac-key-stop').textContent;
   localStorage.setItem('autoClickerSettings',JSON.stringify(acSettings));
+}
+
+function cancelACSettings(){
+  closeAutoClicker();
 }
 
 function openAutoClicker(){
   var m=document.getElementById('ac-modal');
+  document.getElementById('ac-enabled').checked=acSettings.enabled;
   document.getElementById('ac-cps').value=acSettings.cps;
   document.getElementById('ac-offset').value=acSettings.offset;
   document.getElementById('ac-offset-val').textContent=acSettings.offset;
   document.getElementById('ac-click-type').value=acSettings.clickType;
   document.getElementById('ac-click-btn').value=acSettings.clickBtn;
-  document.getElementById('ac-drag-enabled').checked=acSettings.dragEnabled;
-  document.getElementById('ac-drag-dur').value=acSettings.dragDur;
-  document.getElementById('ac-drag-rest').value=acSettings.dragRest;
-  document.getElementById('ac-drag-offset').value=acSettings.dragOffset;
-  document.getElementById('ac-key-hold').textContent=acSettings.holdKey;
-  updateACDragUI();
+  document.getElementById('ac-key-toggle').textContent=acSettings.toggleKey;
+  document.getElementById('ac-key-stop').textContent=acSettings.stopKey;
   updateACStatus();
   m.classList.add('open');
 }
@@ -2697,9 +2694,6 @@ function closeAutoClicker(){
   document.querySelectorAll('.ac-keybtn.recording').forEach(function(b){b.classList.remove('recording')});
 }
 
-function updateACDragUI(){
-  document.getElementById('ac-drag-opts').style.display=document.getElementById('ac-drag-enabled').checked?'flex':'none';
-}
 function updateACStatus(){
   var badge=document.getElementById('ac-status-badge');
   if(acRunning){badge.textContent='Active';badge.className='ac-status on'}
@@ -2707,12 +2701,10 @@ function updateACStatus(){
 }
 
 document.getElementById('ac-offset').addEventListener('input',function(){document.getElementById('ac-offset-val').textContent=this.value});
-document.getElementById('ac-drag-enabled').addEventListener('change',updateACDragUI);
 
 function recordACKey(which){
   acRecordingKey=which;
-  var btnId='ac-key-'+which;
-  var btn=document.getElementById(btnId);
+  var btn=document.getElementById('ac-key-'+which);
   btn.classList.add('recording');
   btn.textContent='Press...';
 }
@@ -2721,85 +2713,104 @@ document.addEventListener('keydown',function(e){
   if(!acRecordingKey) return;
   e.preventDefault();
   var key=e.code;
-  acSettings.holdKey=key;
-  var btn=document.getElementById('ac-key-hold');
+  var btn=document.getElementById('ac-key-'+acRecordingKey);
   btn.textContent=key;
   btn.classList.remove('recording');
   acRecordingKey=null;
 });
 
-function doClick(){
+function doACClick(cx,cy){
   var frame=_goFrame;
   if(!frame) return;
   try{
     var doc=frame.contentDocument||frame.contentWindow.document;
-    var cx=frame.clientWidth/2, cy=frame.clientHeight/2;
     var el=doc.elementFromPoint(cx,cy)||doc.body;
     var btn=acSettings.clickBtn;
     var opts={bubbles:true,cancelable:true,clientX:cx,clientY:cy,button:btn,view:frame.contentWindow};
-    if(acSettings.dragEnabled){
-      doClickDrag(el,opts);
-    }else{
+    el.dispatchEvent(new MouseEvent('mouseup',opts));
+    el.dispatchEvent(new MouseEvent('click',opts));
+    if(acSettings.clickType==='double'){
       el.dispatchEvent(new MouseEvent('mousedown',opts));
       el.dispatchEvent(new MouseEvent('mouseup',opts));
       el.dispatchEvent(new MouseEvent('click',opts));
-      if(acSettings.clickType==='double'){
-        el.dispatchEvent(new MouseEvent('mousedown',opts));
-        el.dispatchEvent(new MouseEvent('mouseup',opts));
-        el.dispatchEvent(new MouseEvent('click',opts));
-        el.dispatchEvent(new MouseEvent('dblclick',opts));
-      }
+      el.dispatchEvent(new MouseEvent('dblclick',opts));
     }
+    el.dispatchEvent(new MouseEvent('mousedown',opts));
   }catch(e){}
 }
 
-function doClickDrag(el,opts){
-  el.dispatchEvent(new MouseEvent('mousedown',opts));
-  var dur=acSettings.dragDur+Math.floor(Math.random()*acSettings.dragOffset*2)-acSettings.dragOffset;
-  var rest=acSettings.dragRest+Math.floor(Math.random()*acSettings.dragOffset*2)-acSettings.dragOffset;
-  if(dur<5)dur=5;if(rest<5)rest=5;
-  acDragTimeout=setTimeout(function(){
-    el.dispatchEvent(new MouseEvent('mouseup',opts));
-    el.dispatchEvent(new MouseEvent('click',opts));
-  },dur);
-}
-
 function startAutoClicker(){
-  saveACSettings();
-  if(acRunning) stopAutoClicker();
+  if(acRunning) return;
   acRunning=true;
   updateACStatus();
-  scheduleClick();
+  scheduleACClick();
 }
-function scheduleClick(){
+function scheduleACClick(){
   if(!acRunning) return;
   var cps=acSettings.cps;
   var offset=acSettings.offset;
-  var actualCps=cps+((Math.random()*2-1)*offset);
-  if(actualCps<0.5)actualCps=0.5;
-  var delay=1000/actualCps;
+  var actual=cps+((Math.random()*2-1)*offset);
+  if(actual<0.5)actual=0.5;
   acIntervalId=setTimeout(function(){
     if(!acRunning) return;
-    doClick();
-    scheduleClick();
-  },delay);
+    if(acMouseHeld){
+      doACClick(acLastMousePos.x,acLastMousePos.y);
+    }
+    scheduleACClick();
+  },1000/actual);
 }
 function stopAutoClicker(){
   acRunning=false;
   if(acIntervalId){clearTimeout(acIntervalId);acIntervalId=null}
-  if(acDragTimeout){clearTimeout(acDragTimeout);acDragTimeout=null}
   updateACStatus();
 }
 
 document.addEventListener('keydown',function(e){
   if(acRecordingKey) return;
+  if(!acSettings.enabled) return;
   if(!_goOverlay||!_goOverlay.classList.contains('active')) return;
-  if(e.code===acSettings.holdKey && !acRunning) startAutoClicker();
+  if(e.code===acSettings.toggleKey){
+    if(acRunning) stopAutoClicker(); else startAutoClicker();
+  }
+  if(e.code===acSettings.stopKey && acRunning){
+    stopAutoClicker();
+  }
 });
-document.addEventListener('keyup',function(e){
-  if(!_goOverlay||!_goOverlay.classList.contains('active')) return;
-  if(e.code===acSettings.holdKey && acRunning) stopAutoClicker();
-});
+
+(function(){
+  function trackMouse(e){
+    acLastMousePos.x=e.clientX;
+    acLastMousePos.y=e.clientY;
+  }
+  function onMouseDown(e){
+    if(!acSettings.enabled||!acRunning) return;
+    if(!_goOverlay||!_goOverlay.classList.contains('active')) return;
+    acMouseHeld=true;
+  }
+  function onMouseUp(e){
+    acMouseHeld=false;
+  }
+  document.addEventListener('mousemove',trackMouse);
+  document.addEventListener('mousedown',onMouseDown);
+  document.addEventListener('mouseup',onMouseUp);
+  if(_goFrame){
+    _goFrame.addEventListener('load',function(){
+      try{
+        var doc=_goFrame.contentDocument||_goFrame.contentWindow.document;
+        doc.addEventListener('mousemove',function(e){
+          var r=_goFrame.getBoundingClientRect();
+          acLastMousePos.x=e.clientX;
+          acLastMousePos.y=e.clientY;
+        });
+        doc.addEventListener('mousedown',function(){
+          if(!acSettings.enabled||!acRunning) return;
+          acMouseHeld=true;
+        });
+        doc.addEventListener('mouseup',function(){acMouseHeld=false});
+      }catch(e){}
+    });
+  }
+})();
 
 // Glowing particles
 (function(){
