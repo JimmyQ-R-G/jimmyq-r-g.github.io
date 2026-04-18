@@ -2301,7 +2301,7 @@ function openSettings(){
   var cloakTitle=localStorage.getItem('cloakSiteTitle')||'Home | Google Classroom';
   var cloakIcon=localStorage.getItem('cloakSiteIcon')||'/cloak-images/gclassroom.png';
   var cloakMethod=localStorage.getItem('cloakMethod')||'about:blank';
-  var autoCloak=localStorage.getItem('autoCloak')||'none';
+
   var closePrevention=localStorage.getItem('closePreventionEnabled')!=='false';
   var autoAnnounce=localStorage.getItem('autoAnnouncement')||'always';
   var isAuthorized=localStorage.getItem('user')==='authorized';
@@ -2356,14 +2356,6 @@ function openSettings(){
     '<div class="setting-row">'+
       '<span class="setting-label">Open in Cloak</span>'+
       '<button class="setting-btn" onclick="openInCloak()">Open Now</button>'+
-    '</div>'+
-    '<div class="setting-row">'+
-      '<span class="setting-label">Auto Cloak</span>'+
-      '<select class="setting-select" onchange="localStorage.setItem(\'autoCloak\',this.value)">'+
-        '<option value="none"'+selOpt('none',autoCloak)+'>Disabled</option>'+
-        '<option value="about:blank"'+selOpt('about:blank',autoCloak)+'>about:blank</option>'+
-        '<option value="blob:null"'+selOpt('blob:null',autoCloak)+'>blob:null</option>'+
-      '</select>'+
     '</div>'+
     '<hr class="setting-divider">'+
 
