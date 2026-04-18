@@ -365,9 +365,22 @@ html,body{
   padding:8px 10px;font-size:12px;font-weight:500;
   background:linear-gradient(transparent,rgba(0,0,0,.85));
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  opacity:.9;transition:opacity .35s ease;
+  opacity:.9;transition:opacity .35s ease,font-size .35s ease,padding .35s ease,text-shadow .35s ease;
 }
-.game-tile:hover .tile-label,.app-tile:hover .tile-label{opacity:1}
+.game-tile:hover .tile-label,.app-tile:hover .tile-label{
+  opacity:1;font-size:13.5px;padding:10px 10px;
+  text-shadow:0 2px 8px rgba(0,0,0,.7);
+}
+.game-tile .tile-shadow,.app-tile .tile-shadow{
+  position:absolute;bottom:0;left:0;right:0;height:40%;
+  background:linear-gradient(transparent,rgba(0,0,0,.6));
+  pointer-events:none;z-index:1;
+  transition:height .4s ease,opacity .4s ease;
+}
+.game-tile:hover .tile-shadow,.app-tile:hover .tile-shadow{
+  height:60%;background:linear-gradient(transparent,rgba(0,0,0,.8));
+}
+.tile-label .hl{color:#b07aff;font-weight:700}
 
 .collections-list{
   display:flex;flex-direction:column;align-items:center;
@@ -676,7 +689,8 @@ html,body{
 .skeleton-collection{max-width:600px;width:100%;height:160px;border-radius:14px}
 .skeleton-unblock{height:120px;border-radius:14px}
 .game-tile img,.app-tile img{position:relative;z-index:1}
-.game-tile .tile-label,.app-tile .tile-label,.collection-tile .tile-label{z-index:2}
+.game-tile .tile-shadow,.app-tile .tile-shadow{z-index:2}
+.game-tile .tile-label,.app-tile .tile-label,.collection-tile .tile-label{z-index:3}
 
 /* ══ PARTICLE CANVAS ══ */
 #particle-canvas{
@@ -726,29 +740,23 @@ html,body{
 /* ══ SEARCH BAR MORPH TRANSITION ══ */
 .search-morph{
   position:fixed;z-index:9999;pointer-events:none;
-  border-radius:28.5px;
+  border-radius:19px;
   background:var(--pill-bg);
-  border:1.5px solid rgba(255,255,255,.35);
-  display:flex;align-items:center;padding:0 20px;gap:10px;
+  border:1.5px solid transparent;
+  display:flex;align-items:center;padding:0 16px;gap:10px;
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   box-shadow:0 4px 20px rgba(0,0,0,.3);
-  transition:top .45s cubic-bezier(.4,0,.2,1),
-             left .45s cubic-bezier(.4,0,.2,1),
-             width .45s cubic-bezier(.4,0,.2,1),
-             height .45s cubic-bezier(.4,0,.2,1),
-             border-radius .45s cubic-bezier(.4,0,.2,1),
-             opacity .15s ease,
-             padding .45s cubic-bezier(.4,0,.2,1),
-             border-color .45s ease;
+  transition:top .4s cubic-bezier(.4,0,.2,1),
+             left .4s cubic-bezier(.4,0,.2,1),
+             width .4s cubic-bezier(.4,0,.2,1),
+             opacity .15s ease;
 }
 .search-morph svg{
   width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
-  transition:width .45s cubic-bezier(.4,0,.2,1),height .45s cubic-bezier(.4,0,.2,1);
 }
 .search-morph span{
-  color:var(--text-dim);font-family:inherit;font-size:20px;
-  transition:font-size .45s cubic-bezier(.4,0,.2,1);
+  color:var(--text-dim);font-family:inherit;font-size:14px;
   white-space:nowrap;overflow:hidden;
 }
 
@@ -1345,7 +1353,6 @@ var proxyIndex=-1;
 
 function morphSearchBar(fromEl,toEl,cb){
   var fromRect=fromEl.getBoundingClientRect();
-  var isFromBig=fromRect.height>45;
   var morph=document.createElement('div');
   morph.className='search-morph';
   morph.innerHTML='<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>'+
@@ -1355,31 +1362,20 @@ function morphSearchBar(fromEl,toEl,cb){
   morph.style.width=fromRect.width+'px';
   morph.style.height=fromRect.height+'px';
   morph.style.borderRadius=(fromRect.height/2)+'px';
-  morph.style.padding=isFromBig?'0 24px':'0 16px';
-  morph.style.borderColor=isFromBig?'#fff':'transparent';
-  var svg=morph.querySelector('svg');
-  var sp=morph.querySelector('span');
-  svg.style.width=isFromBig?'20px':'18px';
-  svg.style.height=isFromBig?'20px':'18px';
-  sp.style.fontSize=isFromBig?'20px':'14px';
+  morph.style.padding='0 16px';
   document.body.appendChild(morph);
   fromEl.style.visibility='hidden';
   toEl.style.visibility='hidden';
 
   requestAnimationFrame(function(){requestAnimationFrame(function(){
     var toRect=toEl.getBoundingClientRect();
-    var isToBig=toRect.height>45;
     morph.style.top=toRect.top+'px';
     morph.style.left=toRect.left+'px';
     morph.style.width=toRect.width+'px';
     morph.style.height=toRect.height+'px';
     morph.style.borderRadius=(toRect.height/2)+'px';
-    morph.style.padding=isToBig?'0 24px':'0 16px';
-    morph.style.borderColor=isToBig?'#fff':'transparent';
-    svg.style.width=isToBig?'20px':'18px';
-    svg.style.height=isToBig?'20px':'18px';
-    sp.style.fontSize=isToBig?'20px':'14px';
-    sp.textContent=toEl.querySelector('input').placeholder||'';
+    var inp=toEl.querySelector('input');
+    if(inp) morph.querySelector('span').textContent=inp.placeholder||'';
     setTimeout(function(){
       morph.style.opacity='0';
       setTimeout(function(){
@@ -1403,16 +1399,16 @@ function navigate(page){
   }
   var prevPage=currentPage;
   var doMorph=false;
-  var homeSearch=document.querySelector('.home-search-bar');
+  var homeBar=document.querySelector('.tb-home .url-bar');
   var gamesSearch=document.querySelector('.tb-games .search-bar');
   var appsSearch=document.querySelector('.tb-apps .search-bar');
 
-  if(prevPage==='home'&&!document.getElementById('page-home').classList.contains('browsing')){
-    if(page==='games'&&homeSearch&&gamesSearch) doMorph='toGames';
-    else if(page==='apps'&&homeSearch&&appsSearch) doMorph='toApps';
-  }else if(currentPage==='games'&&page==='home'&&homeSearch&&gamesSearch){
+  if(prevPage==='home'){
+    if(page==='games'&&homeBar&&gamesSearch) doMorph='toGames';
+    else if(page==='apps'&&homeBar&&appsSearch) doMorph='toApps';
+  }else if(currentPage==='games'&&page==='home'&&homeBar&&gamesSearch){
     doMorph='fromGames';
-  }else if(currentPage==='apps'&&page==='home'&&homeSearch&&appsSearch){
+  }else if(currentPage==='apps'&&page==='home'&&homeBar&&appsSearch){
     doMorph='fromApps';
   }
 
@@ -1422,9 +1418,9 @@ function navigate(page){
   closeGameOverlay();
 
   if(doMorph==='toGames'){
-    morphSearchBar(homeSearch,gamesSearch);
+    morphSearchBar(homeBar,gamesSearch);
   }else if(doMorph==='toApps'){
-    morphSearchBar(homeSearch,appsSearch);
+    morphSearchBar(homeBar,appsSearch);
   }
 
   currentPage=page;
@@ -1438,11 +1434,11 @@ function navigate(page){
 
   if(doMorph==='fromGames'){
     requestAnimationFrame(function(){
-      morphSearchBar(gamesSearch,homeSearch);
+      morphSearchBar(gamesSearch,homeBar);
     });
   }else if(doMorph==='fromApps'){
     requestAnimationFrame(function(){
-      morphSearchBar(appsSearch,homeSearch);
+      morphSearchBar(appsSearch,homeBar);
     });
   }
 }
@@ -1681,7 +1677,21 @@ function staggerTiles(container){
   }
 }
 
-function gameTileHTML(g,imgBase){
+function highlightMatch(name,query){
+  if(!query) return name;
+  var lower=name.toLowerCase();
+  var qi=0,result='';
+  for(var i=0;i<name.length;i++){
+    if(qi<query.length && lower[i]===query[qi]){
+      result+='<span class="hl">'+name[i]+'</span>';
+      qi++;
+    }else{
+      result+=name[i];
+    }
+  }
+  return result;
+}
+function gameTileHTML(g,imgBase,query){
   var src=imgBase?imgBase:'/game-images/games/'+g.img+'.png';
   var escaped=g.url.replace(/'/g,"\\'");
   var onclick;
@@ -1690,10 +1700,12 @@ function gameTileHTML(g,imgBase){
   }else{
     onclick="openGame('"+escaped+"')";
   }
+  var label=highlightMatch(g.n,query||'');
   return '<div class="game-tile" onclick="'+onclick+'">'+
     '<div class="skeleton skeleton-tile"></div>'+
     '<img src="'+src+'" alt="'+g.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
-    '<div class="tile-label">'+g.n+'</div></div>';
+    '<div class="tile-shadow"></div>'+
+    '<div class="tile-label">'+label+'</div></div>';
 }
 function collectionTileHTML(g){
   var escaped=g.url.replace(/'/g,"\\'");
@@ -1734,13 +1746,13 @@ function renderGames(){
     c.className='games-grid';
     var filtered=GAMES.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1 && tagMatch(g)});
     if(!filtered.length) html='<div class="games-empty">No games found</div>';
-    else filtered.forEach(function(g){html+=gameTileHTML(g)});
+    else filtered.forEach(function(g){html+=gameTileHTML(g,null,q)});
   }else if(gameTab==='starred'){
     c.className='games-grid';
     var favs=getFavorites();
     var filtered=GAMES.filter(function(g){return favs.indexOf(g.url)!==-1 && g.n.toLowerCase().indexOf(q)!==-1 && tagMatch(g)});
     if(!filtered.length) html='<div class="games-empty">No starred games yet</div>';
-    else filtered.forEach(function(g){html+=gameTileHTML(g)});
+    else filtered.forEach(function(g){html+=gameTileHTML(g,null,q)});
   }else if(gameTab==='collections'){
     c.className='collections-list';
     var filtered=COLLECTIONS.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1});
@@ -1750,7 +1762,7 @@ function renderGames(){
     c.className='games-grid';
     var filtered=PENDING.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1});
     if(!filtered.length) html='<div class="games-empty">No pending games</div>';
-    else filtered.forEach(function(g){html+=gameTileHTML(g)});
+    else filtered.forEach(function(g){html+=gameTileHTML(g,null,q)});
   }
   c.innerHTML=html;
   staggerTiles(c);
@@ -1828,6 +1840,7 @@ function renderApps(){
     html+='<div class="app-tile" onclick="loadGameInPage(\''+escaped+'\',\'apps\')">'+
       '<div class="skeleton skeleton-tile"></div>'+
       '<img src="/game-images/apps/'+a.img+'.png" alt="'+a.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
+      '<div class="tile-shadow"></div>'+
       '<div class="tile-label">'+a.n+'</div></div>';
   });
   if(!filtered.length) html='<div class="games-empty">No apps found</div>';
