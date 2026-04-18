@@ -723,6 +723,35 @@ html,body{
 }
 @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
+/* ══ SEARCH BAR MORPH TRANSITION ══ */
+.search-morph{
+  position:fixed;z-index:9999;pointer-events:none;
+  border-radius:28.5px;
+  background:var(--pill-bg);
+  border:1.5px solid rgba(255,255,255,.35);
+  display:flex;align-items:center;padding:0 20px;gap:10px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+  transition:top .45s cubic-bezier(.4,0,.2,1),
+             left .45s cubic-bezier(.4,0,.2,1),
+             width .45s cubic-bezier(.4,0,.2,1),
+             height .45s cubic-bezier(.4,0,.2,1),
+             border-radius .45s cubic-bezier(.4,0,.2,1),
+             opacity .15s ease,
+             padding .45s cubic-bezier(.4,0,.2,1),
+             border-color .45s ease;
+}
+.search-morph svg{
+  width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0;
+  transition:width .45s cubic-bezier(.4,0,.2,1),height .45s cubic-bezier(.4,0,.2,1);
+}
+.search-morph span{
+  color:var(--text-dim);font-family:inherit;font-size:20px;
+  transition:font-size .45s cubic-bezier(.4,0,.2,1);
+  white-space:nowrap;overflow:hidden;
+}
+
 /* ══ RESPONSIVE ══ */
 @media(max-width:700px){
   .top-bar{padding:0 10px;height:48px;min-height:48px}
@@ -1329,6 +1358,55 @@ var currentPage='home';
 var proxyHistory=[];
 var proxyIndex=-1;
 
+function morphSearchBar(fromEl,toEl,cb){
+  var fromRect=fromEl.getBoundingClientRect();
+  var isFromBig=fromRect.height>45;
+  var morph=document.createElement('div');
+  morph.className='search-morph';
+  morph.innerHTML='<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>'+
+    (fromEl.querySelector('input').placeholder||'')+'</span>';
+  morph.style.top=fromRect.top+'px';
+  morph.style.left=fromRect.left+'px';
+  morph.style.width=fromRect.width+'px';
+  morph.style.height=fromRect.height+'px';
+  morph.style.borderRadius=(fromRect.height/2)+'px';
+  morph.style.padding=isFromBig?'0 24px':'0 16px';
+  morph.style.borderColor=isFromBig?'#fff':'transparent';
+  var svg=morph.querySelector('svg');
+  var sp=morph.querySelector('span');
+  svg.style.width=isFromBig?'20px':'18px';
+  svg.style.height=isFromBig?'20px':'18px';
+  sp.style.fontSize=isFromBig?'20px':'14px';
+  document.body.appendChild(morph);
+  fromEl.style.visibility='hidden';
+  toEl.style.visibility='hidden';
+
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    var toRect=toEl.getBoundingClientRect();
+    var isToBig=toRect.height>45;
+    morph.style.top=toRect.top+'px';
+    morph.style.left=toRect.left+'px';
+    morph.style.width=toRect.width+'px';
+    morph.style.height=toRect.height+'px';
+    morph.style.borderRadius=(toRect.height/2)+'px';
+    morph.style.padding=isToBig?'0 24px':'0 16px';
+    morph.style.borderColor=isToBig?'#fff':'transparent';
+    svg.style.width=isToBig?'20px':'18px';
+    svg.style.height=isToBig?'20px':'18px';
+    sp.style.fontSize=isToBig?'20px':'14px';
+    sp.textContent=toEl.querySelector('input').placeholder||'';
+    setTimeout(function(){
+      morph.style.opacity='0';
+      setTimeout(function(){
+        morph.remove();
+        fromEl.style.visibility='';
+        toEl.style.visibility='';
+        if(cb) cb();
+      },150);
+    },420);
+  });});
+}
+
 function navigate(page){
   if(currentPage===page){
     if(page==='home') exitBrowsing();
@@ -1338,10 +1416,32 @@ function navigate(page){
     if(el) el.scrollTop=0;
     return;
   }
+  var prevPage=currentPage;
+  var doMorph=false;
+  var homeSearch=document.querySelector('.home-search-bar');
+  var gamesSearch=document.querySelector('.tb-games .search-bar');
+  var appsSearch=document.querySelector('.tb-apps .search-bar');
+
+  if(prevPage==='home'&&!document.getElementById('page-home').classList.contains('browsing')){
+    if(page==='games'&&homeSearch&&gamesSearch) doMorph='toGames';
+    else if(page==='apps'&&homeSearch&&appsSearch) doMorph='toApps';
+  }else if(currentPage==='games'&&page==='home'&&homeSearch&&gamesSearch){
+    doMorph='fromGames';
+  }else if(currentPage==='apps'&&page==='home'&&homeSearch&&appsSearch){
+    doMorph='fromApps';
+  }
+
   exitBrowsing();
   exitPageBrowsing('apps');
   exitPageBrowsing('unblocks');
   closeGameOverlay();
+
+  if(doMorph==='toGames'){
+    morphSearchBar(homeSearch,gamesSearch);
+  }else if(doMorph==='toApps'){
+    morphSearchBar(homeSearch,appsSearch);
+  }
+
   currentPage=page;
   document.getElementById('app').setAttribute('data-page',page);
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
@@ -1350,6 +1450,16 @@ function navigate(page){
     b.classList.toggle('active',b.dataset.nav===page);
   });
   window.history.replaceState(null,'','#'+page);
+
+  if(doMorph==='fromGames'){
+    requestAnimationFrame(function(){
+      morphSearchBar(gamesSearch,homeSearch);
+    });
+  }else if(doMorph==='fromApps'){
+    requestAnimationFrame(function(){
+      morphSearchBar(appsSearch,homeSearch);
+    });
+  }
 }
 
 window.addEventListener('hashchange',function(){
