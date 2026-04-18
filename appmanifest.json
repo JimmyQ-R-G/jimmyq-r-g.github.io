@@ -1,8 +1,8 @@
 {
-  "name": "JimmyQrg",
-  "short_name": "JQRG",
-  "description": "JimmyQrg's Game Hub",
-  "start_url": "/index.html?page=extend",
+  "name": "Home",
+  "short_name": "Home",
+  "description": "Web application",
+  "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",

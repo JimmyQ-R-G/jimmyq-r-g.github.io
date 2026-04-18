@@ -1,6 +1,6 @@
-const CACHE_NAME = 'jqrg-pwa-v14';
+const CACHE_NAME = 'app-v14';
 
-// Complete list of all source files to pre-cache
+// Assets to pre-cache
 const urlsToCache = [
   // ============ ROOT FILES ============
   '/',
@@ -60,13 +60,13 @@ const urlsToCache = [
   '/cursor/animated-cursor/cursor19.png',
   '/cursor/animated-cursor/cursor20.png',
 
-  // ============ GAME IMAGES - COLLECTIONS ============
+  // ============ IMAGES - COLLECTIONS ============
   '/game-images/collections/eaglercraft.png',
   '/game-images/collections/geo-dash-scratch.png',
   '/game-images/collections/scratch.png',
   '/game-images/collections/undertale.png',
 
-  // ============ GAME IMAGES - GAMES ============
+  // ============ IMAGES - ITEMS ============
   '/game-images/games/10-minutes-till-dawn.png',
   '/game-images/games/1v1.lol.png',
   '/game-images/games/3d-car-simulator.png',
@@ -179,12 +179,12 @@ const urlsToCache = [
   '/info/chr-bk/',
   '/info/chr-bk/index.html',
 
-  // ============ JQRG-GAMES PAGES ============
+  // ============ APP PAGES ============
   '/jqrg-games/infinite-campus.png',
   '/jqrg-games/aF7kL2pQ9mXr8HsVzT1wYcB5jDn4GqE0Uo.html',
   '/jqrg-games/J4mT9vQ2xZpL6rFwK1bHs8yC0nAeR7uYdG.html',
 
-  // ============ JQRG-GAMES EAGLERCRAFT ============
+  // ============ EC PAGES ============
   '/jqrg-games/eaglercraft/',
   '/jqrg-games/eaglercraft/index.html',
   '/jqrg-games/eaglercraft/background3.png',
@@ -205,7 +205,7 @@ const urlsToCache = [
   '/jqrg-games/eaglercraft/hacks/oddfuture.html',
   '/jqrg-games/eaglercraft/hacks/resent-pvp.html',
 
-  // ============ JQRG-GAMES UNDERTALE ============
+  // ============ UT PAGES ============
   '/jqrg-games/undertale/',
   '/jqrg-games/undertale/index.html',
   '/jqrg-games/undertale/background.png',
@@ -226,7 +226,7 @@ const urlsToCache = [
   '/jqrg-games/undertale/simulators/underswap/index.html',
   '/jqrg-games/undertale/simulators/underswap/background.png',
 
-  // ============ JQRG-GAMES GAME FILES ============
+  // ============ CONTENT FILES ============
   '/jqrg-games/games/10-minutes-till-dawn/',
   '/jqrg-games/games/1v1-lol/',
   '/jqrg-games/games/2048/',
@@ -320,7 +320,7 @@ const urlsToCache = [
   '/jqrg-games/games/zombie-derby-pixel-survival/',
   '/jqrg-games/games/gaster-fight.sb3',
 
-  // ============ UNBLOCKS PAGES ============
+  // ============ UB PAGES ============
   '/unblocks/',
   '/unblocks/index.html',
   '/unblocks/infinite-campus.png',
@@ -347,18 +347,18 @@ const urlsToCache = [
   '/join/',
   '/join/index.html',
 
-  // ============ SUGGEST GAMES ============
+  // ============ SUGGEST ============
   '/suggest-games/',
   '/suggest-games/index.html',
 
-  // ============ HTML UNBLOCKER ============
+  // ============ HTML TOOLS ============
   '/HTML-unblocker/',
   '/HTML-unblocker/index.html',
   '/HTML-unblocker/no-back.html',
   '/HTML-unblocker/infinite-campus-icon.png',
   '/HTML-unblocker/tech-keyboard.png',
 
-  // ============ UNBLOCKED BROWSER ============
+  // ============ BROWSER ============
   '/unblocked-browser/',
 
   // ============ STRATEGIES ============

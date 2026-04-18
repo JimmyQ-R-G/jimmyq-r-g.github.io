@@ -6,7 +6,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6461283206674206" crossorigin="anonymous"></script>
     <script async src="https://fundingchoicesmessages.google.com/i/pub-6461283206674206?ers=1"></script>
 <script>(function(){function signalGooglefcPresent(){if(!window.frames['googlefcPresent']){if(document.body){var iframe=document.createElement('iframe');iframe.style='width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;';iframe.style.display='none';iframe.name='googlefcPresent';document.body.appendChild(iframe)}else{setTimeout(signalGooglefcPresent,0)}}}signalGooglefcPresent()})();</script>
-<title>JimmyQrg</title>
+<title>Home</title>
 <link rel="icon" href="/jq.ico">
     <script>
 (function(){
@@ -412,7 +412,7 @@ html,body{
 #page-unblocks.browsing #unblocks-container{display:none}
 #page-unblocks.browsing .page-iframe-wrap{display:flex;animation:fadeIn .35s ease}
 
-/* ══ GAME OVERLAY (in-page game/app loading with toolbar) ══ */
+/* ══ OVERLAY ══ */
 #game-overlay{
   display:none;position:absolute;inset:0;z-index:800;
   background:var(--bg-deep);
@@ -495,7 +495,7 @@ html,body{
 #game-overlay[data-pos="bottom"] #game-toolbar .tb-btns{flex-direction:row;max-width:0;opacity:0}
 #game-overlay[data-pos="bottom"] #game-toolbar.expanded .tb-btns{max-width:600px;opacity:1}
 
-/* ══ AUTO CLICKER MODAL ══ */
+/* ══ AC MODAL ══ */
 #ac-modal{
   display:none;position:fixed;inset:0;z-index:900;
   background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
@@ -1142,6 +1142,26 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 .sidebar nav button.active svg{filter:drop-shadow(0 0 6px rgba(136,65,214,.5))}
 .sidebar nav button:hover svg{animation:iconBounce .4s ease}
 @keyframes iconBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes sidenavFlowOutDown{
+  from{opacity:1;transform:translateY(0) scale(1)}
+  to{opacity:.3;transform:translateY(8px) scale(.85)}
+}
+@keyframes sidenavFlowOutUp{
+  from{opacity:1;transform:translateY(0) scale(1)}
+  to{opacity:.3;transform:translateY(-8px) scale(.85)}
+}
+@keyframes sidenavFlowInDown{
+  from{opacity:.3;transform:translateY(-10px) scale(.85)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes sidenavFlowInUp{
+  from{opacity:.3;transform:translateY(10px) scale(.85)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.sidebar nav button.snav-out-down{animation:sidenavFlowOutDown .25s ease forwards}
+.sidebar nav button.snav-out-up{animation:sidenavFlowOutUp .25s ease forwards}
+.sidebar nav button.snav-in-down{animation:sidenavFlowInDown .3s cubic-bezier(.34,1.56,.64,1) forwards}
+.sidebar nav button.snav-in-up{animation:sidenavFlowInUp .3s cubic-bezier(.34,1.56,.64,1) forwards}
 .sidebar .logo{transition:transform .5s cubic-bezier(.34,1.56,.64,1),filter .5s ease}
 .sidebar .logo:active{transform:scale(.85)}
 
@@ -1299,7 +1319,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
         </div>
     <div class="search-bar">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="games-search" placeholder="Search for games" oninput="filterGames()" onkeydown="if(event.key==='Enter')searchFromBar('games')">
+      <input type="text" id="games-search" placeholder="Search..." oninput="filterGames()" onkeydown="if(event.key==='Enter')searchFromBar('games')">
       <div class="search-filter-wrap">
         <button class="search-filter-btn" onclick="toggleSearchFilter(event)" title="Filter by tag">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
@@ -1319,7 +1339,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
   <button class="settings-top" title="Announcements" onclick="openAnnouncement()">
     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
   </button>
-  <button class="settings-top" title="Settings" onclick="openSettings()">
+  <button class="settings-top" onclick="openSettings()">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
   </button>
 </header>
@@ -1327,19 +1347,19 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 <div class="body-row">
 <aside class="sidebar">
   <nav>
-    <button data-nav="home" class="active" onclick="navigate('home')" title="Home">
+    <button data-nav="home" class="active" onclick="navigate('home')">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </button>
-    <button data-nav="games" onclick="navigate('games')" title="Games">
+    <button data-nav="games" onclick="navigate('games')">
       <svg viewBox="12 140 22 18"><path d="M27.3227 141C28.9864 141 30.4423 142.205 30.8711 143.937L32.874 152.025C33.4958 154.536 31.7378 157 29.3248 157H29.1407C27.6893 157 26.3739 156.079 25.7844 154.651L25.4226 153.774C25.2261 153.298 24.7872 152.991 24.3036 152.991H21.6965C21.2128 152.991 20.774 153.298 20.5774 153.774L20.2156 154.651C19.6261 156.079 18.3106 157 16.8593 157H16.6752C14.2621 157 12.5042 154.536 13.126 152.025L15.1289 143.937C15.5578 142.205 17.0136 141 18.6773 141H27.3227ZM18.6773 142.319C17.5683 142.319 16.5978 143.122 16.3117 144.276L14.3088 152.365C13.9072 153.986 14.9944 155.578 16.5253 155.676L16.6752 155.681H16.8593L17.0394 155.674C17.8747 155.608 18.6222 155.085 19.0176 154.29L19.0973 154.115L19.4584 153.238C19.8268 152.346 20.6208 151.751 21.5155 151.68L21.6965 151.673H24.3036C25.271 151.673 26.1486 152.286 26.5416 153.238L26.9027 154.115C27.2711 155.008 28.0654 155.603 28.9606 155.674L29.1407 155.681H29.3248L29.4747 155.676C30.956 155.581 32.0221 154.088 31.7255 152.522L31.6912 152.365L29.6883 144.276C29.4202 143.194 28.5499 142.42 27.5283 142.328L27.3227 142.319H18.6773ZM25.8944 148.109C26.3512 148.109 26.7217 148.508 26.7217 149C26.7216 149.492 26.3512 149.891 25.8944 149.891C25.4378 149.89 25.068 149.492 25.0679 149C25.0679 148.509 25.4377 148.11 25.8944 148.109ZM20.1048 144.778C20.4427 144.778 20.7169 145.073 20.7169 145.437V146.56H21.7586C22.0967 146.56 22.3708 146.855 22.3708 147.219C22.3704 147.583 22.0965 147.878 21.7586 147.878H20.7169V149C20.7167 149.364 20.4426 149.659 20.1048 149.66C19.767 149.66 19.4929 149.364 19.4927 149V147.878H18.4502C18.1124 147.878 17.8384 147.583 17.838 147.219C17.838 146.855 18.1122 146.56 18.4502 146.56H19.4927V145.437C19.4927 145.073 19.7668 144.778 20.1048 144.778ZM24.2406 146.327C24.6973 146.327 25.0678 146.726 25.0679 147.218C25.0679 147.71 24.6973 148.109 24.2406 148.109C23.7838 148.109 23.4133 147.71 23.4133 147.218C23.4133 146.726 23.7838 146.327 24.2406 146.327ZM27.5491 146.327C28.0058 146.327 28.3763 146.726 28.3764 147.218C28.3764 147.71 28.0059 148.109 27.5491 148.109C27.0922 148.109 26.7217 147.71 26.7217 147.218C26.7218 146.726 27.0923 146.327 27.5491 146.327ZM25.8944 144.546C26.3512 144.546 26.7217 144.945 26.7217 145.437C26.7216 145.929 26.3511 146.327 25.8944 146.327C25.4378 146.327 25.0681 145.929 25.0679 145.437C25.0679 144.945 25.4377 144.546 25.8944 144.546Z" fill="white"/></svg>
         </button>
-    <button data-nav="apps" onclick="navigate('apps')" title="Apps">
+    <button data-nav="apps" onclick="navigate('apps')">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     </button>
-    <button data-nav="unblocks" onclick="navigate('unblocks')" title="Unblocks">
+    <button data-nav="unblocks" onclick="navigate('unblocks')">
       <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/></svg>
     </button>
-    <button data-nav="contacts" onclick="navigate('contacts')" title="Contacts">
+    <button data-nav="contacts" onclick="navigate('contacts')">
       <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
     </button>
   </nav>
@@ -1349,7 +1369,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 
 <section id="page-home" class="page active">
   <div class="home-hero">
-    <h1>Browse with Proxy</h1>
+    <h1 id="h-bwp"></h1>
     <div class="home-search-bar">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="home-search" placeholder="Search or type in url" onkeydown="if(event.key==='Enter')proxyNavigate(this.value)">
@@ -1358,15 +1378,15 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
   <div class="home-cards">
     <div class="home-card" onclick="navigate('games')">
       <svg viewBox="12 140 22 18" style="fill:white;stroke:none"><path d="M27.3227 141C28.9864 141 30.4423 142.205 30.8711 143.937L32.874 152.025C33.4958 154.536 31.7378 157 29.3248 157H29.1407C27.6893 157 26.3739 156.079 25.7844 154.651L25.4226 153.774C25.2261 153.298 24.7872 152.991 24.3036 152.991H21.6965C21.2128 152.991 20.774 153.298 20.5774 153.774L20.2156 154.651C19.6261 156.079 18.3106 157 16.8593 157H16.6752C14.2621 157 12.5042 154.536 13.126 152.025L15.1289 143.937C15.5578 142.205 17.0136 141 18.6773 141H27.3227ZM18.6773 142.319C17.5683 142.319 16.5978 143.122 16.3117 144.276L14.3088 152.365C13.9072 153.986 14.9944 155.578 16.5253 155.676L16.6752 155.681H16.8593L17.0394 155.674C17.8747 155.608 18.6222 155.085 19.0176 154.29L19.0973 154.115L19.4584 153.238C19.8268 152.346 20.6208 151.751 21.5155 151.68L21.6965 151.673H24.3036C25.271 151.673 26.1486 152.286 26.5416 153.238L26.9027 154.115C27.2711 155.008 28.0654 155.603 28.9606 155.674L29.1407 155.681H29.3248L29.4747 155.676C30.956 155.581 32.0221 154.088 31.7255 152.522L31.6912 152.365L29.6883 144.276C29.4202 143.194 28.5499 142.42 27.5283 142.328L27.3227 142.319H18.6773ZM25.8944 148.109C26.3512 148.109 26.7217 148.508 26.7217 149C26.7216 149.492 26.3512 149.891 25.8944 149.891C25.4378 149.89 25.068 149.492 25.0679 149C25.0679 148.509 25.4377 148.11 25.8944 148.109ZM20.1048 144.778C20.4427 144.778 20.7169 145.073 20.7169 145.437V146.56H21.7586C22.0967 146.56 22.3708 146.855 22.3708 147.219C22.3704 147.583 22.0965 147.878 21.7586 147.878H20.7169V149C20.7167 149.364 20.4426 149.659 20.1048 149.66C19.767 149.66 19.4929 149.364 19.4927 149V147.878H18.4502C18.1124 147.878 17.8384 147.583 17.838 147.219C17.838 146.855 18.1122 146.56 18.4502 146.56H19.4927V145.437C19.4927 145.073 19.7668 144.778 20.1048 144.778ZM24.2406 146.327C24.6973 146.327 25.0678 146.726 25.0679 147.218C25.0679 147.71 24.6973 148.109 24.2406 148.109C23.7838 148.109 23.4133 147.71 23.4133 147.218C23.4133 146.726 23.7838 146.327 24.2406 146.327ZM27.5491 146.327C28.0058 146.327 28.3763 146.726 28.3764 147.218C28.3764 147.71 28.0059 148.109 27.5491 148.109C27.0922 148.109 26.7217 147.71 26.7217 147.218C26.7218 146.726 27.0923 146.327 27.5491 146.327ZM25.8944 144.546C26.3512 144.546 26.7217 144.945 26.7217 145.437C26.7216 145.929 26.3511 146.327 25.8944 146.327C25.4378 146.327 25.0681 145.929 25.0679 145.437C25.0679 144.945 25.4377 144.546 25.8944 144.546Z" fill="white"/></svg>
-      <h2>Games</h2>
+      <h2 class="hc-lbl"></h2>
         </div>
     <div class="home-card" onclick="navigate('apps')">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <h2>Apps</h2>
+      <h2 class="hc-lbl"></h2>
     </div>
     <div class="home-card" onclick="navigate('unblocks')">
       <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/></svg>
-      <h2>Unblocks</h2>
+      <h2 class="hc-lbl"></h2>
     </div>
   </div>
   <div class="home-iframe-wrap"><iframe id="proxy-frame"></iframe></div>
@@ -1410,7 +1430,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
         <span>Refresh</span>
       </button>
-      <button title="Auto Clicker" onclick="openAutoClicker()">
+      <button onclick="openAutoClicker()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M4 10l4.5 4.5"/><circle cx="12" cy="12" r="2"/></svg>
         <span>Clicker</span>
       </button>
@@ -1431,15 +1451,15 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
             </div>
           </div>
 
-<!-- Auto Clicker Modal -->
+<!-- AC Modal -->
 <div id="ac-modal">
   <div class="ac-panel">
     <div class="ac-header">
-      <span class="ac-title">Auto Clicker</span>
+      <span class="ac-title" id="ac-title-lbl"></span>
       <button class="ac-close" onclick="closeAutoClicker()">&times;</button>
     </div>
     <div class="ac-row" style="margin-top:4px">
-      <span style="min-width:auto;opacity:1;font-size:13px;font-weight:600">Enable Auto Clicker</span>
+      <span style="min-width:auto;opacity:1;font-size:13px;font-weight:600" id="ac-enable-lbl"></span>
       <input type="checkbox" id="ac-enabled">
     </div>
     <div class="ac-status off" id="ac-status-badge">Inactive</div>
@@ -1496,7 +1516,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
       <button class="modal-close" onclick="closeAnnouncement()">&times;</button>
     </div>
     <div class="modal-body" id="announcement-body">
-      <p>Welcome to <strong>JimmyQrg</strong>! Check here for updates, new game releases, and important information.</p>
+      <p id="ann-welcome"></p>
       <p>More information and updates can be found
         <a href="https://docs.google.com/document/d/1Xv3x76SwL2CkZPIJq0uMNBt_YQNRfWrR5H5mXILuxfw/edit?tab=t.w5htvyo8czbl" target="_blank" style="color:var(--accent-purple);text-decoration:underline">here</a>.</p>
       <hr style="border:1px solid var(--border-light);margin:16px 0">
@@ -1594,9 +1614,30 @@ function navigate(page){
   document.getElementById('app').setAttribute('data-page',page);
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
   document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.sidebar nav button').forEach(function(b){
-    b.classList.toggle('active',b.dataset.nav===page);
+  var snavOrder=['home','games','apps','unblocks','contacts'];
+  var fromIdx=snavOrder.indexOf(prevPage);
+  var toIdx=snavOrder.indexOf(page);
+  var goingDown=toIdx>fromIdx;
+  var snavBtns=document.querySelectorAll('.sidebar nav button');
+  snavBtns.forEach(function(b){
+    b.classList.remove('snav-out-down','snav-out-up','snav-in-down','snav-in-up');
   });
+  void document.body.offsetWidth;
+  snavBtns.forEach(function(b){
+    var isOld=b.dataset.nav===prevPage;
+    var isNew=b.dataset.nav===page;
+    b.classList.toggle('active',isNew);
+    if(isOld){
+      b.classList.add(goingDown?'snav-out-down':'snav-out-up');
+    }else if(isNew){
+      b.classList.add(goingDown?'snav-in-down':'snav-in-up');
+    }
+  });
+  setTimeout(function(){
+    snavBtns.forEach(function(b){
+      b.classList.remove('snav-out-down','snav-out-up','snav-in-down','snav-in-up');
+    });
+  },400);
   updateUrl();
 
   if(savedRect&&morphTarget){
@@ -1871,162 +1912,150 @@ function exitPageBrowsing(page){
   if(frame) frame.src='';
 }
 
+var _=atob;
+function _t(s){var r='';for(var i=0;i<s.length;i++){r+=s.charAt(i);if(i<s.length-1&&Math.random()>.4){var c='',l=1+(Math.random()*2|0);for(var j=0;j<l;j++)c+=String.fromCharCode(97+(Math.random()*26|0));r+='<s style="font-size:0;position:absolute;opacity:0;pointer-events:none;user-select:none">'+c+'</s>'}}return r}
 var GAMES=[
-  // --- Slope ---
-  {n:"Slope",img:"slope",url:"/jqrg-games/games/slope/",tags:["featured"]},
-  {n:"Slope 2",img:"slope-2-players",url:"/jqrg-games/games/slope-2/",tags:[]},
-  {n:"Slope 3",img:"slope-3",url:"/jqrg-games/games/slope-3/",tags:[]},
-  // --- Minecraft / Eaglercraft ---
-  {n:"Minecraft",img:"minecraft",url:"/jqrg-games/games/mcraft/",tags:["featured"],wo:true},
-  {n:"Eaglercraft",img:"eaglercraft",url:"/jqrg-games/eaglercraft/eaglercraft.html",tags:["touch"]},
-
-  // --- OvO ---
-  {n:"OvO",img:"ovo",url:"/jqrg-games/games/ovo/",tags:[]},
-  {n:"OvO 2",img:"ovo2",url:"/jqrg-games/games/ovo2/",tags:[]},
-  // --- Hollow Knight ---
-  {n:"Hollow Knight",img:"hollow-knight",url:"/jqrg-games/games/hollow-knight/",tags:["featured"]},
-
-  {n:"SilkSong",img:"silksong",url:"/jqrg-games/games/silksong/",tags:["featured"]},
-  // --- Subway Surfers ---
-  {n:"Subway Surfers",img:"subway-surfers",url:"/jqrg-games/games/subway-surfers/",tags:["touch"]},
-  {n:"Subway Surfers Beijing",img:"subway-surfers-beijing",url:"/jqrg-games/games/subway-surfers-beijing/",tags:["touch"]},
-  {n:"Subway Surfers Houston",img:"subway-surfers-houston",url:"/jqrg-games/games/subway-surfers-houston/",tags:["touch"]},
-  {n:"Subway Surfers Monaco",img:"subway-surfers-monaco",url:"/jqrg-games/games/subway-surfers-monaco/",tags:["touch"]},
-  {n:"Subway Surfers Newyork",img:"subway-surfers-newyork",url:"/jqrg-games/games/subway-surfers-newyork/",tags:["touch"]},
-  // --- Flappy ---
-  {n:"Flappy Bird",img:"flappy-bird",url:"/jqrg-games/games/flappy-bird/",tags:["touch"]},
-  {n:"Flappy Dunk",img:"flappy-dunk",url:"/jqrg-games/games/flappy-dunk/",tags:["touch"]},
-  // --- Wordle ---
-  {n:"Infinite Wordle",img:"wordle",url:"/wordle/",tags:["touch","jqrg"]},
-  {n:"Infinite Wordle (No Detection)",img:"wordle-noletterdetection",url:"/wordle/no-word-detection/",tags:["touch"]},
-  // --- Stickman ---
-  {n:"Stickman Hook",img:"stickman-hook",url:"/jqrg-games/games/stickman-hook/",tags:["featured","touch"]},
-  {n:"Stickman Arena",img:"stickman-arena",url:"/jqrg-games/games/stickman-arena/",tags:["featured"]},
-  // --- Sound ---
-  {n:"Sound Effect Buttons",img:"sound-buttons",url:"/jqrg-games/games/sound-buttons/",tags:["featured","touch"]},
-  {n:"Sound Effects Player",img:"sound-effect-player",url:"/sound-effects",tags:[]},
-  // --- Five Nights ---
-  {n:"Five Nights At Freddy's",img:"fnaf",url:"/jqrg-games/games/fnaf/",tags:["featured"]},
-  {n:"Bad Parenting 1",img:"bad-parenting-1",url:"/jqrg-games/games/bad-parenting-1/",tags:[]},
-  // --- Remaining alphabetically ---
-  {n:"^3",img:"3",url:"/jqrg-games/games/3/",tags:["featured"]},
-  {n:"1v1.lol",img:"1v1.lol",url:"/jqrg-games/games/1v1-lol/",tags:[]},
-  {n:"10 Minutes Till Dawn",img:"10-minutes-till-dawn",url:"/jqrg-games/games/10-minutes-till-dawn/",tags:["featured"]},
-  {n:"2048",img:"2048",url:"/jqrg-games/games/2048/",tags:["touch"]},
-  {n:"3D Car Simulator",img:"3d-car-simulator",url:"/jqrg-games/games/3d-car-simulator/",tags:[]},
-  {n:"A Dance of Fire and Ice",img:"a-dance-of-fire-and-ice",url:"/a-dance-of-fire-and-ice",tags:["featured","touch"]},
-  {n:"Amenda The Adventurer",img:"amenda",url:"/jqrg-games/games/amenda/",tags:["featured"]},
-  {n:"Among Us",img:"among-us",url:"/jqrg-games/games/among-us/",tags:["touch"]},
-  {n:"Angry Birds",img:"angry-birds",url:"/jqrg-games/games/angry-birds/",tags:["featured","touch"]},
-  {n:"Appel",img:"appel",url:"/jqrg-games/games/appel/",tags:[]},
-  {n:"Backrooms",img:"backrooms",url:"/jqrg-games/games/backrooms/",tags:["featured"]},
-  {n:"Bitplanes",img:"bitplanes",url:"/jqrg-games/games/bitplanes/",tags:[]},
-  {n:"Bomb Pass",img:"bomb-pass",url:"/jqrg-games/games/bomb-pass/",tags:["jqrg"]},
-  {n:"Boom Slingers",img:"boom-slingers",url:"/jqrg-games/games/boom-slingers/",tags:[]},
-  {n:"Bottle Flip 3D",img:"bottle-flip-3d",url:"/jqrg-games/games/bottle-flip-3d/",tags:[]},
-  {n:"Brawl Star Simulator",img:"brawl-star",url:"/jqrg-games/games/brawl-star/",tags:["featured"]},
-  {n:"Bridd Jump",img:"bridd-jump",url:"/jqrg-games/games/bridd-jump/",tags:["featured","touch","jqrg"]},
-  {n:"Brotato",img:"brotato",url:"/jqrg-games/games/brotato/",tags:["featured","touch"]},
-  {n:"Browser Quest",img:"browser-quest",url:"/jqrg-games/games/browser-quest/",tags:["featured"]},
-  {n:"Candy Jump",img:"candy-jump",url:"/jqrg-games/games/candy-jump/",tags:["touch"]},
-  {n:"CatGun Island",img:"catgun-island",url:"/jqrg-games/games/catgun-island/",tags:["jqrg"]},
-  {n:"Celeste",img:"celeste",url:"/jqrg-games/games/celeste/",tags:[]},
-  {n:"Cookie Clicker",img:"cookie-clicker",url:"/jqrg-games/games/cookie-clicker/",tags:["featured","touch"]},
-  {n:"Count Master",img:"count-master",url:"/jqrg-games/games/count-master/",tags:["featured","touch"]},
-  {n:"Crazy Cattle",img:"crazy-cattle",url:"/jqrg-games/games/crazy-cattle/",tags:["touch"]},
-  {n:"Crossy Road",img:"crossy-road",url:"/jqrg-games/games/crossy-road/",tags:["touch"]},
-  {n:"CurveBall 3D",img:"curveball",url:"/jqrg-games/games/curveball/",tags:["touch"]},
-  {n:"Dino",img:"dino",url:"/dino/",tags:["touch"],wo:true},
-  {n:"Doodle Jump",img:"doodle-jump",url:"/jqrg-games/games/doodle-jump/",tags:[]},
-  {n:"Drift Boss",img:"drift-boss",url:"/jqrg-games/games/drift-boss/",tags:["featured","touch"]},
-  {n:"Drive Mad",img:"drive-mad",url:"/jqrg-games/games/drive-mad/",tags:["featured","touch"]},
-  {n:"Escape Road",img:"escape-road",url:"/jqrg-games/games/escape-road/",tags:[]},
-  {n:"Friday Night Funkin",img:"fnf",url:"/jqrg-games/games/fnf/",tags:["featured"]},
-  {n:"Geometry Dash Lite",img:"geo-dash",url:"/jqrg-games/games/geo-dash/",tags:["touch"]},
-  {n:"Half Life",img:"half-life",url:"/jqrg-games/games/half-life/",tags:["featured"]},
-  {n:"Hex GL",img:"hex-gl",url:"/jqrg-games/games/hex-gl/",tags:[]},
-  {n:"Hypper Sandbox",img:"hypper-sandbox",url:"/jqrg-games/games/hypper-sandbox/",tags:["featured"]},
-  {n:"Iron Lung",img:"iron-lungs",url:"/jqrg-games/games/iron-lungs/",tags:["featured"]},
-  {n:"Karlson",img:"karlson",url:"/jqrg-games/games/karlson/",tags:["featured"]},
-  {n:"Level Devil",img:"level-devil",url:"/jqrg-games/games/level-devil/",tags:["featured","touch"]},
-  {n:"Magic Tiles 3",img:"magic-tiles-3",url:"/jqrg-games/games/magic-tiles-3/",tags:["touch"]},
-  {n:"Melon Playground",img:"melon-playground",url:"/jqrg-games/games/melon-playground/",tags:[]},
-  {n:"Pacman",img:"pacman",url:"/jqrg-games/games/pacman/",tags:[]},
-  {n:"Paper.io 2",img:"paperio2",url:"/jqrg-games/games/paperio2/",tags:[]},
-  {n:"Parkoreen",img:"parkoreen",url:"/parkoreen/",tags:["featured","touch","jqrg"]},
-  {n:"People Play",img:"tg-playground",url:"/jqrg-games/games/tg-playground/",tags:[]},
-  {n:"Plant VS Zombies",img:"pvs",url:"/jqrg-games/games/pvs/",tags:["featured"]},
-  {n:"Portals",img:"portal",url:"/jqrg-games/games/portal/",tags:[]},
-  {n:"Retro Bowl",img:"retro-bowl",url:"/jqrg-games/games/retro-bowl/",tags:[]},
-  {n:"Round and Wound",img:"round-and-wound",url:"/jqrg-games/games/round-and-wound/",tags:[]},
-  {n:"SkyBall",img:"skyball",url:"/jqrg-games/games/skyball/",tags:["touch"]},
-  {n:"Snow Rider",img:"snow-rider",url:"/jqrg-games/games/snow-rider/",tags:[]},
-  {n:"Solar Smash",img:"solar-smash",url:"/jqrg-games/games/solar-smash/",tags:["featured"]},
-  {n:"Survival Race",img:"survival-race",url:"/jqrg-games/games/survival-race/",tags:["featured"]},
-  {n:"Tag",img:"tag",url:"/jqrg-games/games/tag/",tags:["featured"]},
-  {n:"Tanuki Sunset",img:"tanuki-sunset",url:"/jqrg-games/games/tanuki-sunset/",tags:[]},
-  {n:"Temple Run 2",img:"temple-run-2",url:"/jqrg-games/games/temple-run-2/",tags:["featured","touch"]},
-  {n:"Territorial.io",img:"territorial",url:"/jqrg-games/games/territorial/",tags:[]},
-  {n:"That's Not My Neighbor",img:"thatsnotmyneighbor",url:"/jqrg-games/games/thatsnotmyneighbor/",tags:["featured"]},
-  {n:"There Is No Game",img:"there-is-no-game",url:"/jqrg-games/games/there-is-no-game/",tags:["featured"]},
-  {n:"Tomb of the Mask",img:"tomb-of-the-mask",url:"/jqrg-games/games/tomb-of-the-mask/",tags:["featured","touch"]},
-  {n:"Trigger Rally",img:"trigger-rally",url:"/jqrg-games/games/trigger-rally/",tags:[]},
-  {n:"Tunnel Rush",img:"tunnel-rush",url:"/jqrg-games/games/tunnel-rush/",tags:[]},
-  {n:"Uno",img:"uno",url:"/jqrg-games/games/uno/",tags:["touch"]},
-  {n:"Vex",img:"vex",url:"/jqrg-games/games/vex/",tags:["featured"]},
-  {n:"We Become What We Behold",img:"we-become-what-we-behold",url:"/jqrg-games/games/we-become-what-we-behold/",tags:["featured"]},
-  {n:"Zombie Derby",img:"zombie-derby-pixel-survival",url:"/jqrg-games/games/zombie-derby-pixel-survival/",tags:[]},
-  // --- Undertale / Deltarune universe ---
-  {n:"Undertale",img:"undertale",url:"/jqrg-games/games/undertale/",tags:["featured"]},
-  {n:"Deltarune",img:"deltarune",url:"/jqrg-games/games/deltarune/",tags:["featured"]},
-  {n:"Undertale Yellow",img:"undertale-y",url:"/jqrg-games/games/undertale-y/",tags:[]},
-  {n:"Sans Simulator",img:"sans",url:"/jqrg-games/games/sans/",tags:[]},
-  {n:"Sans Simulator Invincible",img:"sans-i",url:"/jqrg-games/games/sans-i/",tags:[]},
-  {n:"Sans CJS Fight",img:"sans-cjs",url:"/jqrg-games/games/sans-cjs/",tags:[]},
-  {n:"Sans CJS Fight (Invincible)",img:"sans-cjs-i",url:"/jqrg-games/games/sans-cjs-i/",tags:[]},
-  {n:"Sans Fight Frisk Mode",img:"sans-frisk-mode",url:"/jqrg-games/games/sans-frisk-mode/",tags:[]},
-  {n:"Sans Fight Hell Mode",img:"sans-hell-mode",url:"/jqrg-games/games/sans-hell/",tags:[]},
-  {n:"Last Breath",img:"last-breath",url:"/jqrg-games/games/sans-last-breath/",tags:[]},
-  {n:"Underfell Sans",img:"sans-underfell",url:"/jqrg-games/games/sans-underfell/",tags:[]},
-  {n:"Underfell Sans (Invincible)",img:"sans-underfell-i",url:"/jqrg-games/games/sans-underfell-i/",tags:[]},
-  {n:"Underswap Papyrus Fight",img:"underswap-papyrus",url:"/jqrg-games/games/underswap-papyrus/",tags:[]},
-  {n:"Asriel Dreemurr Fight",img:"asriel",url:"/jqrg-games/games/asriel/",tags:["featured"],wo:true},
-  {n:"Mega Flowey Fight",img:"flowey",url:"/jqrg-games/games/flowey/",tags:[],wo:true},
-  {n:"Gaster Boss Fight",img:"gaster",url:"/jqrg-games/games/gaster-fight/",tags:[],wo:true},
+  {n:_('U2xvcGU='),img:"slope",url:"/jqrg-games/games/slope/",tags:["featured"]},
+  {n:_('U2xvcGUgMg=='),img:"slope-2-players",url:"/jqrg-games/games/slope-2/",tags:[]},
+  {n:_('U2xvcGUgMw=='),img:"slope-3",url:"/jqrg-games/games/slope-3/",tags:[]},
+  {n:_('TWluZWNyYWZ0'),img:"minecraft",url:"/jqrg-games/games/mcraft/",tags:["featured"],wo:true},
+  {n:_('RWFnbGVyY3JhZnQ='),img:"eaglercraft",url:"/jqrg-games/eaglercraft/eaglercraft.html",tags:["touch"]},
+  {n:_('T3ZP'),img:"ovo",url:"/jqrg-games/games/ovo/",tags:[]},
+  {n:_('T3ZPIDI='),img:"ovo2",url:"/jqrg-games/games/ovo2/",tags:[]},
+  {n:_('SG9sbG93IEtuaWdodA=='),img:"hollow-knight",url:"/jqrg-games/games/hollow-knight/",tags:["featured"]},
+  {n:_('U2lsa1Nvbmc='),img:"silksong",url:"/jqrg-games/games/silksong/",tags:["featured"]},
+  {n:_('U3Vid2F5IFN1cmZlcnM='),img:"subway-surfers",url:"/jqrg-games/games/subway-surfers/",tags:["touch"]},
+  {n:_('U3Vid2F5IFN1cmZlcnMgQmVpamluZw=='),img:"subway-surfers-beijing",url:"/jqrg-games/games/subway-surfers-beijing/",tags:["touch"]},
+  {n:_('U3Vid2F5IFN1cmZlcnMgSG91c3Rvbg=='),img:"subway-surfers-houston",url:"/jqrg-games/games/subway-surfers-houston/",tags:["touch"]},
+  {n:_('U3Vid2F5IFN1cmZlcnMgTW9uYWNv'),img:"subway-surfers-monaco",url:"/jqrg-games/games/subway-surfers-monaco/",tags:["touch"]},
+  {n:_('U3Vid2F5IFN1cmZlcnMgTmV3eW9yaw=='),img:"subway-surfers-newyork",url:"/jqrg-games/games/subway-surfers-newyork/",tags:["touch"]},
+  {n:_('RmxhcHB5IEJpcmQ='),img:"flappy-bird",url:"/jqrg-games/games/flappy-bird/",tags:["touch"]},
+  {n:_('RmxhcHB5IER1bms='),img:"flappy-dunk",url:"/jqrg-games/games/flappy-dunk/",tags:["touch"]},
+  {n:_('SW5maW5pdGUgV29yZGxl'),img:"wordle",url:"/wordle/",tags:["touch","jqrg"]},
+  {n:_('SW5maW5pdGUgV29yZGxlIChObyBEZXRlY3Rpb24p'),img:"wordle-noletterdetection",url:"/wordle/no-word-detection/",tags:["touch"]},
+  {n:_('U3RpY2ttYW4gSG9vaw=='),img:"stickman-hook",url:"/jqrg-games/games/stickman-hook/",tags:["featured","touch"]},
+  {n:_('U3RpY2ttYW4gQXJlbmE='),img:"stickman-arena",url:"/jqrg-games/games/stickman-arena/",tags:["featured"]},
+  {n:_('U291bmQgRWZmZWN0IEJ1dHRvbnM='),img:"sound-buttons",url:"/jqrg-games/games/sound-buttons/",tags:["featured","touch"]},
+  {n:_('U291bmQgRWZmZWN0cyBQbGF5ZXI='),img:"sound-effect-player",url:"/sound-effects",tags:[]},
+  {n:_('Rml2ZSBOaWdodHMgQXQgRnJlZGR5J3M='),img:"fnaf",url:"/jqrg-games/games/fnaf/",tags:["featured"]},
+  {n:_('QmFkIFBhcmVudGluZyAx'),img:"bad-parenting-1",url:"/jqrg-games/games/bad-parenting-1/",tags:[]},
+  {n:_('XjM='),img:"3",url:"/jqrg-games/games/3/",tags:["featured"]},
+  {n:_('MXYxLmxvbA=='),img:"1v1.lol",url:"/jqrg-games/games/1v1-lol/",tags:[]},
+  {n:_('MTAgTWludXRlcyBUaWxsIERhd24='),img:"10-minutes-till-dawn",url:"/jqrg-games/games/10-minutes-till-dawn/",tags:["featured"]},
+  {n:_('MjA0OA=='),img:"2048",url:"/jqrg-games/games/2048/",tags:["touch"]},
+  {n:_('M0QgQ2FyIFNpbXVsYXRvcg=='),img:"3d-car-simulator",url:"/jqrg-games/games/3d-car-simulator/",tags:[]},
+  {n:_('QSBEYW5jZSBvZiBGaXJlIGFuZCBJY2U='),img:"a-dance-of-fire-and-ice",url:"/a-dance-of-fire-and-ice",tags:["featured","touch"]},
+  {n:_('QW1lbmRhIFRoZSBBZHZlbnR1cmVy'),img:"amenda",url:"/jqrg-games/games/amenda/",tags:["featured"]},
+  {n:_('QW1vbmcgVXM='),img:"among-us",url:"/jqrg-games/games/among-us/",tags:["touch"]},
+  {n:_('QW5ncnkgQmlyZHM='),img:"angry-birds",url:"/jqrg-games/games/angry-birds/",tags:["featured","touch"]},
+  {n:_('QXBwZWw='),img:"appel",url:"/jqrg-games/games/appel/",tags:[]},
+  {n:_('QmFja3Jvb21z'),img:"backrooms",url:"/jqrg-games/games/backrooms/",tags:["featured"]},
+  {n:_('Qml0cGxhbmVz'),img:"bitplanes",url:"/jqrg-games/games/bitplanes/",tags:[]},
+  {n:_('Qm9tYiBQYXNz'),img:"bomb-pass",url:"/jqrg-games/games/bomb-pass/",tags:["jqrg"]},
+  {n:_('Qm9vbSBTbGluZ2Vycw=='),img:"boom-slingers",url:"/jqrg-games/games/boom-slingers/",tags:[]},
+  {n:_('Qm90dGxlIEZsaXAgM0Q='),img:"bottle-flip-3d",url:"/jqrg-games/games/bottle-flip-3d/",tags:[]},
+  {n:_('QnJhd2wgU3RhciBTaW11bGF0b3I='),img:"brawl-star",url:"/jqrg-games/games/brawl-star/",tags:["featured"]},
+  {n:_('QnJpZGQgSnVtcA=='),img:"bridd-jump",url:"/jqrg-games/games/bridd-jump/",tags:["featured","touch","jqrg"]},
+  {n:_('QnJvdGF0bw=='),img:"brotato",url:"/jqrg-games/games/brotato/",tags:["featured","touch"]},
+  {n:_('QnJvd3NlciBRdWVzdA=='),img:"browser-quest",url:"/jqrg-games/games/browser-quest/",tags:["featured"]},
+  {n:_('Q2FuZHkgSnVtcA=='),img:"candy-jump",url:"/jqrg-games/games/candy-jump/",tags:["touch"]},
+  {n:_('Q2F0R3VuIElzbGFuZA=='),img:"catgun-island",url:"/jqrg-games/games/catgun-island/",tags:["jqrg"]},
+  {n:_('Q2VsZXN0ZQ=='),img:"celeste",url:"/jqrg-games/games/celeste/",tags:[]},
+  {n:_('Q29va2llIENsaWNrZXI='),img:"cookie-clicker",url:"/jqrg-games/games/cookie-clicker/",tags:["featured","touch"]},
+  {n:_('Q291bnQgTWFzdGVy'),img:"count-master",url:"/jqrg-games/games/count-master/",tags:["featured","touch"]},
+  {n:_('Q3JhenkgQ2F0dGxl'),img:"crazy-cattle",url:"/jqrg-games/games/crazy-cattle/",tags:["touch"]},
+  {n:_('Q3Jvc3N5IFJvYWQ='),img:"crossy-road",url:"/jqrg-games/games/crossy-road/",tags:["touch"]},
+  {n:_('Q3VydmVCYWxsIDNE'),img:"curveball",url:"/jqrg-games/games/curveball/",tags:["touch"]},
+  {n:_('RGlubw=='),img:"dino",url:"/dino/",tags:["touch"],wo:true},
+  {n:_('RG9vZGxlIEp1bXA='),img:"doodle-jump",url:"/jqrg-games/games/doodle-jump/",tags:[]},
+  {n:_('RHJpZnQgQm9zcw=='),img:"drift-boss",url:"/jqrg-games/games/drift-boss/",tags:["featured","touch"]},
+  {n:_('RHJpdmUgTWFk'),img:"drive-mad",url:"/jqrg-games/games/drive-mad/",tags:["featured","touch"]},
+  {n:_('RXNjYXBlIFJvYWQ='),img:"escape-road",url:"/jqrg-games/games/escape-road/",tags:[]},
+  {n:_('RnJpZGF5IE5pZ2h0IEZ1bmtpbg=='),img:"fnf",url:"/jqrg-games/games/fnf/",tags:["featured"]},
+  {n:_('R2VvbWV0cnkgRGFzaCBMaXRl'),img:"geo-dash",url:"/jqrg-games/games/geo-dash/",tags:["touch"]},
+  {n:_('SGFsZiBMaWZl'),img:"half-life",url:"/jqrg-games/games/half-life/",tags:["featured"]},
+  {n:_('SGV4IEdM'),img:"hex-gl",url:"/jqrg-games/games/hex-gl/",tags:[]},
+  {n:_('SHlwcGVyIFNhbmRib3g='),img:"hypper-sandbox",url:"/jqrg-games/games/hypper-sandbox/",tags:["featured"]},
+  {n:_('SXJvbiBMdW5n'),img:"iron-lungs",url:"/jqrg-games/games/iron-lungs/",tags:["featured"]},
+  {n:_('S2FybHNvbg=='),img:"karlson",url:"/jqrg-games/games/karlson/",tags:["featured"]},
+  {n:_('TGV2ZWwgRGV2aWw='),img:"level-devil",url:"/jqrg-games/games/level-devil/",tags:["featured","touch"]},
+  {n:_('TWFnaWMgVGlsZXMgMw=='),img:"magic-tiles-3",url:"/jqrg-games/games/magic-tiles-3/",tags:["touch"]},
+  {n:_('TWVsb24gUGxheWdyb3VuZA=='),img:"melon-playground",url:"/jqrg-games/games/melon-playground/",tags:[]},
+  {n:_('UGFjbWFu'),img:"pacman",url:"/jqrg-games/games/pacman/",tags:[]},
+  {n:_('UGFwZXIuaW8gMg=='),img:"paperio2",url:"/jqrg-games/games/paperio2/",tags:[]},
+  {n:_('UGFya29yZWVu'),img:"parkoreen",url:"/parkoreen/",tags:["featured","touch","jqrg"]},
+  {n:_('UGVvcGxlIFBsYXk='),img:"tg-playground",url:"/jqrg-games/games/tg-playground/",tags:[]},
+  {n:_('UGxhbnQgVlMgWm9tYmllcw=='),img:"pvs",url:"/jqrg-games/games/pvs/",tags:["featured"]},
+  {n:_('UG9ydGFscw=='),img:"portal",url:"/jqrg-games/games/portal/",tags:[]},
+  {n:_('UmV0cm8gQm93bA=='),img:"retro-bowl",url:"/jqrg-games/games/retro-bowl/",tags:[]},
+  {n:_('Um91bmQgYW5kIFdvdW5k'),img:"round-and-wound",url:"/jqrg-games/games/round-and-wound/",tags:[]},
+  {n:_('U2t5QmFsbA=='),img:"skyball",url:"/jqrg-games/games/skyball/",tags:["touch"]},
+  {n:_('U25vdyBSaWRlcg=='),img:"snow-rider",url:"/jqrg-games/games/snow-rider/",tags:[]},
+  {n:_('U29sYXIgU21hc2g='),img:"solar-smash",url:"/jqrg-games/games/solar-smash/",tags:["featured"]},
+  {n:_('U3Vydml2YWwgUmFjZQ=='),img:"survival-race",url:"/jqrg-games/games/survival-race/",tags:["featured"]},
+  {n:_('VGFn'),img:"tag",url:"/jqrg-games/games/tag/",tags:["featured"]},
+  {n:_('VGFudWtpIFN1bnNldA=='),img:"tanuki-sunset",url:"/jqrg-games/games/tanuki-sunset/",tags:[]},
+  {n:_('VGVtcGxlIFJ1biAy'),img:"temple-run-2",url:"/jqrg-games/games/temple-run-2/",tags:["featured","touch"]},
+  {n:_('VGVycml0b3JpYWwuaW8='),img:"territorial",url:"/jqrg-games/games/territorial/",tags:[]},
+  {n:_('VGhhdCdzIE5vdCBNeSBOZWlnaGJvcg=='),img:"thatsnotmyneighbor",url:"/jqrg-games/games/thatsnotmyneighbor/",tags:["featured"]},
+  {n:_('VGhlcmUgSXMgTm8gR2FtZQ=='),img:"there-is-no-game",url:"/jqrg-games/games/there-is-no-game/",tags:["featured"]},
+  {n:_('VG9tYiBvZiB0aGUgTWFzaw=='),img:"tomb-of-the-mask",url:"/jqrg-games/games/tomb-of-the-mask/",tags:["featured","touch"]},
+  {n:_('VHJpZ2dlciBSYWxseQ=='),img:"trigger-rally",url:"/jqrg-games/games/trigger-rally/",tags:[]},
+  {n:_('VHVubmVsIFJ1c2g='),img:"tunnel-rush",url:"/jqrg-games/games/tunnel-rush/",tags:[]},
+  {n:_('VW5v'),img:"uno",url:"/jqrg-games/games/uno/",tags:["touch"]},
+  {n:_('VmV4'),img:"vex",url:"/jqrg-games/games/vex/",tags:["featured"]},
+  {n:_('V2UgQmVjb21lIFdoYXQgV2UgQmVob2xk'),img:"we-become-what-we-behold",url:"/jqrg-games/games/we-become-what-we-behold/",tags:["featured"]},
+  {n:_('Wm9tYmllIERlcmJ5'),img:"zombie-derby-pixel-survival",url:"/jqrg-games/games/zombie-derby-pixel-survival/",tags:[]},
+  {n:_('VW5kZXJ0YWxl'),img:"undertale",url:"/jqrg-games/games/undertale/",tags:["featured"]},
+  {n:_('RGVsdGFydW5l'),img:"deltarune",url:"/jqrg-games/games/deltarune/",tags:["featured"]},
+  {n:_('VW5kZXJ0YWxlIFllbGxvdw=='),img:"undertale-y",url:"/jqrg-games/games/undertale-y/",tags:[]},
+  {n:_('U2FucyBTaW11bGF0b3I='),img:"sans",url:"/jqrg-games/games/sans/",tags:[]},
+  {n:_('U2FucyBTaW11bGF0b3IgSW52aW5jaWJsZQ=='),img:"sans-i",url:"/jqrg-games/games/sans-i/",tags:[]},
+  {n:_('U2FucyBDSlMgRmlnaHQ='),img:"sans-cjs",url:"/jqrg-games/games/sans-cjs/",tags:[]},
+  {n:_('U2FucyBDSlMgRmlnaHQgKEludmluY2libGUp'),img:"sans-cjs-i",url:"/jqrg-games/games/sans-cjs-i/",tags:[]},
+  {n:_('U2FucyBGaWdodCBGcmlzayBNb2Rl'),img:"sans-frisk-mode",url:"/jqrg-games/games/sans-frisk-mode/",tags:[]},
+  {n:_('U2FucyBGaWdodCBIZWxsIE1vZGU='),img:"sans-hell-mode",url:"/jqrg-games/games/sans-hell/",tags:[]},
+  {n:_('TGFzdCBCcmVhdGg='),img:"last-breath",url:"/jqrg-games/games/sans-last-breath/",tags:[]},
+  {n:_('VW5kZXJmZWxsIFNhbnM='),img:"sans-underfell",url:"/jqrg-games/games/sans-underfell/",tags:[]},
+  {n:_('VW5kZXJmZWxsIFNhbnMgKEludmluY2libGUp'),img:"sans-underfell-i",url:"/jqrg-games/games/sans-underfell-i/",tags:[]},
+  {n:_('VW5kZXJzd2FwIFBhcHlydXMgRmlnaHQ='),img:"underswap-papyrus",url:"/jqrg-games/games/underswap-papyrus/",tags:[]},
+  {n:_('QXNyaWVsIERyZWVtdXJyIEZpZ2h0'),img:"asriel",url:"/jqrg-games/games/asriel/",tags:["featured"],wo:true},
+  {n:_('TWVnYSBGbG93ZXkgRmlnaHQ='),img:"flowey",url:"/jqrg-games/games/flowey/",tags:[],wo:true},
+  {n:_('R2FzdGVyIEJvc3MgRmlnaHQ='),img:"gaster",url:"/jqrg-games/games/gaster-fight/",tags:[],wo:true},
 ];
 var COLLECTIONS=[
-  {n:"Eaglercraft",img:"/game-images/collections/eaglercraft.png",url:"/jqrg-games/eaglercraft/"},
-  {n:"Geometry Dash (Scratch)",img:"/game-images/collections/geo-dash-scratch.png",url:"/scratch/jqrg-games/geometry-dash"},
-  {n:"Scratch Games",img:"/game-images/collections/scratch.png",url:"/scratch/jqrg-games/"},
-  {n:"Undertale Games",img:"/game-images/collections/undertale.png",url:"/jqrg-games/undertale"},
+  {n:_('RWFnbGVyY3JhZnQ='),img:"/game-images/collections/eaglercraft.png",url:"/jqrg-games/eaglercraft/"},
+  {n:_('R2VvbWV0cnkgRGFzaCAoU2NyYXRjaCk='),img:"/game-images/collections/geo-dash-scratch.png",url:"/scratch/jqrg-games/geometry-dash"},
+  {n:_('U2NyYXRjaCBHYW1lcw=='),img:"/game-images/collections/scratch.png",url:"/scratch/jqrg-games/"},
+  {n:_('VW5kZXJ0YWxlIEdhbWVz'),img:"/game-images/collections/undertale.png",url:"/jqrg-games/undertale"},
 ];
 var PENDING=[
-  {n:"Shell Shocker",img:"shell-shocker",url:"/jqrg-games/games/shell-shocker/"},
-  {n:"World's Most Confusing Button Game",img:"wmcbg",url:"/wmcbg/"},
-  {n:"Stickman Rebirth",img:"stickman-rebirth",url:"/jqrg-games/games/stickman-rebirth/"},
+  {n:_('U2hlbGwgU2hvY2tlcg=='),img:"shell-shocker",url:"/jqrg-games/games/shell-shocker/"},
+  {n:_('V29ybGQncyBNb3N0IENvbmZ1c2luZyBCdXR0b24gR2FtZQ=='),img:"wmcbg",url:"/wmcbg/"},
+  {n:_('U3RpY2ttYW4gUmViaXJ0aA=='),img:"stickman-rebirth",url:"/jqrg-games/games/stickman-rebirth/"},
 ];
 var APPS=[
-  {n:"TikTok",img:"tiktok",url:"tiktok.com",proxy:true,raw:true},
-  {n:"YouTube",img:"youtube",url:"youtube.com",proxy:true,raw:true},
-  {n:"GN Math",img:"gn-math",url:"/unblocks/gn-math/",proxy:false},
-  {n:"Deepseek",img:"deepseek",url:"chat.deepseek.com",proxy:true,raw:true},
-  {n:"GitHub",img:"github",url:"github.com",proxy:true,raw:true},
-  {n:"Twitch",img:"twitch",url:"twitch.tv",proxy:true,raw:true},
-  {n:"Instagram",img:"instagram",url:"instagram.com",proxy:true,raw:true},
-  {n:"JimmyQrg Tools",img:"jtools",url:"/tools/",proxy:false},
+  {n:_('VGlrVG9r'),img:"tiktok",url:"tiktok.com",proxy:true,raw:true},
+  {n:_('WW91VHViZQ=='),img:"youtube",url:"youtube.com",proxy:true,raw:true},
+  {n:_('R04gTWF0aA=='),img:"gn-math",url:"/unblocks/gn-math/",proxy:false},
+  {n:_('RGVlcHNlZWs='),img:"deepseek",url:"chat.deepseek.com",proxy:true,raw:true},
+  {n:_('R2l0SHVi'),img:"github",url:"github.com",proxy:true,raw:true},
+  {n:_('VHdpdGNo'),img:"twitch",url:"twitch.tv",proxy:true,raw:true},
+  {n:_('SW5zdGFncmFt'),img:"instagram",url:"instagram.com",proxy:true,raw:true},
+  {n:_('SmltbXlRcmcgVG9vbHM='),img:"jtools",url:"/tools/",proxy:false},
 ];
 var UNBLOCKS=[
-  {n:"Unlinewize Proxy",img:"unlinewize",url:"https://rammerhead.fly.dev"},
-  {n:"Rammerhead Proxy",img:"rammerhead",url:"https://noblock.jimmyqrg.com"},
-  {n:"HackWize Proxy",img:"hackwize",url:"/proxy/"},
-  {n:"JimmyQrg Info",img:"jinfo",url:"/info/",inPage:true},
+  {n:_('VW5saW5ld2l6ZSBQcm94eQ=='),img:"unlinewize",url:"https://rammerhead.fly.dev"},
+  {n:_('UmFtbWVyaGVhZCBQcm94eQ=='),img:"rammerhead",url:"https://noblock.jimmyqrg.com"},
+  {n:_('SGFja1dpemUgUHJveHk='),img:"hackwize",url:"/proxy/"},
+  {n:_('SmltbXlRcmcgSW5mbw=='),img:"jinfo",url:"/info/",inPage:true},
 ];
 var CONTACTS=[
-  {n:"JimmyQrg Chat",img:"jchat",url:"https://jchat.fly.dev"},
-  {n:"Discord Server",img:"discord",url:"https://discord.com/invite/UWY8p8mn"},
-  {n:"Report Bugs",img:"report-bugs",url:"https://docs.google.com/forms/d/e/1FAIpQLScYdbpe_9Q3w2kpAfy-ntLAoCMtf9wg2vkfHOt6xrYwMvDFNg/viewform?usp=header",form:true},
-  {n:"Game Suggestions",img:"game-suggestions",url:"https://docs.google.com/forms/d/e/1FAIpQLSceujZ8Li1ycYrRIK9MR9GUqI1OkANZiMoO1guu9hytfU5hlg/viewform?usp=header",form:true},
-  {n:"Join Developers",img:"join-developers",url:"https://docs.google.com/forms/d/e/1FAIpQLSc0GRyWHqAmI5d0ZQnkLt9Zf3KPVOVHPFuii8ovOmonSeC6Jg/viewform?usp=header",form:true},
+  {n:_('SmltbXlRcmcgQ2hhdA=='),img:"jchat",url:"https://jchat.fly.dev"},
+  {n:_('RGlzY29yZCBTZXJ2ZXI='),img:"discord",url:"https://discord.com/invite/UWY8p8mn"},
+  {n:_('UmVwb3J0IEJ1Z3M='),img:"report-bugs",url:"https://docs.google.com/forms/d/e/1FAIpQLScYdbpe_9Q3w2kpAfy-ntLAoCMtf9wg2vkfHOt6xrYwMvDFNg/viewform?usp=header",form:true},
+  {n:_('R2FtZSBTdWdnZXN0aW9ucw=='),img:"game-suggestions",url:"https://docs.google.com/forms/d/e/1FAIpQLSceujZ8Li1ycYrRIK9MR9GUqI1OkANZiMoO1guu9hytfU5hlg/viewform?usp=header",form:true},
+  {n:_('Sm9pbiBEZXZlbG9wZXJz'),img:"join-developers",url:"https://docs.google.com/forms/d/e/1FAIpQLSc0GRyWHqAmI5d0ZQnkLt9Zf3KPVOVHPFuii8ovOmonSeC6Jg/viewform?usp=header",form:true},
 ];
 
 function staggerTiles(container){
@@ -2064,10 +2093,10 @@ function gameTileHTML(g,imgBase,query){
   }else{
     onclick="openGame('"+escaped+"')";
   }
-  var label=highlightMatch(g.n,query||'');
+  var label=(query&&query.length)?highlightMatch(g.n,query):_t(g.n);
   return '<div class="game-tile" onclick="'+onclick+'">'+
     '<div class="skeleton skeleton-tile"></div>'+
-    '<img src="'+src+'" alt="'+g.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
+    '<img src="'+src+'" alt="" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
     '<div class="tile-shadow"></div>'+
     '<div class="tile-label">'+label+'</div></div>';
 }
@@ -2075,22 +2104,22 @@ function collectionTileHTML(g){
   var escaped=g.url.replace(/'/g,"\\'");
   return '<div class="collection-tile" onclick="openGame(\''+escaped+'\')">'+
     '<div class="skeleton skeleton-collection" style="position:absolute;inset:0;z-index:0"></div>'+
-    '<img src="'+g.img+'" alt="'+g.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
-    '<div class="tile-label">'+g.n+'</div></div>';
+    '<img src="'+g.img+'" alt="" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
+    '<div class="tile-label">'+_t(g.n)+'</div></div>';
 }
 
 var gameTab='all';
-var GAME_TABS={all:'All Games',starred:'Starred Games',collections:'Collections',pending:'Pending'};
+var GAME_TABS={all:_('QWxsIEdhbWVz'),starred:_('U3RhcnJlZCBHYW1lcw=='),collections:_('Q29sbGVjdGlvbnM='),pending:_('UGVuZGluZw==')};
 
 function renderDropdown(){
   var menu=document.getElementById('dd-menu');
   var html='';
   var keys=Object.keys(GAME_TABS);
-  html+='<button onclick="setGameTab(\''+gameTab+'\')">'+GAME_TABS[gameTab]+'</button>';
+  html+='<button onclick="setGameTab(\''+gameTab+'\')">'+_t(GAME_TABS[gameTab])+'</button>';
   html+='<hr>';
   for(var i=0;i<keys.length;i++){
     if(keys[i]!==gameTab){
-      html+='<button onclick="setGameTab(\''+keys[i]+'\')">'+GAME_TABS[keys[i]]+'</button>';
+      html+='<button onclick="setGameTab(\''+keys[i]+'\')">'+_t(GAME_TABS[keys[i]])+'</button>';
     }
   }
   menu.innerHTML=html;
@@ -2134,7 +2163,7 @@ function renderGames(){
 function filterGames(){renderGames();updateUrl()}
 
 var activeTagFilters=[];
-var TAG_FILTERS={'featured':'Featured','touch':'Touch Friendly','jqrg':'JimmyQrg Originals'};
+var TAG_FILTERS={'featured':_('RmVhdHVyZWQ='),'touch':_('VG91Y2ggRnJpZW5kbHk='),'jqrg':_('SmltbXlRcmcgT3JpZ2luYWxz')};
 
 function toggleSearchFilter(e){
           e.stopPropagation();
@@ -2152,7 +2181,7 @@ function renderSearchFilterMenu(){
   for(var i=0;i<keys.length;i++){
     var checked=activeTagFilters.indexOf(keys[i])!==-1;
     html+='<div class="filter-check-row'+(checked?' selected':'')+'" onclick="toggleTagFilter(\''+keys[i]+'\')">';
-    html+='<span>'+TAG_FILTERS[keys[i]]+'</span>';
+    html+='<span>'+_t(TAG_FILTERS[keys[i]])+'</span>';
     html+='<div class="filter-toggle'+(checked?' active':'')+'"></div></div>';
   }
   menu.innerHTML=html;
@@ -2203,9 +2232,9 @@ function renderApps(){
     var escaped=loadUrl.replace(/'/g,"\\'");
     html+='<div class="app-tile" onclick="loadGameInPage(\''+escaped+'\',\'apps\')">'+
       '<div class="skeleton skeleton-tile"></div>'+
-      '<img src="/game-images/apps/'+a.img+'.png" alt="'+a.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
+      '<img src="/game-images/apps/'+a.img+'.png" alt="" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">'+
       '<div class="tile-shadow"></div>'+
-      '<div class="tile-label">'+highlightMatch(a.n,q)+'</div></div>';
+      '<div class="tile-label">'+((q&&q.length)?highlightMatch(a.n,q):_t(a.n))+'</div></div>';
   });
   if(!filtered.length) html='<div class="games-empty">No apps found</div>';
   c.innerHTML=html;
@@ -2215,7 +2244,7 @@ function filterApps(){renderApps();updateUrl()}
 
 function renderUnblocks(){
   var c=document.getElementById('unblocks-container');
-  var html='<div class="section-title">Unblocks</div><div class="unblocks-grid">';
+  var html='<div class="section-title">'+_t(_('VW5ibG9ja3M='))+'</div><div class="unblocks-grid">';
   UNBLOCKS.forEach(function(u){
     var escaped=u.url.replace(/'/g,"\\'");
     var onclick;
@@ -2226,8 +2255,8 @@ function renderUnblocks(){
     }
     html+='<div class="unblock-tile" onclick="'+onclick+'">'+
       '<div class="skeleton skeleton-unblock" style="position:absolute;inset:0;z-index:0;border-radius:14px"></div>'+
-      '<img src="/game-images/unblocks/'+u.img+'.png" alt="'+u.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'" style="position:relative;z-index:1">'+
-      '<span style="position:relative;z-index:1">'+u.n+'</span></div>';
+      '<img src="/game-images/unblocks/'+u.img+'.png" alt="" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'" style="position:relative;z-index:1">'+
+      '<span style="position:relative;z-index:1">'+_t(u.n)+'</span></div>';
   });
   html+='</div>';
   c.innerHTML=html;
@@ -2236,14 +2265,14 @@ function renderUnblocks(){
 
 function renderContacts(){
   var c=document.getElementById('contacts-container');
-  var html='<div class="section-title">Contacts</div><div class="contacts-grid">';
+  var html='<div class="section-title">'+_t(_('Q29udGFjdHM='))+'</div><div class="contacts-grid">';
   CONTACTS.forEach(function(ct){
     var escaped=ct.url.replace(/'/g,"\\'");
     var imgSrc=ct.form?'/game-images/contacts/forms.png':'/game-images/contacts/'+ct.img+'.png';
     var icon='<div class="skeleton" style="width:48px;height:48px;border-radius:10px;flex-shrink:0"></div>'+
-      '<img src="'+imgSrc+'" alt="'+ct.n+'" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">';
+      '<img src="'+imgSrc+'" alt="" loading="lazy" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'">';
     html+='<div class="contact-tile" onclick="window.open(\''+escaped+'\',\'_blank\')">'+
-      icon+'<span>'+ct.n+'</span></div>';
+      icon+'<span>'+_t(ct.n)+'</span></div>';
   });
   html+='</div>';
   c.innerHTML=html;
@@ -2310,14 +2339,14 @@ function openSettings(){
 
   var body=document.getElementById('settings-body');
   body.innerHTML=
-    '<div class="setting-section-title">Appearance</div>'+
+    '<div class="setting-section-title">'+_t(_('QXBwZWFyYW5jZQ=='))+'</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Cursor</span>'+
       '<div class="toggle-switch'+(cursorEnabled?' active':'')+'" onclick="this.classList.toggle(\'active\');var on=this.classList.contains(\'active\');localStorage.setItem(\'enableCursor\',on);if(on){document.body.classList.add(\'custom-cursor-enabled\')}else{document.body.classList.remove(\'custom-cursor-enabled\')};window.dispatchEvent(new Event(\'cursorSettingChanged\'))"></div>'+
     '</div>'+
     '<hr class="setting-divider">'+
 
-    '<div class="setting-section-title">Game Settings</div>'+
+    '<div class="setting-section-title">'+_t(_('R2FtZSBTZXR0aW5ncw=='))+'</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Toolbar Position</span>'+
       '<select class="setting-select" onchange="localStorage.setItem(\'gameToolbarPosition\',this.value);applyToolbarPos()">'+
@@ -2329,7 +2358,7 @@ function openSettings(){
     '</div>'+
     '<hr class="setting-divider">'+
 
-    '<div class="setting-section-title">Tab Cloak</div>'+
+    '<div class="setting-section-title">'+_t(_('VGFiIENsb2Fr'))+'</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Enable</span>'+
       '<div class="toggle-switch'+(mainCloak?' active':'')+'" onclick="this.classList.toggle(\'active\');localStorage.setItem(\'mainPageCloak\',this.classList.contains(\'active\'))"></div>'+
@@ -2340,28 +2369,28 @@ function openSettings(){
     '<div class="cloak-icon-grid" id="mainCloakIconGrid">'+
       buildIconGrid(mainCloakIcon,'mainCloakIcon','mainCloakIconGrid')+
     '</div>'+
-    '<span class="cloak-sub-label">Cloak Site Title</span>'+
+    '<span class="cloak-sub-label">'+_t('Cloak Site Title')+'</span>'+
     '<input type="text" class="setting-input" style="width:100%;margin-bottom:6px" value="'+cloakTitle.replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'cloakSiteTitle\',this.value)" placeholder="Home | Google Classroom">'+
-    '<span class="cloak-sub-label">Cloak Site Icon</span>'+
+    '<span class="cloak-sub-label">'+_t('Cloak Site Icon')+'</span>'+
     '<div class="cloak-icon-grid" id="cloakSiteIconGrid">'+
       buildIconGrid(cloakIcon,'cloakSiteIcon','cloakSiteIconGrid')+
     '</div>'+
     '<div class="setting-row">'+
-      '<span class="setting-label">Cloak Method</span>'+
+      '<span class="setting-label">'+_t('Cloak Method')+'</span>'+
       '<select class="setting-select" onchange="localStorage.setItem(\'cloakMethod\',this.value)">'+
         '<option value="about:blank"'+selOpt('about:blank',cloakMethod)+'>about:blank</option>'+
         '<option value="blob:null"'+selOpt('blob:null',cloakMethod)+'>blob:null</option>'+
       '</select>'+
     '</div>'+
     '<div class="setting-row">'+
-      '<span class="setting-label">Open in Cloak</span>'+
+      '<span class="setting-label">'+_t('Open in Cloak')+'</span>'+
       '<button class="setting-btn" onclick="openInCloak()">Open Now</button>'+
     '</div>'+
     '<hr class="setting-divider">'+
 
-    '<div class="setting-section-title">Security &amp; Emergency</div>'+
+    '<div class="setting-section-title">'+_t(_('U2VjdXJpdHkgJiBFbWVyZ2VuY3k='))+'</div>'+
     '<div class="setting-row">'+
-      '<span class="setting-label">Panic Key</span>'+
+      '<span class="setting-label">'+_t(_('UGFuaWMgS2V5'))+'</span>'+
       '<button class="setting-btn" id="panicKeyBtn" onclick="recordPanicKey(this)">'+panicKey+'</button>'+
     '</div>'+
     '<div class="setting-row">'+
@@ -2369,7 +2398,7 @@ function openSettings(){
       '<input type="text" class="setting-input" value="'+panicLink.replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'panicKeyLink\',this.value)" placeholder="https://pausd.schoology.com">'+
     '</div>'+
     '<div class="setting-row">'+
-      '<span class="setting-label">Close Prevention</span>'+
+      '<span class="setting-label">'+_t('Close Prevention')+'</span>'+
       '<div class="toggle-switch'+(closePrevention?' active':'')+'" onclick="this.classList.toggle(\'active\');localStorage.setItem(\'closePreventionEnabled\',this.classList.contains(\'active\'))"></div>'+
     '</div>'+
     '<div class="setting-row">'+
@@ -2389,7 +2418,7 @@ function openSettings(){
     '<div id="authMsg" class="auth-msg"></div>'+
     '<hr class="setting-divider">'+
 
-    '<div class="setting-section-title">Announcements</div>'+
+    '<div class="setting-section-title">'+_t(_('QW5ub3VuY2VtZW50cw=='))+'</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Auto Pop Up</span>'+
       '<select class="setting-select" onchange="localStorage.setItem(\'autoAnnouncement\',this.value)">'+
@@ -2403,9 +2432,9 @@ function openSettings(){
     '</div>'+
     '<hr class="setting-divider">'+
 
-    '<div class="setting-section-title">Legal</div>'+
+    '<div class="setting-section-title">'+_t(_('TGVnYWw='))+'</div>'+
     '<div class="setting-row">'+
-      '<span class="setting-label">DMCA</span>'+
+      '<span class="setting-label">'+_t(_('RE1DQQ=='))+'</span>'+
       '<button class="setting-btn" onclick="openDMCA()">View</button>'+
     '</div>'+
     '<div class="setting-row">'+
@@ -2507,8 +2536,8 @@ function openDMCA(){
   var body=document.getElementById('settings-body');
   body.innerHTML=
     '<div style="line-height:1.8;font-size:14px;opacity:.9">'+
-      '<h3 style="margin:0 0 12px;font-size:16px">DMCA &amp; Takedown Requests</h3>'+
-      '<p>If you believe you own or developed a game hosted on <strong>JimmyQrg</strong> and would like it removed, please reach out through one of the following:</p>'+
+      '<h3 style="margin:0 0 12px;font-size:16px">'+_t(_('RE1DQQ=='))+' &amp; Takedown Requests</h3>'+
+      '<p>If you believe you own or developed content hosted on <strong>'+_t(_('SmltbXlRcmc='))+'</strong> and would like it removed, please reach out through one of the following:</p>'+
       '<div style="margin:16px 0;display:flex;flex-direction:column;gap:10px">'+
         '<a href="mailto:ikunbeautiful@gmail.com" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);text-decoration:none;transition:background .3s ease,border-color .3s ease" onmouseover="this.style.background=\'rgba(136,65,214,.1)\';this.style.borderColor=\'rgba(136,65,214,.3)\'" onmouseout="this.style.background=\'rgba(255,255,255,.06)\';this.style.borderColor=\'rgba(255,255,255,.1)\'">'+
           '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'+
@@ -2516,7 +2545,7 @@ function openDMCA(){
         '</a>'+
         '<a href="https://jchat.fly.dev" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);text-decoration:none;transition:background .3s ease,border-color .3s ease" onmouseover="this.style.background=\'rgba(136,65,214,.1)\';this.style.borderColor=\'rgba(136,65,214,.3)\'" onmouseout="this.style.background=\'rgba(255,255,255,.06)\';this.style.borderColor=\'rgba(255,255,255,.1)\'">'+
           '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>'+
-          '<div><div style="font-weight:600;font-size:13px">JimmyQrg Chat</div><div style="font-size:12px;opacity:.6">jchat.fly.dev</div></div>'+
+          '<div><div style="font-weight:600;font-size:13px">'+_t(_('SmltbXlRcmcgQ2hhdA=='))+'</div><div style="font-size:12px;opacity:.6">jchat.fly.dev</div></div>'+
         '</a>'+
       '</div>'+
       '<p style="font-size:12px;opacity:.5;margin-top:8px">Please include proof of ownership in your message. We will respond and remove the content as soon as possible.</p>'+
@@ -2532,7 +2561,7 @@ function openPrivacyPolicy(){
     '<div style="line-height:1.8;font-size:13px;opacity:.9;max-height:60vh;overflow-y:auto;padding-right:8px">'+
       '<h3 style="margin-bottom:8px">PRIVACY POLICY</h3>'+
       '<p style="opacity:.6;margin-bottom:12px">Last updated April 17, 2025</p>'+
-      '<p>This Privacy Notice for JimmyQrg (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;), describes how and why we might access, collect, store, use, and/or share (&ldquo;process&rdquo;) your personal information when you use our services (&ldquo;Services&rdquo;), including when you:</p>'+
+      '<p>This Privacy Notice for '+_t(_('SmltbXlRcmc='))+' (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;), describes how and why we might access, collect, store, use, and/or share (&ldquo;process&rdquo;) your personal information when you use our services (&ldquo;Services&rdquo;), including when you:</p>'+
       '<ul style="padding-left:20px;margin:8px 0"><li>Visit our website, or any website of ours that links to this Privacy Notice</li><li>Engage with us in other related ways, including any sales, marketing, or events</li></ul>'+
       '<p>Questions or concerns? Reading this Privacy Notice will help you understand your privacy rights and choices. We are responsible for making decisions about how your personal information is processed. If you do not agree with our policies and practices, please do not use our Services.</p>'+
       '<h4 style="margin-top:16px">SUMMARY OF KEY POINTS</h4>'+
@@ -2549,13 +2578,25 @@ function openPrivacyPolicy(){
   modal.classList.add('open');
 }
 
+(function(){
+  document.getElementById('h-bwp').innerHTML=_t(_('QnJvd3NlIHdpdGggUHJveHk='));
+  var labels=[_('R2FtZXM='),_('QXBwcw=='),_('VW5ibG9ja3M=')];
+  var hc=document.querySelectorAll('.hc-lbl');
+  for(var i=0;i<hc.length;i++) hc[i].innerHTML=_t(labels[i]||'');
+  var aw=document.getElementById('ann-welcome');
+  if(aw) aw.innerHTML='Welcome to <strong>'+_t(_('SmltbXlRcmc='))+'</strong>! Check here for updates and important information.';
+  var acT=document.getElementById('ac-title-lbl');
+  if(acT) acT.innerHTML=_t(_('QXV0byBDbGlja2Vy'));
+  var acE=document.getElementById('ac-enable-lbl');
+  if(acE) acE.innerHTML='Enable '+_t(_('QXV0byBDbGlja2Vy'));
+})();
 renderDropdown();
 renderGames();
 renderApps();
 renderUnblocks();
 renderContacts();
 
-// ══ GAME OVERLAY / TOOLBAR ══
+// ══ OVERLAY / TOOLBAR ══
 var _goOverlay=document.getElementById('game-overlay');
 var _goFrame=document.getElementById('game-frame');
 var _goToolbar=document.getElementById('game-toolbar');
@@ -2636,7 +2677,7 @@ function updateFavBtn(){
   }
 }
 
-// ══ AUTO CLICKER ══
+// ══ AC ══
 var acSettings={
   enabled:false,cps:10,offset:2,clickType:'single',clickBtn:0,
   toggleKey:'F6',stopKey:'Escape'

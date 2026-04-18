@@ -1,72 +1,27 @@
-// -------------------------------
-// Panic Key Logic
-// -------------------------------
-
-const currentDomainCache = "jimmyqrg.github.io";
-function getCurrentDomain() {
-  return currentDomainCache;
+var _dc=atob('amltbXlxcmcuZ2l0aHViLmlv');
+function _gd(){return _dc}
+var _PKS=atob('cGFuaWNLZXk=');
+var _PLS=atob('cGFuaWNLZXlMaW5r');
+var _pk=localStorage.getItem(_PKS)||'ShiftRight';
+var _pl=localStorage.getItem(_PLS)||'';
+function _frl(l){
+  if(!l)return atob('aHR0cHM6Ly9wYXVzZC5zY2hvb2xvZ3kuY29t');
+  if(l.startsWith('http://')||l.startsWith('https://'))return l;
+  if(l.startsWith('/')||l.includes('/')){
+    var c=l.startsWith('/')?l.substring(1):l;
+    var d=_dc||atob('amltbXlxcmcuZ2l0aHViLmlv');
+    return 'https://'+d+'/'+c;
+  }
+  if(l.includes('.')&&!l.includes('/'))return 'https://'+l;
+  return atob('aHR0cHM6Ly9wYXVzZC5zY2hvb2xvZ3kuY29t');
 }
-
-const PANIC_KEY_STORAGE = "panicKey";
-const PANIC_LINK_STORAGE = "panicKeyLink";
-
-// Load saved panic key (default = Right Shift)
-let panicKey = localStorage.getItem(PANIC_KEY_STORAGE) || "ShiftRight";
-
-// Load redirect link
-let panicLink = localStorage.getItem(PANIC_LINK_STORAGE) || "";
-
-// Function to fix/normalize redirect links
-function fixRedirectLink(link) {
-  if (!link) return "https://pausd.schoology.com";
-
-  // If it's already a full URL with protocol, use it as is
-  if (link.startsWith("http://") || link.startsWith("https://")) {
-    return link;
-  }
-
-  // If it starts with a path (e.g., "jqrg-games/eaglercraft")
-  // or is a relative path, prepend the base URL
-  if (link.startsWith("/") || link.includes("/")) {
-    // Remove leading slash if present
-    const cleanPath = link.startsWith("/") ? link.substring(1) : link;
-    const domain = currentDomainCache || "jimmyqrg.github.io"; // Use cached domain or fallback
-    return `https://${domain}/${cleanPath}`;
-  }
-
-  // If it's just a domain (e.g., "www.schooloqy.com"), add protocol
-  if (link.includes(".") && !link.includes("/")) {
-    return `https://${link}`;
-  }
-
-  // Default fallback
-  return "https://pausd.schoology.com";
-}
-
-// Listen for panic key press
-document.addEventListener("keydown", (e) => {
-  // Always check localStorage directly to get the latest values
-  // (storage events don't fire in the same window)
-  const currentPanicKey =
-    localStorage.getItem(PANIC_KEY_STORAGE) || "ShiftRight";
-  const currentPanicLink = localStorage.getItem(PANIC_LINK_STORAGE) || "";
-
-  // Fix the redirect link if it's incorrect
-  const redirectLink = fixRedirectLink(currentPanicLink);
-
-  // Match the key code (e.code)
-  if (e.code === currentPanicKey) {
-    // Immediately redirect
-    window.location.href = redirectLink;
-  }
+document.addEventListener('keydown',function(e){
+  var ck=localStorage.getItem(_PKS)||'ShiftRight';
+  var cl=localStorage.getItem(_PLS)||'';
+  var rl=_frl(cl);
+  if(e.code===ck)window.location.href=rl;
 });
-
-// If the link changes during page lifetime, update automatically
-window.addEventListener("storage", (event) => {
-  if (event.key === PANIC_KEY_STORAGE) {
-    panicKey = event.newValue || "ShiftRight";
-  }
-  if (event.key === PANIC_LINK_STORAGE) {
-    panicLink = event.newValue || "";
-  }
+window.addEventListener('storage',function(e){
+  if(e.key===_PKS)_pk=e.newValue||'ShiftRight';
+  if(e.key===_PLS)_pl=e.newValue||'';
 });

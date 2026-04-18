@@ -102,6 +102,10 @@ Use it by linking the script: `<script src="/js/style.js">`
 
 REQUIREMENT: `<link rel="stylesheet" href="/css/main.css">`
 
+## Keyword Filter Prevention
+
+Please read `PreventKeywordFilter.md`
+
 ## Current Work
 
 The current thing we are working on is to make each game independent on theirselves, which means, every game should not iframe my other repos or anybody else's repos or link files from anywhere else if possible.
