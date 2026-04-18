@@ -1351,20 +1351,16 @@ var currentPage='home';
 var proxyHistory=[];
 var proxyIndex=-1;
 
-function morphSearchBar(fromEl,toEl,cb){
-  var fromRect=fromEl.getBoundingClientRect();
+function morphSearchBar(fromRect,toEl){
   var morph=document.createElement('div');
   morph.className='search-morph';
-  morph.innerHTML='<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>'+
-    (fromEl.querySelector('input').placeholder||'')+'</span>';
+  morph.innerHTML='<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span></span>';
   morph.style.top=fromRect.top+'px';
   morph.style.left=fromRect.left+'px';
   morph.style.width=fromRect.width+'px';
   morph.style.height=fromRect.height+'px';
   morph.style.borderRadius=(fromRect.height/2)+'px';
-  morph.style.padding='0 16px';
   document.body.appendChild(morph);
-  fromEl.style.visibility='hidden';
   toEl.style.visibility='hidden';
 
   requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -1372,19 +1368,15 @@ function morphSearchBar(fromEl,toEl,cb){
     morph.style.top=toRect.top+'px';
     morph.style.left=toRect.left+'px';
     morph.style.width=toRect.width+'px';
-    morph.style.height=toRect.height+'px';
-    morph.style.borderRadius=(toRect.height/2)+'px';
     var inp=toEl.querySelector('input');
     if(inp) morph.querySelector('span').textContent=inp.placeholder||'';
     setTimeout(function(){
       morph.style.opacity='0';
       setTimeout(function(){
         morph.remove();
-        fromEl.style.visibility='';
         toEl.style.visibility='';
-        if(cb) cb();
       },150);
-    },420);
+    },400);
   });});
 }
 
@@ -1398,30 +1390,30 @@ function navigate(page){
     return;
   }
   var prevPage=currentPage;
-  var doMorph=false;
   var homeBar=document.querySelector('.tb-home .url-bar');
   var gamesSearch=document.querySelector('.tb-games .search-bar');
   var appsSearch=document.querySelector('.tb-apps .search-bar');
 
-  if(prevPage==='home'){
-    if(page==='games'&&homeBar&&gamesSearch) doMorph='toGames';
-    else if(page==='apps'&&homeBar&&appsSearch) doMorph='toApps';
-  }else if(currentPage==='games'&&page==='home'&&homeBar&&gamesSearch){
-    doMorph='fromGames';
-  }else if(currentPage==='apps'&&page==='home'&&homeBar&&appsSearch){
-    doMorph='fromApps';
+  var savedRect=null;
+  var morphTarget=null;
+  if(prevPage==='home'&&(page==='games'||page==='apps')){
+    var target=page==='games'?gamesSearch:appsSearch;
+    if(homeBar&&target){
+      savedRect=homeBar.getBoundingClientRect();
+      morphTarget=target;
+    }
+  }else if(page==='home'&&(prevPage==='games'||prevPage==='apps')){
+    var source=prevPage==='games'?gamesSearch:appsSearch;
+    if(source&&homeBar){
+      savedRect=source.getBoundingClientRect();
+      morphTarget=homeBar;
+    }
   }
 
   exitBrowsing();
   exitPageBrowsing('apps');
   exitPageBrowsing('unblocks');
   closeGameOverlay();
-
-  if(doMorph==='toGames'){
-    morphSearchBar(homeBar,gamesSearch);
-  }else if(doMorph==='toApps'){
-    morphSearchBar(homeBar,appsSearch);
-  }
 
   currentPage=page;
   document.getElementById('app').setAttribute('data-page',page);
@@ -1432,14 +1424,8 @@ function navigate(page){
   });
   window.history.replaceState(null,'','#'+page);
 
-  if(doMorph==='fromGames'){
-    requestAnimationFrame(function(){
-      morphSearchBar(gamesSearch,homeBar);
-    });
-  }else if(doMorph==='fromApps'){
-    requestAnimationFrame(function(){
-      morphSearchBar(appsSearch,homeBar);
-    });
+  if(savedRect&&morphTarget){
+    morphSearchBar(savedRect,morphTarget);
   }
 }
 
