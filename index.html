@@ -1049,6 +1049,23 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 }
 .cloak-upload-zone:active{transform:scale(.98)}
 
+/* --- Auth message animation --- */
+.auth-msg{
+  overflow:hidden;max-height:0;opacity:0;
+  padding:0 14px;margin:0;border-radius:10px;
+  font-size:13px;font-weight:500;
+  transition:max-height .4s cubic-bezier(.4,0,.2,1),opacity .35s ease,padding .35s ease,margin .35s ease,transform .35s cubic-bezier(.34,1.56,.64,1);
+  transform:translateY(-6px) scale(.96);
+}
+.auth-msg.show{
+  max-height:60px;opacity:1;padding:10px 14px;margin:8px 0 0;
+  transform:translateY(0) scale(1);
+}
+.auth-msg.success{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25)}
+.auth-msg.error{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
+@keyframes authShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.auth-msg.shake{animation:authShake .4s ease}
+
 /* --- AC modal panel entrance --- */
 @keyframes acSlideIn{
   from{opacity:0;transform:translateY(16px) scale(.96)}
@@ -2283,7 +2300,8 @@ function openSettings(){
   var mainCloakTitle=localStorage.getItem('mainCloakTitle')||'Home | Schoology';
   var mainCloakIcon=localStorage.getItem('mainCloakIcon')||'/cloak-images/schoology.png';
   var cursorEnabled=localStorage.getItem('enableCursor')!=='false';
-  var cloakSite=localStorage.getItem('cloakSite')||'Google Classroom';
+  var cloakTitle=localStorage.getItem('cloakSiteTitle')||'Home | Google Classroom';
+  var cloakIcon=localStorage.getItem('cloakSiteIcon')||'/cloak-images/gclassroom.png';
   var cloakMethod=localStorage.getItem('cloakMethod')||'about:blank';
   var autoCloak=localStorage.getItem('autoCloak')||'none';
   var closePrevention=localStorage.getItem('closePreventionEnabled')!=='false';
@@ -2324,27 +2342,11 @@ function openSettings(){
     '<div class="cloak-icon-grid" id="mainCloakIconGrid">'+
       buildIconGrid(mainCloakIcon,'mainCloakIcon','mainCloakIconGrid')+
     '</div>'+
-    '<div class="setting-row">'+
-      '<span class="setting-label">Cloak Site</span>'+
-      '<select id="cloakSiteSelect" class="setting-select" onchange="localStorage.setItem(\'cloakSite\',this.value);var c=this.value===\'Custom\';document.getElementById(\'customCloakRow\').style.display=c?\'flex\':\'none\';document.getElementById(\'customCloakFaviconRow\').style.display=c?\'flex\':\'none\'">'+
-        '<option'+selOpt('Google Classroom',cloakSite)+'>Google Classroom</option>'+
-        '<option'+selOpt('Clever',cloakSite)+'>Clever</option>'+
-        '<option'+selOpt('Edpuzzle',cloakSite)+'>Edpuzzle</option>'+
-        '<option'+selOpt('IXL',cloakSite)+'>IXL</option>'+
-        '<option'+selOpt('Gmail',cloakSite)+'>Gmail</option>'+
-        '<option'+selOpt('Google Docs',cloakSite)+'>Google Docs</option>'+
-        '<option'+selOpt('Google Slides',cloakSite)+'>Google Slides</option>'+
-        '<option'+selOpt('Khan Academy',cloakSite)+'>Khan Academy</option>'+
-        '<option'+selOpt('Custom',cloakSite)+'>Custom</option>'+
-      '</select>'+
-    '</div>'+
-    '<div class="setting-row" id="customCloakRow" style="display:'+(cloakSite==='Custom'?'flex':'none')+'">'+
-      '<span class="setting-label">Custom Title</span>'+
-      '<input type="text" class="setting-input" value="'+(localStorage.getItem('customCloakTitle')||'').replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'customCloakTitle\',this.value)" placeholder="Enter custom title">'+
-    '</div>'+
-    '<div class="setting-row" id="customCloakFaviconRow" style="display:'+(cloakSite==='Custom'?'flex':'none')+'">'+
-      '<span class="setting-label">Custom Favicon</span>'+
-      '<input type="text" class="setting-input" value="'+(localStorage.getItem('customCloakFavicon')||'').replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'customCloakFavicon\',this.value)" placeholder="https://example.com/favicon.ico">'+
+    '<span class="cloak-sub-label">Cloak Site Title</span>'+
+    '<input type="text" class="setting-input" style="width:100%;margin-bottom:6px" value="'+cloakTitle.replace(/"/g,'&quot;')+'" onchange="localStorage.setItem(\'cloakSiteTitle\',this.value)" placeholder="Home | Google Classroom">'+
+    '<span class="cloak-sub-label">Cloak Site Icon</span>'+
+    '<div class="cloak-icon-grid" id="cloakSiteIconGrid">'+
+      buildIconGrid(cloakIcon,'cloakSiteIcon','cloakSiteIconGrid')+
     '</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Cloak Method</span>'+
@@ -2384,16 +2386,17 @@ function openSettings(){
       '<span class="setting-label">Access Code</span>'+
       '<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'+
         '<input type="password" id="accessCodeInput" class="setting-input" style="flex:1" placeholder="Enter code">'+
-        '<button class="setting-btn" onclick="var c=document.getElementById(\'accessCodeInput\').value;if(c===String.fromCharCode(97,115,100,102,103,104,106,107,108,59,39)){localStorage.setItem(\'user\',\'authorized\');document.getElementById(\'authStatus\').textContent=\'Authorized\';document.getElementById(\'authStatus\').style.color=\'#22c55e\';alert(\'Access granted.\')}else{alert(\'Incorrect code.\')}">Authorize</button>'+
+        '<button class="setting-btn" onclick="submitAccessCode()">Authorize</button>'+
       '</div>'+
     '</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Status</span>'+
       '<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'+
         '<span id="authStatus" style="font-size:13px;color:'+(isAuthorized?'#22c55e':'rgba(255,255,255,.5)')+'">'+(isAuthorized?'Authorized':'Not authorized')+'</span>'+
-        (isAuthorized?'<button class="setting-btn" onclick="localStorage.setItem(\'user\',\'normal\');document.getElementById(\'authStatus\').textContent=\'Not authorized\';document.getElementById(\'authStatus\').style.color=\'rgba(255,255,255,.5)\';this.remove();alert(\'Unauthorized.\')">Revoke</button>':'')+
+        (isAuthorized?'<button class="setting-btn" onclick="revokeAccess(this)">Revoke</button>':'')+
       '</div>'+
     '</div>'+
+    '<div id="authMsg" class="auth-msg"></div>'+
     '<hr class="setting-divider">'+
 
     '<div class="setting-section-title">Announcements</div>'+
@@ -2465,13 +2468,40 @@ function recordPanicKey(btn){
   document.addEventListener('keydown',handler,true);
 }
 
+function showAuthMsg(type,text){
+  var el=document.getElementById('authMsg');
+  if(!el) return;
+  el.className='auth-msg '+type;
+  el.textContent=text;
+  void el.offsetWidth;
+  el.classList.add('show');
+  if(type==='error') el.classList.add('shake');
+  clearTimeout(el._timer);
+  el._timer=setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.className='auth-msg'},400)},2500);
+}
+function submitAccessCode(){
+  var c=document.getElementById('accessCodeInput').value;
+  if(c===String.fromCharCode(97,115,100,102,103,104,106,107,108,59,39)){
+    localStorage.setItem('user','authorized');
+    document.getElementById('authStatus').textContent='Authorized';
+    document.getElementById('authStatus').style.color='#22c55e';
+    showAuthMsg('success','Access granted.');
+  }else{
+    showAuthMsg('error','Incorrect code.');
+  }
+}
+function revokeAccess(btn){
+  localStorage.setItem('user','normal');
+  document.getElementById('authStatus').textContent='Not authorized';
+  document.getElementById('authStatus').style.color='rgba(255,255,255,.5)';
+  btn.remove();
+  showAuthMsg('success','Access revoked.');
+}
+
 function openInCloak(){
   var method=localStorage.getItem('cloakMethod')||'about:blank';
-  var site=localStorage.getItem('cloakSite')||'Google Classroom';
-  var titles={'Google Classroom':'Home | Google Classroom','Clever':'Clever | Portal','Edpuzzle':'Edpuzzle','IXL':'IXL | Math, Language Arts, Science, Social Studies, and Spanish','Gmail':'Gmail','Google Docs':'Google Docs','Google Slides':'Google Slides','Khan Academy':'Khan Academy'};
-  var favicons={'Google Classroom':'/cloak-images/gclassroom.png','Clever':'/cloak-images/clever.png','Edpuzzle':'/cloak-images/edpuzzle.png','IXL':'/cloak-images/ixl.png','Gmail':'/cloak-images/gmail.png','Google Docs':'/cloak-images/gdocs.png','Google Slides':'/cloak-images/gslides.png','Khan Academy':'/cloak-images/khan.png'};
-  var t=titles[site]||localStorage.getItem('customCloakTitle')||'Home';
-  var f=favicons[site]||localStorage.getItem('customCloakFavicon')||'/jq.ico';
+  var t=localStorage.getItem('cloakSiteTitle')||'Home | Google Classroom';
+  var f=localStorage.getItem('cloakSiteIcon')||'/cloak-images/gclassroom.png';
   var html='<!DOCTYPE html><html><head><title>'+t+'</title><link rel="icon" href="'+f+'"><style>body{margin:0;overflow:hidden}iframe{width:100vw;height:100vh;border:0}</style></head><body><iframe src="'+location.href+'"></iframe></body></html>';
   if(method==='about:blank'){
     var w=window.open('about:blank','_blank');
@@ -2487,11 +2517,19 @@ function openDMCA(){
   var body=document.getElementById('settings-body');
   body.innerHTML=
     '<div style="line-height:1.8;font-size:14px;opacity:.9">'+
-      '<p>If you own or developed a game that is on <strong>JimmyQrg</strong> and would like it removed, please do one of the following:</p>'+
-      '<ol style="padding-left:20px;margin:12px 0">'+
-        '<li style="margin-bottom:8px"><a href="https://discord.gg/D4c9VFYWyU" target="_blank" style="color:var(--accent-purple)">Join the Discord</a> and DM or ping in a public channel <strong>[INSTANT RESPONSE]</strong></li>'+
-        '<li>Email with the subject starting with <code style="background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px">!DMCA</code>. Please show proof you own the game. <strong>[DELAYED RESPONSE]</strong></li>'+
-      '</ol>'+
+      '<h3 style="margin:0 0 12px;font-size:16px">DMCA &amp; Takedown Requests</h3>'+
+      '<p>If you believe you own or developed a game hosted on <strong>JimmyQrg</strong> and would like it removed, please reach out through one of the following:</p>'+
+      '<div style="margin:16px 0;display:flex;flex-direction:column;gap:10px">'+
+        '<a href="mailto:ikunbeautiful@gmail.com" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);text-decoration:none;transition:background .3s ease,border-color .3s ease" onmouseover="this.style.background=\'rgba(136,65,214,.1)\';this.style.borderColor=\'rgba(136,65,214,.3)\'" onmouseout="this.style.background=\'rgba(255,255,255,.06)\';this.style.borderColor=\'rgba(255,255,255,.1)\'">'+
+          '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'+
+          '<div><div style="font-weight:600;font-size:13px">Email</div><div style="font-size:12px;opacity:.6">ikunbeautiful@gmail.com</div></div>'+
+        '</a>'+
+        '<a href="https://jchat.fly.dev" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);text-decoration:none;transition:background .3s ease,border-color .3s ease" onmouseover="this.style.background=\'rgba(136,65,214,.1)\';this.style.borderColor=\'rgba(136,65,214,.3)\'" onmouseout="this.style.background=\'rgba(255,255,255,.06)\';this.style.borderColor=\'rgba(255,255,255,.1)\'">'+
+          '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>'+
+          '<div><div style="font-weight:600;font-size:13px">JimmyQrg Chat</div><div style="font-size:12px;opacity:.6">jchat.fly.dev</div></div>'+
+        '</a>'+
+      '</div>'+
+      '<p style="font-size:12px;opacity:.5;margin-top:8px">Please include proof of ownership in your message. We will respond and remove the content as soon as possible.</p>'+
       '<div style="margin-top:16px"><button class="setting-btn" onclick="openSettings()">Back to Settings</button></div>'+
     '</div>';
   modal.classList.add('open');
