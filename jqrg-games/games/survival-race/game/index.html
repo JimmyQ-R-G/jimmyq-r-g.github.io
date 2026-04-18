@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Supercars Battle 3D</title>
+    <link rel="stylesheet" href="./style.css" />
+
+    <style>
+      /* Prevents the blue highlight on canvas focus */
+      canvas:focus {
+        outline: none;
+      }
+
+      /* Basic styles for a full-screen experience */
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body class="dark">
+    <!-- This container holds the Unity game canvas -->
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+    
+    <!-- This is the loading screen overlay -->
+    <div id="loading-cover" style="display: block">
+      <div id="unity-loading-bar">
+        <div id="unity-logo"><img src="logo.png" /></div>
+        <div id="unity-progress-bar-empty" style="display: none">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <script>
+      // --- Yandex SDK Global Variable Stubs ---
+      // These are defined first and attached to the window object to ensure they
+      // exist globally before the game's own scripts try to access them.
+      window.environmentData = "null";
+      window.cloudSaves = "noData"; 
+      window.playerData = "noData";
+      window.paymentsData = "none";
+      window.myGameInstance = null;
+      window.ysdk = { // Explicitly global
+        features: {
+          LoadingAPI: {
+            ready: () => {
+              console.log("SDK STUB: ysdk.features.LoadingAPI.ready() called");
+            },
+          },
+        },
+      };
+    </script>
+
+    <script>
+      // --- Yandex SDK Function Stubs ---
+      // These are empty placeholder functions to prevent crashes.
+      function InitGame() { console.log("SDK STUB: InitGame called"); }
+      function FullAdShow() { console.log("SDK STUB: FullAdShow called"); }
+      function RewardedShow(id) { console.log(`SDK STUB: RewardedShow called for ID: ${id}`); }
+      function StickyAdActivity(show) { console.log(`SDK STUB: StickyAdActivity called with: ${show}`); }
+      function Review() { console.log("SDK STUB: Review called"); }
+      function PromptShow() { console.log("SDK STUB: PromptShow called"); }
+      function SaveCloud(jsonData, flush) { console.log("SDK STUB: SaveCloud called"); }
+      function LoadCloud(sendback) { console.log("SDK STUB: LoadCloud called"); return Promise.resolve("noData"); }
+      function GetPayments(sendback) { console.log("SDK STUB: GetPayments called"); return Promise.resolve("none"); }
+      function BuyPayments(id) { console.log(`SDK STUB: BuyPayments called for ID: ${id}`); }
+      function ConsumePurchase(id) { console.log(`SDK STUB: ConsumePurchase called for ID: ${id}`); }
+      function ConsumePurchases() { console.log("SDK STUB: ConsumePurchases called"); }
+      function InitLeaderboards() { console.log("SDK STUB: InitLeaderboards called"); }
+      function GetLeaderboardScores() { console.log("SDK STUB: GetLeaderboardScores called"); }
+      function SetLeaderboardScores(_name, score) { console.log(`SDK STUB: SetLeaderboardScores called for ${_name}`); }
+      function RequestingEnvironmentData(sendback) { console.log("SDK STUB: RequestingEnvironmentData called"); return Promise.resolve("null"); }
+      function InitPlayer(sendback) { console.log("SDK STUB: InitPlayer called"); return Promise.resolve(JSON.stringify({ playerAuth: "rejected" })); }
+      function OpenAuthDialog() { console.log("SDK STUB: OpenAuthDialog called"); }
+
+
+      // --- Unity Game Configuration ---
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/yandexGames.loader.js";
+      const config = {
+        dataUrl: buildUrl + "/yandexGames.data.br",
+        frameworkUrl: buildUrl + "/yandexGames.framework.js.br",
+        codeUrl: buildUrl + "/yandexGames.wasm.br",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Brain massage",
+        productName: "Supercars Battle 3D",
+        productVersion: "0.0.204",
+      };
+
+      // --- DOM Element References ---
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const spinner = document.querySelector(".spinner");
+
+      // --- UI and Behavior Setup ---
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+      }
+      loadingCover.style.background = "url('background.jpg') center / cover";
+      document.addEventListener("contextmenu", (event) => event.preventDefault());
+      
+      // --- Game Loading Logic ---
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          spinner.style.display = "none";
+          progressBarEmpty.style.display = "";
+          progressBarFull.style.width = `${100 * progress}%`;
+        })
+          .then((unityInstance) => {
+            myGameInstance = unityInstance; // Store instance globally
+            loadingCover.style.display = "none";
+            
+            // Fix for the "AudioContext was prevented from starting" warning.
+            // We resume the audio context on the first user interaction.
+            const resumeAudio = () => {
+                if (myGameInstance && myGameInstance.Module.audioContext && myGameInstance.Module.audioContext.state === 'suspended') {
+                    myGameInstance.Module.audioContext.resume();
+                }
+                document.removeEventListener('click', resumeAudio);
+                document.removeEventListener('touchend', resumeAudio);
+            };
+            document.addEventListener('click', resumeAudio);
+            document.addEventListener('touchend', resumeAudio);
+
+          })
+          .catch((message) => {
+            console.error(message);
+          });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
+
