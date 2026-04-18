@@ -190,6 +190,31 @@ html,body{
 }
 .url-bar input::placeholder,.search-bar input::placeholder{color:var(--text-dim)}
 
+.search-filter-wrap{position:relative;flex-shrink:0}
+.search-filter-btn{
+  background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;
+  border-radius:6px;transition:background .2s,color .2s;color:var(--text-dim);
+}
+.search-filter-btn svg{width:16px;height:16px}
+.search-filter-btn:hover,.search-filter-btn.active{color:#fff;background:rgba(255,255,255,.1)}
+.search-filter-menu{
+  display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:90;
+  background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border-light);border-radius:12px;padding:6px 0;
+  min-width:150px;box-shadow:0 8px 30px rgba(0,0,0,.4);
+  animation:fadeInUp .2s ease;
+}
+.search-filter-menu.open{display:block}
+.search-filter-menu button{
+  width:100%;padding:8px 16px;border:none;background:none;color:var(--text-dim);
+  font-family:inherit;font-size:13px;cursor:pointer;text-align:left;
+  transition:background .15s,color .15s;display:flex;align-items:center;gap:8px;
+}
+.search-filter-menu button:hover{background:rgba(255,255,255,.06);color:#fff}
+.search-filter-menu button.selected{color:var(--accent-purple)}
+.search-filter-menu button .check-mark{opacity:0;font-size:12px}
+.search-filter-menu button.selected .check-mark{opacity:1}
+
 .dropdown{position:relative;flex-shrink:0}
 .dropdown-btn{
   height:43px;min-width:180px;border-radius:13px;
@@ -724,6 +749,12 @@ html,body{
     <div class="search-bar">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="games-search" placeholder="Search for games" oninput="filterGames()">
+      <div class="search-filter-wrap">
+        <button class="search-filter-btn" onclick="toggleSearchFilter(event)" title="Filter by tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+        <div class="search-filter-menu" id="search-filter-menu"></div>
+      </div>
     </div>
   </div>
 
@@ -937,17 +968,12 @@ html,body{
       <hr style="border:1px solid var(--border-light);margin:16px 0">
       <p style="font-weight:500">Latest updates:</p>
       <ul style="margin:8px 0 12px 20px;opacity:.85;line-height:1.7">
-        <li>Added Round and Wound</li>
-        <li>Added Appel</li>
-        <li>Added Big Flappy Towers Tiny Square</li>
-        <li>Added Territorial.io</li>
-        <li>Added Five Nights At Freddy's & Epstein's 1~4 (FNAF)</li>
-        <li>Added Bomb Pass</li>
-        <li>Added Boom Slingers</li>
+        <li>Released Magic Tiles 3</li>
+        <li>Added ^3</li>
       </ul>
       <p style="font-weight:500">History:</p>
       <ul style="margin:8px 0 0 20px;opacity:.85;line-height:1.7">
-        <li>Added in total <b>110</b> games</li>
+        <li>Added in total <b>109</b> games</li>
       </ul>
     </div>
   </div>
@@ -1089,6 +1115,7 @@ var GAMES=[
   {n:"Five Nights At Freddy's",img:"fnaf",url:"/jqrg-games/games/fnaf/",tags:["featured"]},
   {n:"Bad Parenting 1",img:"bad-parenting-1",url:"/jqrg-games/games/bad-parenting-1/",tags:[]},
   // --- Remaining alphabetically ---
+  {n:"^3",img:"3",url:"/jqrg-games/games/3/",tags:[]},
   {n:"1v1.lol",img:"1v1.lol",url:"/jqrg-games/games/1v1-lol/",tags:[]},
   {n:"10 Minutes Till Dawn",img:"10-minutes-till-dawn",url:"/jqrg-games/games/10-minutes-till-dawn/",tags:["featured"]},
   {n:"2048",img:"2048",url:"/jqrg-games/games/2048/",tags:["touch"]},
@@ -1128,6 +1155,7 @@ var GAMES=[
   {n:"Iron Lung",img:"iron-lungs",url:"/jqrg-games/games/iron-lungs/",tags:["featured"]},
   {n:"Karlson",img:"karlson",url:"/jqrg-games/games/karlson/",tags:["featured"]},
   {n:"Level Devil",img:"level-devil",url:"/jqrg-games/games/level-devil/",tags:["featured","touch"]},
+  {n:"Magic Tiles 3",img:"magic-tiles-3",url:"/jqrg-games/games/magic-tiles-3/",tags:["touch"]},
   {n:"Melon Playground",img:"melon-playground",url:"/jqrg-games/games/melon-playground/",tags:[]},
   {n:"Pacman",img:"pacman",url:"/jqrg-games/games/pacman/",tags:[]},
   {n:"Paper.io 2",img:"paperio2",url:"/jqrg-games/games/paperio2/",tags:[]},
@@ -1180,14 +1208,13 @@ var COLLECTIONS=[
 ];
 var PENDING=[
   {n:"Shell Shocker",img:"shell-shocker",url:"/jqrg-games/games/shell-shocker/"},
-  {n:"Magic Tiles 3",img:"magic-tiles-3",url:"/jqrg-games/games/magic-tiles-3/"},
   {n:"World's Most Confusing Button Game",img:"wmcbg",url:"/wmcbg/"},
   {n:"Stickman Rebirth",img:"stickman-rebirth",url:"/jqrg-games/games/stickman-rebirth/"},
 ];
 var APPS=[
   {n:"TikTok",img:"tiktok",url:"tiktok.com",proxy:true,raw:true},
   {n:"YouTube",img:"youtube",url:"youtube.com",proxy:true,raw:true},
-  {n:"GN Math",img:"gn-math",url:"/unblocks/gn-math.html",proxy:false},
+  {n:"GN Math",img:"gn-math",url:"/unblocks/gn-math/",proxy:false},
   {n:"Deepseek",img:"deepseek",url:"chat.deepseek.com",proxy:true,raw:true},
   {n:"GitHub",img:"github",url:"github.com",proxy:true,raw:true},
   {n:"Twitch",img:"twitch",url:"twitch.tv",proxy:true,raw:true},
@@ -1252,15 +1279,16 @@ function renderGames(){
   var c=document.getElementById('games-container');
   var q=(document.getElementById('games-search').value||'').toLowerCase();
   var html='';
+  var tagMatch=function(g){return !activeTagFilter||g.tags.indexOf(activeTagFilter)!==-1};
   if(gameTab==='all'){
     c.className='games-grid';
-    var filtered=GAMES.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1});
+    var filtered=GAMES.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1 && tagMatch(g)});
     if(!filtered.length) html='<div class="games-empty">No games found</div>';
     else filtered.forEach(function(g){html+=gameTileHTML(g)});
   }else if(gameTab==='starred'){
     c.className='games-grid';
     var favs=getFavorites();
-    var filtered=GAMES.filter(function(g){return favs.indexOf(g.url)!==-1 && g.n.toLowerCase().indexOf(q)!==-1});
+    var filtered=GAMES.filter(function(g){return favs.indexOf(g.url)!==-1 && g.n.toLowerCase().indexOf(q)!==-1 && tagMatch(g)});
     if(!filtered.length) html='<div class="games-empty">No starred games yet</div>';
     else filtered.forEach(function(g){html+=gameTileHTML(g)});
   }else if(gameTab==='collections'){
@@ -1277,6 +1305,42 @@ function renderGames(){
   c.innerHTML=html;
 }
 function filterGames(){renderGames()}
+
+var activeTagFilter='';
+var TAG_FILTERS={'':"All",'featured':'Featured','touch':'Touch Friendly','jqrg':'JimmyQrg Originals'};
+
+function toggleSearchFilter(e){
+  e.stopPropagation();
+  var menu=document.getElementById('search-filter-menu');
+  var isOpen=menu.classList.contains('open');
+  menu.classList.toggle('open');
+  var btn=menu.parentElement.querySelector('.search-filter-btn');
+  btn.classList.toggle('active',!isOpen);
+  if(!isOpen) renderSearchFilterMenu();
+}
+function renderSearchFilterMenu(){
+  var menu=document.getElementById('search-filter-menu');
+  var html='';
+  var keys=Object.keys(TAG_FILTERS);
+  for(var i=0;i<keys.length;i++){
+    var sel=keys[i]===activeTagFilter?'selected':'';
+    html+='<button class="'+sel+'" onclick="setTagFilter(\''+keys[i]+'\')"><span class="check-mark">&#10003;</span>'+TAG_FILTERS[keys[i]]+'</button>';
+  }
+  menu.innerHTML=html;
+}
+function setTagFilter(tag){
+  activeTagFilter=tag;
+  document.getElementById('search-filter-menu').classList.remove('open');
+  document.querySelector('.search-filter-btn').classList.toggle('active',tag!=='');
+  renderGames();
+}
+document.addEventListener('click',function(e){
+  var menu=document.getElementById('search-filter-menu');
+  if(menu && !menu.parentElement.contains(e.target)) {
+    menu.classList.remove('open');
+    if(!activeTagFilter) menu.parentElement.querySelector('.search-filter-btn').classList.remove('active');
+  }
+});
 
 function setGameTab(tab){
   gameTab=tab;
@@ -1663,6 +1727,8 @@ function loadGameInPage(url,sourcePage){
   var absUrl=(url.startsWith('http')||url.startsWith('//'))?url:new URL(url,window.location.origin).href;
   _goFrame.src=absUrl;
   _goOverlay.classList.add('active');
+  var favBtn=document.getElementById('tb-fav');
+  if(favBtn) favBtn.style.display=(_goSourcePage==='apps'||_goSourcePage==='unblocks')?'none':'';
   updateFavBtn();
 }
 function closeGameOverlay(){
