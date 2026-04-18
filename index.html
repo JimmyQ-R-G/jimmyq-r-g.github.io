@@ -164,6 +164,7 @@ html,body{
 #app[data-page="home"] .tb-home,
 #app[data-page="games"] .tb-games,
 #app[data-page="apps"] .tb-apps{display:flex}
+.tb-section.tb-exiting{display:flex;pointer-events:none}
 
 .tb-section .nav-btns{display:flex;gap:4px;align-items:center;flex-shrink:0}
 .tb-section .nav-btns button{
@@ -1055,6 +1056,65 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 }
 #ac-modal.open .ac-panel{animation:acSlideIn .35s cubic-bezier(.34,1.56,.64,1)}
 
+/* ══ TOP BAR TRANSITION ANIMATIONS ══ */
+
+/* Nav buttons flow out to right (home→games) */
+@keyframes navFlowOutRight{
+  from{opacity:1;transform:translateX(0) rotate(0)}
+  to{opacity:0;transform:translateX(30px) rotate(8deg)}
+}
+/* Nav buttons flow in from right (games→home) */
+@keyframes navFlowInFromRight{
+  from{opacity:0;transform:translateX(30px) rotate(8deg)}
+  to{opacity:1;transform:translateX(0) rotate(0)}
+}
+/* Nav buttons flow out to left (home→apps) */
+@keyframes navFlowOutLeft{
+  from{opacity:1;transform:translateX(0) rotate(0)}
+  to{opacity:0;transform:translateX(-30px) rotate(-8deg)}
+}
+/* Nav buttons flow in from left (apps→home) */
+@keyframes navFlowInFromLeft{
+  from{opacity:0;transform:translateX(-30px) rotate(-8deg)}
+  to{opacity:1;transform:translateX(0) rotate(0)}
+}
+/* Dropdown / generic item fade in + enlarge */
+@keyframes tbItemIn{
+  from{opacity:0;transform:scale(.8)}
+  to{opacity:1;transform:scale(1)}
+}
+/* Dropdown / generic item fade out + shrink */
+@keyframes tbItemOut{
+  from{opacity:1;transform:scale(1)}
+  to{opacity:0;transform:scale(.8)}
+}
+
+.tb-home .nav-btns button{will-change:transform,opacity}
+.tb-games .dropdown{will-change:transform,opacity}
+
+.nav-flow-out-right{animation:navFlowOutRight .3s ease forwards}
+.nav-flow-out-right:nth-child(1){animation-delay:0s}
+.nav-flow-out-right:nth-child(2){animation-delay:.04s}
+.nav-flow-out-right:nth-child(3){animation-delay:.08s}
+
+.nav-flow-in-from-right{animation:navFlowInFromRight .35s cubic-bezier(.34,1.56,.64,1) forwards}
+.nav-flow-in-from-right:nth-child(3){animation-delay:0s}
+.nav-flow-in-from-right:nth-child(2){animation-delay:.06s}
+.nav-flow-in-from-right:nth-child(1){animation-delay:.12s}
+
+.nav-flow-out-left{animation:navFlowOutLeft .3s ease forwards}
+.nav-flow-out-left:nth-child(3){animation-delay:0s}
+.nav-flow-out-left:nth-child(2){animation-delay:.04s}
+.nav-flow-out-left:nth-child(1){animation-delay:.08s}
+
+.nav-flow-in-from-left{animation:navFlowInFromLeft .35s cubic-bezier(.34,1.56,.64,1) forwards}
+.nav-flow-in-from-left:nth-child(1){animation-delay:0s}
+.nav-flow-in-from-left:nth-child(2){animation-delay:.06s}
+.nav-flow-in-from-left:nth-child(3){animation-delay:.12s}
+
+.tb-item-in{animation:tbItemIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
+.tb-item-out{animation:tbItemOut .25s ease forwards}
+
 /* ══ ADDITIONAL ANIMATIONS (5 more per element) ══ */
 
 /* --- Sidebar: glow on active, ripple on click, icon bounce, label fade, separator pulse --- */
@@ -1526,6 +1586,87 @@ function navigate(page){
 
   if(savedRect&&morphTarget){
     morphSearchBar(savedRect,morphTarget);
+  }
+
+  animateTopBar(prevPage,page);
+}
+
+function animateTopBar(from,to){
+  var navBtns=document.querySelectorAll('.tb-home .nav-btns button');
+  var dropdown=document.querySelector('.tb-games .dropdown');
+  var gameSearchBar=document.querySelector('.tb-games .search-bar');
+  var appSearchBar=document.querySelector('.tb-apps .search-bar');
+  var tbHome=document.querySelector('.tb-home');
+  var tbGames=document.querySelector('.tb-games');
+  var tbApps=document.querySelector('.tb-apps');
+  var allAnimEls=[].concat(Array.from(navBtns));
+  if(dropdown) allAnimEls.push(dropdown);
+  if(gameSearchBar) allAnimEls.push(gameSearchBar);
+  if(appSearchBar) allAnimEls.push(appSearchBar);
+  var AC=['nav-flow-out-right','nav-flow-in-from-right','nav-flow-out-left','nav-flow-in-from-left','tb-item-in','tb-item-out'];
+
+  allAnimEls.forEach(function(el){AC.forEach(function(c){el.classList.remove(c)})});
+  [tbHome,tbGames,tbApps].forEach(function(s){if(s)s.classList.remove('tb-exiting')});
+  void document.body.offsetWidth;
+
+  var hasBar={home:true,games:true,apps:true};
+  var fromSection={home:tbHome,games:tbGames,apps:tbApps}[from];
+
+  function exitSection(section,dur){
+    if(!section) return;
+    section.classList.add('tb-exiting');
+    setTimeout(function(){section.classList.remove('tb-exiting')},dur);
+  }
+
+  if(from==='home'&&to==='games'){
+    exitSection(tbHome,350);
+    navBtns.forEach(function(b){b.classList.add('nav-flow-out-right')});
+    if(dropdown) dropdown.classList.add('tb-item-in');
+    if(gameSearchBar) gameSearchBar.classList.add('tb-item-in');
+
+  }else if(from==='games'&&to==='home'){
+    navBtns.forEach(function(b){b.classList.add('nav-flow-in-from-right')});
+
+  }else if(from==='home'&&to==='apps'){
+    exitSection(tbHome,350);
+    navBtns.forEach(function(b){b.classList.add('nav-flow-out-left')});
+    if(appSearchBar) appSearchBar.classList.add('tb-item-in');
+
+  }else if(from==='apps'&&to==='home'){
+    navBtns.forEach(function(b){b.classList.add('nav-flow-in-from-left')});
+
+  }else if(from==='games'&&to==='apps'){
+    exitSection(tbGames,300);
+    if(dropdown) dropdown.classList.add('tb-item-out');
+    if(gameSearchBar) gameSearchBar.classList.add('tb-item-out');
+    if(appSearchBar) appSearchBar.classList.add('tb-item-in');
+
+  }else if(from==='apps'&&to==='games'){
+    exitSection(tbApps,300);
+    if(appSearchBar) appSearchBar.classList.add('tb-item-out');
+    if(dropdown) dropdown.classList.add('tb-item-in');
+    if(gameSearchBar) gameSearchBar.classList.add('tb-item-in');
+
+  }else if(hasBar[from]&&!hasBar[to]){
+    exitSection(fromSection,300);
+    if(from==='home'){
+      navBtns.forEach(function(b){b.classList.add('tb-item-out')});
+    }else if(from==='games'){
+      if(dropdown) dropdown.classList.add('tb-item-out');
+      if(gameSearchBar) gameSearchBar.classList.add('tb-item-out');
+    }else if(from==='apps'){
+      if(appSearchBar) appSearchBar.classList.add('tb-item-out');
+    }
+
+  }else if(!hasBar[from]&&hasBar[to]){
+    if(to==='home'){
+      navBtns.forEach(function(b){b.classList.add('nav-flow-in-from-left')});
+    }else if(to==='games'){
+      if(dropdown) dropdown.classList.add('tb-item-in');
+      if(gameSearchBar) gameSearchBar.classList.add('tb-item-in');
+    }else if(to==='apps'){
+      if(appSearchBar) appSearchBar.classList.add('tb-item-in');
+    }
   }
 }
 
