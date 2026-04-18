@@ -199,21 +199,34 @@ html,body{
 .search-filter-btn:hover,.search-filter-btn.active{color:#fff;background:rgba(255,255,255,.1)}
 .search-filter-menu{
   display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:90;
-  background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border:1px solid var(--border-light);border-radius:12px;padding:6px 0;
-  min-width:150px;box-shadow:0 8px 30px rgba(0,0,0,.4);
+  background:rgba(18,10,28,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:6px 0;
+  min-width:170px;box-shadow:0 8px 30px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05);
   animation:fadeInUp .2s ease;
 }
 .search-filter-menu.open{display:block}
-.search-filter-menu button{
-  width:100%;padding:8px 16px;border:none;background:none;color:var(--text-dim);
-  font-family:inherit;font-size:13px;cursor:pointer;text-align:left;
-  transition:background .15s,color .15s;display:flex;align-items:center;gap:8px;
+.filter-check-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 16px;cursor:pointer;color:rgba(255,255,255,.75);
+  font-size:13px;transition:background .2s ease,color .2s ease;
 }
-.search-filter-menu button:hover{background:rgba(255,255,255,.06);color:#fff}
-.search-filter-menu button.selected{color:var(--accent-purple)}
-.search-filter-menu button .check-mark{opacity:0;font-size:12px}
-.search-filter-menu button.selected .check-mark{opacity:1}
+.filter-check-row:hover{background:rgba(255,255,255,.08);color:#fff}
+.filter-check-row.selected{color:var(--accent-purple);font-weight:500}
+.filter-check-row input[type="checkbox"]{
+  width:16px;height:16px;border-radius:4px;flex-shrink:0;
+  margin:0;cursor:pointer;
+  background:rgba(255,255,255,.12);
+}
+.filter-check-row input[type="checkbox"]::after{
+  width:10px;height:10px;top:3px;left:3px;border-radius:2px;
+  transform:scale(0);transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+  background:var(--accent-purple);
+}
+.filter-check-row input[type="checkbox"]:checked{background:rgba(136,65,214,.2);border:none}
+.filter-check-row input[type="checkbox"]:checked::after{
+  transform:scale(1);box-shadow:none;
+}
+.filter-check-row span{flex:1}
 
 .dropdown{position:relative;flex-shrink:0}
 .dropdown-btn{
@@ -819,10 +832,10 @@ html,body{
   transition:background .25s ease,color .25s ease,transform .2s ease;
 }
 .search-filter-btn:active{transform:scale(.88)}
-.search-filter-menu button{
+.filter-check-row{
   transition:background .2s ease,color .2s ease,padding-left .25s ease;
 }
-.search-filter-menu button:hover{
+.filter-check-row:hover{
   padding-left:20px;
 }
 
@@ -1577,7 +1590,11 @@ function renderGames(){
   var c=document.getElementById('games-container');
   var q=(document.getElementById('games-search').value||'').toLowerCase();
   var html='';
-  var tagMatch=function(g){return !activeTagFilter||g.tags.indexOf(activeTagFilter)!==-1};
+  var tagMatch=function(g){
+    if(!activeTagFilters.length) return true;
+    for(var i=0;i<activeTagFilters.length;i++){if(g.tags.indexOf(activeTagFilters[i])!==-1) return true}
+    return false;
+  };
   if(gameTab==='all'){
     c.className='games-grid';
     var filtered=GAMES.filter(function(g){return g.n.toLowerCase().indexOf(q)!==-1 && tagMatch(g)});
@@ -1604,8 +1621,8 @@ function renderGames(){
 }
 function filterGames(){renderGames()}
 
-var activeTagFilter='';
-var TAG_FILTERS={'':"All",'featured':'Featured','touch':'Touch Friendly','jqrg':'JimmyQrg Originals'};
+var activeTagFilters=[];
+var TAG_FILTERS={'featured':'Featured','touch':'Touch Friendly','jqrg':'JimmyQrg Originals'};
 
 function toggleSearchFilter(e){
   e.stopPropagation();
@@ -1613,7 +1630,7 @@ function toggleSearchFilter(e){
   var isOpen=menu.classList.contains('open');
   menu.classList.toggle('open');
   var btn=menu.parentElement.querySelector('.search-filter-btn');
-  btn.classList.toggle('active',!isOpen);
+  btn.classList.toggle('active',!isOpen||activeTagFilters.length>0);
   if(!isOpen) renderSearchFilterMenu();
 }
 function renderSearchFilterMenu(){
@@ -1621,22 +1638,26 @@ function renderSearchFilterMenu(){
   var html='';
   var keys=Object.keys(TAG_FILTERS);
   for(var i=0;i<keys.length;i++){
-    var sel=keys[i]===activeTagFilter?'selected':'';
-    html+='<button class="'+sel+'" onclick="setTagFilter(\''+keys[i]+'\')"><span class="check-mark">&#10003;</span>'+TAG_FILTERS[keys[i]]+'</button>';
+    var checked=activeTagFilters.indexOf(keys[i])!==-1;
+    html+='<label class="filter-check-row'+(checked?' selected':'')+'">';
+    html+='<input type="checkbox"'+(checked?' checked':'')+' onchange="toggleTagFilter(\''+keys[i]+'\')">';
+    html+='<span>'+TAG_FILTERS[keys[i]]+'</span></label>';
   }
   menu.innerHTML=html;
 }
-function setTagFilter(tag){
-  activeTagFilter=tag;
-  document.getElementById('search-filter-menu').classList.remove('open');
-  document.querySelector('.search-filter-btn').classList.toggle('active',tag!=='');
+function toggleTagFilter(tag){
+  var idx=activeTagFilters.indexOf(tag);
+  if(idx===-1) activeTagFilters.push(tag);
+  else activeTagFilters.splice(idx,1);
+  document.querySelector('.search-filter-btn').classList.toggle('active',activeTagFilters.length>0);
+  renderSearchFilterMenu();
   renderGames();
 }
 document.addEventListener('click',function(e){
   var menu=document.getElementById('search-filter-menu');
   if(menu && !menu.parentElement.contains(e.target)) {
     menu.classList.remove('open');
-    if(!activeTagFilter) menu.parentElement.querySelector('.search-filter-btn').classList.remove('active');
+    if(!activeTagFilters.length) menu.parentElement.querySelector('.search-filter-btn').classList.remove('active');
   }
 });
 
