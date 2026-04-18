@@ -1283,24 +1283,9 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
       </div>
     </div>
     <div class="ac-section">
-      <label>Activation Mode</label>
-      <select id="ac-mode">
-        <option value="toggle">Toggle Key</option>
-        <option value="startstop">Start / Stop Keys</option>
-      </select>
-      <div id="ac-keys-toggle" style="margin-top:8px">
-        <label>Toggle Key</label>
-        <button class="ac-keybtn" id="ac-key-toggle" onclick="recordACKey('toggle')">F6</button>
-      </div>
-      <div id="ac-keys-startstop" style="display:none;margin-top:8px">
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-          <label style="flex:1">Start Key</label>
-          <button class="ac-keybtn" id="ac-key-start" onclick="recordACKey('start')">F6</button>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <label style="flex:1">Stop Key</label>
-          <button class="ac-keybtn" id="ac-key-stop" onclick="recordACKey('stop')">F7</button>
-        </div>
+      <label>Hold Key (click while held)</label>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+        <button class="ac-keybtn" id="ac-key-hold" onclick="recordACKey('hold')">F6</button>
       </div>
     </div>
     <div class="ac-actions">
@@ -2263,7 +2248,7 @@ function updateFavBtn(){
 var acSettings={
   cps:10,offset:2,clickType:'single',clickBtn:0,
   dragEnabled:false,dragDur:50,dragRest:50,dragOffset:10,
-  mode:'toggle',toggleKey:'F6',startKey:'F6',stopKey:'F7'
+  holdKey:'F6'
 };
 var acRunning=false;
 var acIntervalId=null;
@@ -2285,7 +2270,6 @@ function saveACSettings(){
   acSettings.dragDur=parseInt(document.getElementById('ac-drag-dur').value)||50;
   acSettings.dragRest=parseInt(document.getElementById('ac-drag-rest').value)||50;
   acSettings.dragOffset=parseInt(document.getElementById('ac-drag-offset').value)||10;
-  acSettings.mode=document.getElementById('ac-mode').value;
   localStorage.setItem('autoClickerSettings',JSON.stringify(acSettings));
 }
 
@@ -2300,11 +2284,7 @@ function openAutoClicker(){
   document.getElementById('ac-drag-dur').value=acSettings.dragDur;
   document.getElementById('ac-drag-rest').value=acSettings.dragRest;
   document.getElementById('ac-drag-offset').value=acSettings.dragOffset;
-  document.getElementById('ac-mode').value=acSettings.mode;
-  document.getElementById('ac-key-toggle').textContent=acSettings.toggleKey;
-  document.getElementById('ac-key-start').textContent=acSettings.startKey;
-  document.getElementById('ac-key-stop').textContent=acSettings.stopKey;
-  updateACModeUI();
+  document.getElementById('ac-key-hold').textContent=acSettings.holdKey;
   updateACDragUI();
   updateACStatus();
   m.classList.add('open');
@@ -2315,11 +2295,6 @@ function closeAutoClicker(){
   document.querySelectorAll('.ac-keybtn.recording').forEach(function(b){b.classList.remove('recording')});
 }
 
-function updateACModeUI(){
-  var mode=document.getElementById('ac-mode').value;
-  document.getElementById('ac-keys-toggle').style.display=(mode==='toggle')?'block':'none';
-  document.getElementById('ac-keys-startstop').style.display=(mode==='startstop')?'block':'none';
-}
 function updateACDragUI(){
   document.getElementById('ac-drag-opts').style.display=document.getElementById('ac-drag-enabled').checked?'flex':'none';
 }
@@ -2330,7 +2305,6 @@ function updateACStatus(){
 }
 
 document.getElementById('ac-offset').addEventListener('input',function(){document.getElementById('ac-offset-val').textContent=this.value});
-document.getElementById('ac-mode').addEventListener('change',updateACModeUI);
 document.getElementById('ac-drag-enabled').addEventListener('change',updateACDragUI);
 
 function recordACKey(which){
@@ -2345,9 +2319,8 @@ document.addEventListener('keydown',function(e){
   if(!acRecordingKey) return;
   e.preventDefault();
   var key=e.code;
-  acSettings[acRecordingKey+'Key']=key;
-  var btnId='ac-key-'+acRecordingKey;
-  var btn=document.getElementById(btnId);
+  acSettings.holdKey=key;
+  var btn=document.getElementById('ac-key-hold');
   btn.textContent=key;
   btn.classList.remove('recording');
   acRecordingKey=null;
@@ -2418,16 +2391,12 @@ function stopAutoClicker(){
 
 document.addEventListener('keydown',function(e){
   if(acRecordingKey) return;
-  if(!_goOverlay.classList.contains('active')) return;
-  var key=e.code;
-  if(acSettings.mode==='toggle'){
-    if(key===acSettings.toggleKey){
-      if(acRunning) stopAutoClicker(); else startAutoClicker();
-    }
-  }else{
-    if(key===acSettings.startKey && !acRunning) startAutoClicker();
-    if(key===acSettings.stopKey && acRunning) stopAutoClicker();
-  }
+  if(!_goOverlay||!_goOverlay.classList.contains('active')) return;
+  if(e.code===acSettings.holdKey && !acRunning) startAutoClicker();
+});
+document.addEventListener('keyup',function(e){
+  if(!_goOverlay||!_goOverlay.classList.contains('active')) return;
+  if(e.code===acSettings.holdKey && acRunning) stopAutoClicker();
 });
 
 // Glowing particles
