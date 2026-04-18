@@ -219,28 +219,20 @@ html,body{
   font-size:13px;transition:background .2s ease,color .2s ease;
 }
 .filter-check-row:hover{background:rgba(255,255,255,.08);color:#fff}
-.filter-check-row.selected{color:var(--accent-purple);font-weight:500}
-.filter-check-row input[type="checkbox"]{
-  width:16px;height:16px;border-radius:4px;flex-shrink:0;
-  margin:0;cursor:pointer;
-  background:transparent;border:1.5px solid rgba(255,255,255,.35);
-  transition:background .2s ease,border-color .2s ease;
-}
-.filter-check-row input[type="checkbox"]:hover{border-color:rgba(255,255,255,.55)}
-.filter-check-row input[type="checkbox"]::after{
-  content:'';width:16px;height:16px;top:0;left:0;border-radius:0;
-  transform:none;background:none;
-  display:flex;align-items:center;justify-content:center;
-}
-.filter-check-row input[type="checkbox"]:checked{
-  background:var(--accent-purple);border-color:var(--accent-purple);
-}
-.filter-check-row input[type="checkbox"]:checked::after{
-  content:'✓';color:#fff;font-size:11px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  transform:none;box-shadow:none;background:none;
-}
+.filter-check-row.selected{color:#fff;font-weight:500}
 .filter-check-row span{flex:1}
+.filter-toggle{
+  width:36px;height:20px;border-radius:10px;cursor:pointer;
+  background:rgba(255,255,255,.15);position:relative;flex-shrink:0;
+  transition:background .35s ease;
+}
+.filter-toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:14px;height:14px;border-radius:50%;background:#fff;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.filter-toggle.active{background:var(--accent-purple)}
+.filter-toggle.active::after{transform:translateX(16px)}
 
 .dropdown{position:relative;flex-shrink:0}
 .dropdown-btn{
@@ -902,9 +894,7 @@ html,body{
 .filter-check-row{
   transition:background .2s ease,color .2s ease,padding-left .25s ease;
 }
-.filter-check-row:hover{
-  padding-left:20px;
-}
+.filter-check-row:hover{padding-left:20px}
 
 /* --- Modal Overlay & Panel --- */
 .modal-overlay{transition:opacity .35s ease,backdrop-filter .35s ease}
@@ -1773,9 +1763,9 @@ function renderSearchFilterMenu(){
   var keys=Object.keys(TAG_FILTERS);
   for(var i=0;i<keys.length;i++){
     var checked=activeTagFilters.indexOf(keys[i])!==-1;
-    html+='<label class="filter-check-row'+(checked?' selected':'')+'">';
-    html+='<input type="checkbox"'+(checked?' checked':'')+' onchange="toggleTagFilter(\''+keys[i]+'\')">';
-    html+='<span>'+TAG_FILTERS[keys[i]]+'</span></label>';
+    html+='<div class="filter-check-row'+(checked?' selected':'')+'" onclick="toggleTagFilter(\''+keys[i]+'\')">';
+    html+='<span>'+TAG_FILTERS[keys[i]]+'</span>';
+    html+='<div class="filter-toggle'+(checked?' active':'')+'"></div></div>';
   }
   menu.innerHTML=html;
 }
