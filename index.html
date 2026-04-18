@@ -741,7 +741,7 @@ html,body{
   transition:top .4s cubic-bezier(.4,0,.2,1),
              left .4s cubic-bezier(.4,0,.2,1),
              width .4s cubic-bezier(.4,0,.2,1),
-             opacity .15s ease;
+             opacity .25s ease;
 }
 .search-morph svg{
   width:18px;height:18px;stroke:var(--text-dim);stroke-width:1.5;
@@ -1471,10 +1471,18 @@ function morphSearchBar(fromRect,toEl){
     var inp=toEl.querySelector('input');
     if(inp) morph.querySelector('span').textContent=inp.placeholder||'';
     setTimeout(function(){
-      toEl.style.visibility='';
       morph.style.opacity='0';
-      setTimeout(function(){morph.remove()},200);
-    },400);
+      morph.addEventListener('transitionend',function done(e){
+        if(e.propertyName!=='opacity') return;
+        morph.removeEventListener('transitionend',done);
+        toEl.style.visibility='';
+        morph.remove();
+      });
+      setTimeout(function(){
+        toEl.style.visibility='';
+        morph.remove();
+      },300);
+    },380);
   });});
 }
 
@@ -1494,18 +1502,12 @@ function navigate(page){
 
   var savedRect=null;
   var morphTarget=null;
-  if(prevPage==='home'&&(page==='games'||page==='apps')){
-    var target=page==='games'?gamesSearch:appsSearch;
-    if(homeBar&&target){
-      savedRect=homeBar.getBoundingClientRect();
-      morphTarget=target;
-    }
-  }else if(page==='home'&&(prevPage==='games'||prevPage==='apps')){
-    var source=prevPage==='games'?gamesSearch:appsSearch;
-    if(source&&homeBar){
-      savedRect=source.getBoundingClientRect();
-      morphTarget=homeBar;
-    }
+  var barMap={home:homeBar,games:gamesSearch,apps:appsSearch};
+  var fromBar=barMap[prevPage];
+  var toBar=barMap[page];
+  if(fromBar&&toBar){
+    savedRect=fromBar.getBoundingClientRect();
+    morphTarget=toBar;
   }
 
   exitBrowsing();
