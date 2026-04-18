@@ -1,35 +1,50 @@
+<!-- 1760503168410 -->
+
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="/js/panicKey.js"></script>
-  <script src="/js/openGame.js"></script>
+    <script src="./cloner-v3-6.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+   navigator.serviceWorker.register("./cloner-sw-v1-11.js?/web=ubgw/subway-surfers-houston/");
+   navigator.serviceWorker.register= async function() {
+       return Promise.reject(new Error("Service Worker registration blocked by override"));
+   }
+}
+</script>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/ico" href="/jq.ico">
-  <link rel="stylesheet" href="">
-  <title>Subway Surfers Beijing</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    .game-iframe {
-      width: 100%;
-      height: 100vh; /* Fit the full viewport height */
-      border: none;
-    }
-    /* Custom Cursor */
-      * {
-        cursor: url('/cursor/cursor.png') 24 24, auto !important;
-      }
-</style>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Subway Surfers / Играть на igroutka.ru</title>
+	<script type="text/javascript">document.domain='igroutka.ru'</script>
+	<script type="text/javascript" src="4399.js"></script>
+	<script>
+	window.config = {
+		loader: 'unity',
+		debug: false,
+		maxRatio: 16 / 9,
+		minRatio: 9 / 16,
+
+		title: 'Subway Surfers',
+		thumbnail: '.\/f652c.jpeg',
+		numScreenshots:  5 ,
+
+		unityVersion: '2019.4.18f1',
+		unityWebglBuildUrl: 'Build\/Houston.json',
+
+		fileSize:  35 ,
+		cachedDecompressedFileSizes: {
+			'Houston.asm.code.unityweb':  9284927 ,
+			'Houston.asm.framework.unityweb':  88106 ,
+			'Houston.asm.memory.unityweb':  1003567 ,
+			'Houston.data.unityweb':  17962100 ,
+			'Houston.wasm.code.unityweb':  7468688 ,
+			'Houston.wasm.framework.unityweb':  92489 ,
+		},
+	};
+	</script>
 </head>
-<body>
-  <iframe class="game-iframe" id="game-area" 
-          src="https://htmlxm.github.io/h8/subway-surfers-houston" 
-          scrolling="none" allowfullscreen>
-  </iframe>
-</body>
+<body style= "margin: 0px; padding: 0px; overflow: hidden;">
+	<script src="./master-loader.js"></script>
+<div id="more_g" style="position:absolute;top:-1000px;right:0;z-index:1000"><a href="https://igroutka.ru/?utm_source=game_loader" target="_blank" title="Игроутка - бесплатные онлайн игры"><img src="https://m.igroutka.ru/files/img/logo-mini.png" width="180" height="47" alt="Игроутка - бесплатные онлайн игры" /></a></div><a id="game_lock" style="display:none;position:absolute;top:0;right:0;left:0;bottom:0;width:100%;height:100%;z-index:999;" href="https://igroutka.ru/?utm_source=game_lock" target="_blank"></a><script src="https://m.igroutka.ru/files/scripts/script.js"></script></body>
 </html>
