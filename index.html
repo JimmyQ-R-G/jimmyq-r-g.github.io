@@ -1361,11 +1361,9 @@ function morphSearchBar(fromRect,toEl){
     var inp=toEl.querySelector('input');
     if(inp) morph.querySelector('span').textContent=inp.placeholder||'';
     setTimeout(function(){
+      toEl.style.visibility='';
       morph.style.opacity='0';
-      setTimeout(function(){
-        morph.remove();
-        toEl.style.visibility='';
-      },150);
+      setTimeout(function(){morph.remove()},200);
     },400);
   });});
 }
