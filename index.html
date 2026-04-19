@@ -1854,7 +1854,6 @@ function animateTopBar(from,to){
   }
 }
 
-var VALID_TABS=['home','games','apps','unblocks','contacts'];
 
 function searchFromBar(tab){
   closeGameOverlay();
@@ -1866,124 +1865,23 @@ function searchFromBar(tab){
   updateUrl();
 }
 
+var HASH_MAP={home:'h',games:'g',apps:'a',unblocks:'u',contacts:'c'};
+var HASH_REV={h:'home',g:'games',a:'apps',u:'unblocks',c:'contacts'};
+
 function updateUrl(){
-  var params=new URLSearchParams();
-  params.set('tab',currentPage);
-  var pageId='default';
-  if(_goOverlay&&_goOverlay.classList.contains('active')&&_goCurrentUrl){
-    pageId=urlToPageId(_goCurrentUrl,_goSourcePage)||'default';
-  }
-  var searchId=(currentPage==='games'||currentPage==='apps')?currentPage+'-search':'';
-  var searchEl=searchId?document.getElementById(searchId):null;
-  var q=searchEl?searchEl.value.trim():'';
-  if(q&&pageId==='default'){
-    params.set('page','search');
-    params.set('q',q);
-  }else{
-    params.set('page',pageId);
-  }
-  window.history.replaceState(null,'','?'+params.toString());
-}
-
-function urlToPageId(url,source){
-  if(source==='games'||!source||source===''){
-    var all=GAMES.concat(PENDING);
-    for(var i=0;i<all.length;i++){
-      if(all[i].url===url) return all[i].img;
-    }
-    for(var i=0;i<COLLECTIONS.length;i++){
-      if(COLLECTIONS[i].url===url) return COLLECTIONS[i].img||COLLECTIONS[i].n.toLowerCase().replace(/\s+/g,'-');
-    }
-  }
-  if(source==='apps'){
-    for(var i=0;i<APPS.length;i++){
-      var loadUrl=APPS[i].proxy?proxyUrl('https://'+APPS[i].url,!!APPS[i].raw):APPS[i].url;
-      if(loadUrl===url||APPS[i].url===url) return APPS[i].img;
-    }
-  }
-  if(source==='unblocks'){
-    for(var i=0;i<UNBLOCKS.length;i++){
-      if(UNBLOCKS[i].url===url) return UNBLOCKS[i].img;
-    }
-  }
-  return null;
-}
-
-function pageIdToAction(pageId){
-  if(!pageId||pageId==='default') return null;
-  for(var i=0;i<GAMES.length;i++){
-    if(GAMES[i].img===pageId) return {type:'game',item:GAMES[i]};
-  }
-  for(var i=0;i<PENDING.length;i++){
-    if(PENDING[i].img===pageId) return {type:'game',item:PENDING[i]};
-  }
-  for(var i=0;i<COLLECTIONS.length;i++){
-    var cid=COLLECTIONS[i].img||COLLECTIONS[i].n.toLowerCase().replace(/\s+/g,'-');
-    if(cid===pageId) return {type:'game',item:COLLECTIONS[i]};
-  }
-  for(var i=0;i<APPS.length;i++){
-    if(APPS[i].img===pageId) return {type:'app',item:APPS[i]};
-  }
-  for(var i=0;i<UNBLOCKS.length;i++){
-    if(UNBLOCKS[i].img===pageId) return {type:'unblock',item:UNBLOCKS[i]};
-  }
-  return null;
+  var h=HASH_MAP[currentPage]||'h';
+  window.history.replaceState(null,'','#'+h);
 }
 
 function restoreFromUrl(){
-  var params=new URLSearchParams(window.location.search);
-  var hash=window.location.hash.slice(1);
-
-  if(hash&&VALID_TABS.indexOf(hash)!==-1){
-    window.history.replaceState(null,'','?tab='+hash+'&page=default');
-    params=new URLSearchParams(window.location.search);
-  }
-
-  var tab=params.get('tab');
-  var pageId=params.get('page');
-
-  if(!tab||VALID_TABS.indexOf(tab)===-1){
-    updateUrl();
-    return;
-  }
-
+  var h=window.location.hash.slice(1);
+  var tab=HASH_REV[h];
+  if(!tab){updateUrl();return}
   if(tab!==currentPage) navigate(tab);
-
-  if(pageId==='search'){
-    var q=params.get('q')||'';
-    if(q){
-      if(tab==='games'){
-        var el=document.getElementById('games-search');
-        if(el){el.value=q;renderGames()}
-      }else if(tab==='apps'){
-        var el=document.getElementById('apps-search');
-        if(el){el.value=q;renderApps()}
-      }
-    }
-  }else if(pageId&&pageId!=='default'){
-    var action=pageIdToAction(pageId);
-    if(action){
-      if(action.type==='game'){
-        if(action.item.wo){
-          window.open(action.item.url,'_blank');
-        }else{
-          loadGameInPage(action.item.url,'games');
-        }
-      }else if(action.type==='app'){
-        var loadUrl=action.item.proxy?proxyUrl('https://'+action.item.url,!!action.item.raw):action.item.url;
-        loadGameInPage(loadUrl,'apps');
-      }else if(action.type==='unblock'&&action.item.inPage){
-        loadGameInPage(action.item.url,'unblocks');
-      }
-    }
-  }
-
-  if(!pageId){
-    updateUrl();
-  }
 }
 
 restoreFromUrl();
+window.addEventListener('hashchange',function(){restoreFromUrl()});
 
 function isUrl(s){
   return /^https?:\/\//i.test(s)||/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}/i.test(s);
