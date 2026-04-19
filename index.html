@@ -311,7 +311,7 @@ html,body{
   display:flex;gap:24px;flex-wrap:wrap;justify-content:center;padding:10px 0 40px;
 }
 .home-card{
-  opacity:0;animation:tileIn .5s cubic-bezier(.25,.46,.45,.94) forwards;
+  opacity:0;animation-duration:.5s;animation-timing-function:cubic-bezier(.25,.46,.45,.94);animation-fill-mode:forwards;
 }
 .home-card:nth-child(1){animation-delay:.05s}
 .home-card:nth-child(2){animation-delay:.15s}
@@ -724,9 +724,21 @@ html,body{
   from{opacity:0;transform:translateY(18px) scale(.92)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
+@keyframes tileSlideLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tileSlideRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tileFadeScale{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes tileFlipIn{from{opacity:0;transform:perspective(400px) rotateY(-15deg) scale(.9)}to{opacity:1;transform:perspective(400px) rotateY(0) scale(1)}}
+@keyframes tileDropBounce{0%{opacity:0;transform:translateY(-30px) scale(.95)}60%{opacity:1;transform:translateY(6px) scale(1.02)}100%{transform:translateY(0) scale(1)}}
+@keyframes tileZoomSpin{from{opacity:0;transform:scale(.5) rotate(-8deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes tileSwingIn{0%{opacity:0;transform:rotate(-6deg) translateY(12px)}60%{transform:rotate(2deg) translateY(-2px)}100%{opacity:1;transform:rotate(0) translateY(0)}}
+@keyframes tileElastic{0%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1.08)}75%{transform:scale(.95)}100%{transform:scale(1)}}
+@keyframes tileBlurIn{from{opacity:0;filter:blur(8px);transform:scale(1.05)}to{opacity:1;filter:blur(0);transform:scale(1)}}
+@keyframes tileRollIn{from{opacity:0;transform:translateX(-20px) rotate(-12deg)}to{opacity:1;transform:translateX(0) rotate(0)}}
 .tile-stagger{
   opacity:0;
-  animation:tileIn .4s cubic-bezier(.25,.46,.45,.94) forwards;
+  animation-duration:.4s;
+  animation-timing-function:cubic-bezier(.25,.46,.45,.94);
+  animation-fill-mode:forwards;
 }
 @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
@@ -1095,6 +1107,17 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
   from{opacity:0;transform:translateX(-30px) rotate(-8deg)}
   to{opacity:1;transform:translateX(0) rotate(0)}
 }
+/* --- Extra nav exit/enter variants --- */
+@keyframes navBounceOutRight{0%{opacity:1;transform:translateX(0)}40%{transform:translateX(-8px)}100%{opacity:0;transform:translateX(40px)}}
+@keyframes navBounceInRight{0%{opacity:0;transform:translateX(40px)}60%{transform:translateX(-4px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes navFlipOutRight{from{opacity:1;transform:perspective(400px) rotateY(0)}to{opacity:0;transform:perspective(400px) rotateY(25deg) scale(.9)}}
+@keyframes navFlipInRight{from{opacity:0;transform:perspective(400px) rotateY(25deg) scale(.9)}to{opacity:1;transform:perspective(400px) rotateY(0)}}
+@keyframes navScaleOutRight{from{opacity:1;transform:scale(1) translateX(0)}to{opacity:0;transform:scale(.6) translateX(20px)}}
+@keyframes navScaleInRight{from{opacity:0;transform:scale(.6) translateX(20px)}to{opacity:1;transform:scale(1) translateX(0)}}
+@keyframes navBounceOutLeft{0%{opacity:1;transform:translateX(0)}40%{transform:translateX(8px)}100%{opacity:0;transform:translateX(-40px)}}
+@keyframes navBounceInLeft{0%{opacity:0;transform:translateX(-40px)}60%{transform:translateX(4px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes navBlurOut{from{opacity:1;filter:blur(0)}to{opacity:0;filter:blur(6px);transform:scale(.85)}}
+@keyframes navBlurIn{from{opacity:0;filter:blur(6px);transform:scale(.85)}to{opacity:1;filter:blur(0);transform:scale(1)}}
 /* Dropdown / generic item fade in + enlarge */
 @keyframes tbItemIn{
   from{opacity:0;transform:scale(.8)}
@@ -1158,10 +1181,20 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
   from{opacity:.3;transform:translateY(10px) scale(.85)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
-.sidebar nav button.snav-out-down{animation:sidenavFlowOutDown .25s ease forwards}
-.sidebar nav button.snav-out-up{animation:sidenavFlowOutUp .25s ease forwards}
-.sidebar nav button.snav-in-down{animation:sidenavFlowInDown .3s cubic-bezier(.34,1.56,.64,1) forwards}
-.sidebar nav button.snav-in-up{animation:sidenavFlowInUp .3s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes snavBounceOutDown{0%{opacity:1;transform:translateY(0)}40%{transform:translateY(-4px)}100%{opacity:.2;transform:translateY(12px) scale(.8)}}
+@keyframes snavBounceOutUp{0%{opacity:1;transform:translateY(0)}40%{transform:translateY(4px)}100%{opacity:.2;transform:translateY(-12px) scale(.8)}}
+@keyframes snavBounceInDown{0%{opacity:.2;transform:translateY(-14px) scale(.8)}60%{transform:translateY(3px) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes snavBounceInUp{0%{opacity:.2;transform:translateY(14px) scale(.8)}60%{transform:translateY(-3px) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes snavFlipOutDown{from{opacity:1;transform:perspective(300px) rotateX(0)}to{opacity:.2;transform:perspective(300px) rotateX(20deg) scale(.85)}}
+@keyframes snavFlipOutUp{from{opacity:1;transform:perspective(300px) rotateX(0)}to{opacity:.2;transform:perspective(300px) rotateX(-20deg) scale(.85)}}
+@keyframes snavFlipInDown{from{opacity:.2;transform:perspective(300px) rotateX(-20deg) scale(.85)}to{opacity:1;transform:perspective(300px) rotateX(0) scale(1)}}
+@keyframes snavFlipInUp{from{opacity:.2;transform:perspective(300px) rotateX(20deg) scale(.85)}to{opacity:1;transform:perspective(300px) rotateX(0) scale(1)}}
+@keyframes snavBlurOutDown{from{opacity:1;filter:blur(0)}to{opacity:.2;filter:blur(4px);transform:translateY(6px)}}
+@keyframes snavBlurInDown{from{opacity:.2;filter:blur(4px);transform:translateY(-6px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
+.sidebar nav button.snav-out-down{animation-duration:.25s;animation-timing-function:ease;animation-fill-mode:forwards}
+.sidebar nav button.snav-out-up{animation-duration:.25s;animation-timing-function:ease;animation-fill-mode:forwards}
+.sidebar nav button.snav-in-down{animation-duration:.3s;animation-timing-function:cubic-bezier(.34,1.56,.64,1);animation-fill-mode:forwards}
+.sidebar nav button.snav-in-up{animation-duration:.3s;animation-timing-function:cubic-bezier(.34,1.56,.64,1);animation-fill-mode:forwards}
 .sidebar .logo{transition:transform .5s cubic-bezier(.34,1.56,.64,1),filter .5s ease}
 .sidebar .logo:active{transform:scale(.85)}
 
@@ -1180,12 +1213,26 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 
 /* --- Search/URL bar: glow ring on focus, icon rotate, placeholder shimmer, border pulse --- */
 @keyframes searchGlow{0%,100%{box-shadow:0 0 12px rgba(136,65,214,.3)}50%{box-shadow:0 0 20px rgba(136,65,214,.45)}}
+@keyframes searchPulse{0%,100%{border-color:rgba(136,65,214,.2)}50%{border-color:rgba(136,65,214,.5)}}
+@keyframes searchExpandIn{from{opacity:0;transform:scaleX(.85)}to{opacity:1;transform:scaleX(1)}}
+@keyframes searchShakeIn{0%{transform:translateX(-4px)}25%{transform:translateX(4px)}50%{transform:translateX(-2px)}75%{transform:translateX(2px)}100%{transform:translateX(0)}}
+@keyframes searchIconSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes searchIconBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes searchBorderGradient{0%{border-color:rgba(136,65,214,.3)}33%{border-color:rgba(214,65,136,.3)}66%{border-color:rgba(65,136,214,.3)}100%{border-color:rgba(136,65,214,.3)}}
+@keyframes searchUnderline{from{background-size:0 2px}to{background-size:100% 2px}}
+@keyframes searchFocusLift{from{transform:translateY(0);box-shadow:none}to{transform:translateY(-2px);box-shadow:0 4px 16px rgba(136,65,214,.2)}}
+@keyframes searchPlaceholderFade{0%,100%{opacity:.5}50%{opacity:.8}}
+@keyframes searchRipple{0%{box-shadow:0 0 0 0 rgba(136,65,214,.3)}100%{box-shadow:0 0 0 10px rgba(136,65,214,0)}}
 .url-bar:focus-within,.search-bar:focus-within{animation:searchGlow 2s ease infinite}
 .url-bar:focus-within svg,.search-bar:focus-within svg{
   transform:scale(1.1) rotate(-8deg);
 }
+.url-bar:hover,.search-bar:hover{animation:searchPulse 1.5s ease infinite}
+.url-bar:hover svg,.search-bar:hover svg{animation:searchIconBounce .5s ease}
 .home-search-bar:focus-within{animation:searchGlow 2s ease infinite}
 .home-search-bar:focus-within svg{transform:scale(1.1) rotate(-8deg)}
+.home-search-bar:hover{animation:searchPulse 1.5s ease infinite}
+.home-search-bar:hover svg{animation:searchIconBounce .5s ease}
 
 /* --- Game/App tiles: image zoom, label slide up, glow border, pressed sink --- */
 .game-tile img,.app-tile img{transition:transform .5s cubic-bezier(.25,.46,.45,.94),filter .4s ease}
@@ -1199,6 +1246,16 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 .game-tile .tile-label,.app-tile .tile-label{transition:opacity .35s ease,font-size .35s ease,padding .35s ease,text-shadow .35s ease,transform .35s ease}
 
 /* --- Dropdown: open/close smooth height, button glow, item slide --- */
+@keyframes dropSlideDown{from{opacity:0;transform:translateY(-10px) scaleY(.9)}to{opacity:1;transform:translateY(0) scaleY(1)}}
+@keyframes dropSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dropFanOut{from{opacity:0;transform:perspective(300px) rotateX(-10deg);transform-origin:top center}to{opacity:1;transform:perspective(300px) rotateX(0)}}
+@keyframes dropZoomIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes dropFlipDown{from{opacity:0;transform:perspective(400px) rotateX(-15deg)}to{opacity:1;transform:perspective(400px) rotateX(0)}}
+@keyframes dropBounceDown{0%{opacity:0;transform:translateY(-12px)}65%{opacity:1;transform:translateY(4px)}100%{transform:translateY(0)}}
+@keyframes dropBlurIn{from{opacity:0;filter:blur(5px)}to{opacity:1;filter:blur(0)}}
+@keyframes dropElastic{0%{opacity:0;transform:scaleY(.5)}60%{transform:scaleY(1.06)}100%{opacity:1;transform:scaleY(1)}}
+@keyframes dropReveal{from{opacity:0;clip-path:inset(0 0 100% 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes dropCascade{from{opacity:0;transform:translateY(-6px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .dropdown-btn{transition:border-color .3s ease,box-shadow .3s ease,transform .2s ease,background .3s ease}
 .dropdown-btn:active{transform:scale(.96)}
 .dropdown-btn:hover{background:rgba(255,255,255,.05)}
@@ -1235,32 +1292,91 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 .filter-toggle:hover::after{box-shadow:0 0 6px rgba(255,255,255,.2)}
 .filter-toggle.active:hover{box-shadow:0 0 0 4px rgba(136,65,214,.15)}
 
+/* --- Home card entrance variants --- */
+@keyframes cardLiftIn{from{opacity:0;transform:translateY(30px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes cardFlipIn{from{opacity:0;transform:perspective(500px) rotateY(-12deg)}to{opacity:1;transform:perspective(500px) rotateY(0)}}
+@keyframes cardSwingIn{0%{opacity:0;transform:rotate(-5deg) scale(.9)}70%{transform:rotate(1.5deg) scale(1.02)}100%{opacity:1;transform:rotate(0) scale(1)}}
+@keyframes cardBounceIn{0%{opacity:0;transform:translateY(25px)}60%{opacity:1;transform:translateY(-6px)}100%{transform:translateY(0)}}
+@keyframes cardSlideLeft{from{opacity:0;transform:translateX(-35px)}to{opacity:1;transform:translateX(0)}}
+@keyframes cardSlideRight{from{opacity:0;transform:translateX(35px)}to{opacity:1;transform:translateX(0)}}
+@keyframes cardZoomIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes cardRotateIn{from{opacity:0;transform:rotate(-4deg) translateY(15px)}to{opacity:1;transform:rotate(0) translateY(0)}}
+@keyframes cardBlurFadeIn{from{opacity:0;filter:blur(10px)}to{opacity:1;filter:blur(0)}}
+@keyframes cardDropIn{0%{opacity:0;transform:translateY(-25px) scale(1.05)}70%{transform:translateY(4px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
+
 /* --- Modal: backdrop blur animate, panel bounce, close button glow --- */
 .modal-overlay.open{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .modal-close:hover{box-shadow:0 0 12px rgba(255,255,255,.1)}
 @keyframes modalPanelIn{0%{opacity:0;transform:scale(.92) translateY(20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
-.modal-overlay.open .modal{animation:modalPanelIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalSlideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalSlideDown{from{opacity:0;transform:translateY(-40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalSlideLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes modalSlideRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes modalFlipX{from{opacity:0;transform:perspective(600px) rotateX(-12deg) scale(.9)}to{opacity:1;transform:perspective(600px) rotateX(0) scale(1)}}
+@keyframes modalFlipY{from{opacity:0;transform:perspective(600px) rotateY(-12deg) scale(.9)}to{opacity:1;transform:perspective(600px) rotateY(0) scale(1)}}
+@keyframes modalZoomBounce{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes modalRotateIn{from{opacity:0;transform:rotate(-3deg) scale(.9)}to{opacity:1;transform:rotate(0) scale(1)}}
+@keyframes modalBlurIn{from{opacity:0;filter:blur(10px);transform:scale(1.05)}to{opacity:1;filter:blur(0);transform:scale(1)}}
+@keyframes modalDrop{0%{opacity:0;transform:translateY(-50px) scale(1.1)}60%{opacity:1;transform:translateY(8px) scale(.98)}100%{transform:translateY(0) scale(1)}}
+.modal-overlay.open .modal{animation-duration:.4s;animation-timing-function:cubic-bezier(.34,1.56,.64,1);animation-fill-mode:both}
 
 /* --- Game toolbar: expand glow, button icon spin hint --- */
+@keyframes toolbarSlideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toolbarBounceIn{0%{opacity:0;transform:translateX(30px)}65%{opacity:1;transform:translateX(-4px)}100%{transform:translateX(0)}}
+@keyframes toolbarExpandPulse{0%,100%{box-shadow:-2px 0 20px rgba(0,0,0,.4)}50%{box-shadow:-2px 0 30px rgba(136,65,214,.3)}}
+@keyframes toolbarBtnSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes toolbarBtnBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes toolbarBtnRipple{0%{box-shadow:0 0 0 0 rgba(255,255,255,.15)}100%{box-shadow:0 0 0 8px rgba(255,255,255,0)}}
+@keyframes toolbarFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes toolbarBtnFlip{from{transform:perspective(300px) rotateY(-10deg)}to{transform:perspective(300px) rotateY(0)}}
+@keyframes toolbarGlowPulse{0%,100%{box-shadow:0 0 0 rgba(136,65,214,0)}50%{box-shadow:0 0 12px rgba(136,65,214,.2)}}
+@keyframes toolbarBtnPop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 #game-toolbar{transition:width .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s ease}
-#game-toolbar.expanded{box-shadow:-2px 0 20px rgba(0,0,0,.4)}
+#game-toolbar.expanded{box-shadow:-2px 0 20px rgba(0,0,0,.4);animation:toolbarExpandPulse 2s ease infinite}
 #game-toolbar button:hover{
   background:rgba(255,255,255,.1);
   box-shadow:0 0 8px rgba(255,255,255,.05);
+  animation:toolbarBtnBounce .4s ease;
 }
+#game-toolbar button:active{animation:toolbarBtnPop .2s ease}
 
 /* --- Page transition: smooth content entrance --- */
 @keyframes pageSlideIn{0%{opacity:0;transform:translateX(12px)}100%{opacity:1;transform:translateX(0)}}
-.page.active{animation:pageSlideIn .35s ease}
+@keyframes pageFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pageFadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pageZoomIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes pageSlideLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pageSlideRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pageFlipX{from{opacity:0;transform:perspective(600px) rotateX(-8deg)}to{opacity:1;transform:perspective(600px) rotateX(0)}}
+@keyframes pageBlurIn{from{opacity:0;filter:blur(6px)}to{opacity:1;filter:blur(0)}}
+@keyframes pageBounceIn{0%{opacity:0;transform:scale(.85)}60%{opacity:1;transform:scale(1.03)}100%{transform:scale(1)}}
+@keyframes pageRotateIn{from{opacity:0;transform:rotate(-2deg) scale(.95)}to{opacity:1;transform:rotate(0) scale(1)}}
+@keyframes pageExpandIn{from{opacity:0;transform:scaleY(.9) translateY(10px)}to{opacity:1;transform:scaleY(1) translateY(0)}}
+.page.active{animation-duration:.35s;animation-timing-function:ease;animation-fill-mode:both}
 
 /* --- Setting rows: subtle slide in on hover --- */
-.setting-row:hover{transform:translateX(2px)}
-.setting-section-title{position:relative}
+@keyframes settingRowSlideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes settingRowFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes settingRowHighlight{0%{background:rgba(136,65,214,0)}50%{background:rgba(136,65,214,.06)}100%{background:rgba(136,65,214,0)}}
+@keyframes toggleBounce{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes toggleRipple{0%{box-shadow:0 0 0 0 rgba(136,65,214,.3)}100%{box-shadow:0 0 0 8px rgba(136,65,214,0)}}
+@keyframes toggleGlow{0%,100%{box-shadow:0 0 4px rgba(136,65,214,.2)}50%{box-shadow:0 0 12px rgba(136,65,214,.4)}}
+@keyframes sectionTitleSlideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sectionTitleGlow{0%,100%{text-shadow:0 0 0 transparent}50%{text-shadow:0 0 8px rgba(136,65,214,.3)}}
+@keyframes keyBtnPop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes settingDividerGrow{from{width:0}to{width:100%}}
+.setting-row:hover{transform:translateX(2px);animation:settingRowHighlight .6s ease}
+.setting-row{transition:transform .2s ease,background .3s ease}
+.toggle-switch:active,.filter-toggle:active{animation:toggleBounce .3s ease}
+.toggle-switch.active{animation:toggleRipple .4s ease}
+.setting-section-title{position:relative;transition:text-shadow .3s ease}
+.setting-section-title:hover{animation:sectionTitleGlow 1.5s ease infinite}
 .setting-section-title::after{
   content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;
   background:var(--accent-purple);transition:width .4s ease;
 }
 .setting-section-title:hover::after{width:100%}
+.keybtn:active{animation:keyBtnPop .25s ease}
 
 /* --- Pulse for active keybtn recording --- */
 @keyframes pulse{
@@ -1612,15 +1728,21 @@ function navigate(page){
 
   currentPage=page;
   document.getElementById('app').setAttribute('data-page',page);
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
-  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');p.style.animationName=''});
+  var activePage=document.getElementById('page-'+page);
+  activePage.style.animationName=pickRandom(PAGE_ANIMS);
+  activePage.classList.add('active');
+  if(page==='home') randomizeHomeCards();
   var snavOrder=['home','games','apps','unblocks','contacts'];
   var fromIdx=snavOrder.indexOf(prevPage);
   var toIdx=snavOrder.indexOf(page);
   var goingDown=toIdx>fromIdx;
   var snavBtns=document.querySelectorAll('.sidebar nav button');
+  var snavOutAnim=goingDown?pickRandom(SNAV_OUT_DOWN):pickRandom(SNAV_OUT_UP);
+  var snavInAnim=goingDown?pickRandom(SNAV_IN_DOWN):pickRandom(SNAV_IN_UP);
   snavBtns.forEach(function(b){
     b.classList.remove('snav-out-down','snav-out-up','snav-in-down','snav-in-up');
+    b.style.animationName='';
   });
   void document.body.offsetWidth;
   snavBtns.forEach(function(b){
@@ -1629,13 +1751,16 @@ function navigate(page){
     b.classList.toggle('active',isNew);
     if(isOld){
       b.classList.add(goingDown?'snav-out-down':'snav-out-up');
+      b.style.animationName=snavOutAnim;
     }else if(isNew){
       b.classList.add(goingDown?'snav-in-down':'snav-in-up');
+      b.style.animationName=snavInAnim;
     }
   });
   setTimeout(function(){
     snavBtns.forEach(function(b){
       b.classList.remove('snav-out-down','snav-out-up','snav-in-down','snav-in-up');
+      b.style.animationName='';
     });
   },400);
   updateUrl();
@@ -1661,35 +1786,38 @@ function animateTopBar(from,to){
   if(appSearchBar) allAnimEls.push(appSearchBar);
   var AC=['nav-flow-out-right','nav-flow-in-from-right','nav-flow-out-left','nav-flow-in-from-left','tb-item-in','tb-item-out'];
 
-  allAnimEls.forEach(function(el){AC.forEach(function(c){el.classList.remove(c)})});
+  allAnimEls.forEach(function(el){AC.forEach(function(c){el.classList.remove(c)});el.style.animationName=''});
   [tbHome,tbGames,tbApps].forEach(function(s){if(s)s.classList.remove('tb-exiting')});
   void document.body.offsetWidth;
 
   var hasBar={home:true,games:true,apps:true};
   var fromSection={home:tbHome,games:tbGames,apps:tbApps}[from];
+  var outR=pickRandom(NAV_OUT_RIGHT),inR=pickRandom(NAV_IN_RIGHT);
+  var outL=pickRandom(NAV_OUT_LEFT),inL=pickRandom(NAV_IN_LEFT);
 
   function exitSection(section,dur){
     if(!section) return;
     section.classList.add('tb-exiting');
     setTimeout(function(){section.classList.remove('tb-exiting')},dur);
   }
+  function applyNavOut(cls,animName){navBtns.forEach(function(b){b.classList.add(cls);b.style.animationName=animName})}
 
   if(from==='home'&&to==='games'){
     exitSection(tbHome,350);
-    navBtns.forEach(function(b){b.classList.add('nav-flow-out-right')});
+    applyNavOut('nav-flow-out-right',outR);
     if(dropdown) dropdown.classList.add('tb-item-in');
     if(gameSearchBar) gameSearchBar.classList.add('tb-item-in');
 
   }else if(from==='games'&&to==='home'){
-    navBtns.forEach(function(b){b.classList.add('nav-flow-in-from-right')});
+    applyNavOut('nav-flow-in-from-right',inR);
 
   }else if(from==='home'&&to==='apps'){
     exitSection(tbHome,350);
-    navBtns.forEach(function(b){b.classList.add('nav-flow-out-left')});
+    applyNavOut('nav-flow-out-left',outL);
     if(appSearchBar) appSearchBar.classList.add('tb-item-in');
 
   }else if(from==='apps'&&to==='home'){
-    navBtns.forEach(function(b){b.classList.add('nav-flow-in-from-left')});
+    applyNavOut('nav-flow-in-from-left',inL);
 
   }else if(from==='games'&&to==='apps'){
     exitSection(tbGames,300);
@@ -1716,7 +1844,7 @@ function animateTopBar(from,to){
 
   }else if(!hasBar[from]&&hasBar[to]){
     if(to==='home'){
-      navBtns.forEach(function(b){b.classList.add('nav-flow-in-from-left')});
+      applyNavOut('nav-flow-in-from-left',inL);
     }else if(to==='games'){
       if(dropdown) dropdown.classList.add('tb-item-in');
       if(gameSearchBar) gameSearchBar.classList.add('tb-item-in');
@@ -2058,13 +2186,31 @@ var CONTACTS=[
   {n:_('Sm9pbiBEZXZlbG9wZXJz'),img:"join-developers",url:"https://docs.google.com/forms/d/e/1FAIpQLSc0GRyWHqAmI5d0ZQnkLt9Zf3KPVOVHPFuii8ovOmonSeC6Jg/viewform?usp=header",form:true},
 ];
 
+function pickRandom(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+var TILE_ANIMS=['tileIn','tileSlideLeft','tileSlideRight','tileFadeScale','tileFlipIn','tileDropBounce','tileZoomSpin','tileSwingIn','tileElastic','tileBlurIn','tileRollIn'];
+var PAGE_ANIMS=['pageSlideIn','pageFadeUp','pageFadeDown','pageZoomIn','pageSlideLeft','pageSlideRight','pageFlipX','pageBlurIn','pageBounceIn','pageRotateIn','pageExpandIn'];
+var CARD_ANIMS=['tileIn','cardLiftIn','cardFlipIn','cardSwingIn','cardBounceIn','cardSlideLeft','cardSlideRight','cardZoomIn','cardRotateIn','cardBlurFadeIn','cardDropIn'];
+var MODAL_ANIMS=['modalPanelIn','modalSlideUp','modalSlideDown','modalSlideLeft','modalSlideRight','modalFlipX','modalFlipY','modalZoomBounce','modalRotateIn','modalBlurIn','modalDrop'];
+var NAV_OUT_RIGHT=['navFlowOutRight','navBounceOutRight','navFlipOutRight','navScaleOutRight','navBlurOut'];
+var NAV_IN_RIGHT=['navFlowInFromRight','navBounceInRight','navFlipInRight','navScaleInRight','navBlurIn'];
+var NAV_OUT_LEFT=['navFlowOutLeft','navBounceOutLeft','navBlurOut'];
+var NAV_IN_LEFT=['navFlowInFromLeft','navBounceInLeft','navBlurIn'];
+var SNAV_OUT_DOWN=['sidenavFlowOutDown','snavBounceOutDown','snavFlipOutDown','snavBlurOutDown'];
+var SNAV_OUT_UP=['sidenavFlowOutUp','snavBounceOutUp','snavFlipOutUp'];
+var SNAV_IN_DOWN=['sidenavFlowInDown','snavBounceInDown','snavFlipInDown','snavBlurInDown'];
+var SNAV_IN_UP=['sidenavFlowInUp','snavBounceInUp','snavFlipInUp'];
+var DROP_ANIMS=['dropSlideDown','dropFanOut','dropZoomIn','dropFlipDown','dropBounceDown','dropBlurIn','dropElastic','dropReveal','dropCascade'];
+
 function staggerTiles(container){
   var tiles=container.querySelectorAll('.game-tile,.app-tile,.collection-tile,.unblock-tile,.contact-tile');
+  var anim=pickRandom(TILE_ANIMS);
   var delay=0;
   var step=30;
   var max=600;
   for(var i=0;i<tiles.length;i++){
     tiles[i].classList.add('tile-stagger');
+    tiles[i].style.animationName=anim;
     tiles[i].style.animationDelay=Math.min(delay,max)+'ms';
     delay+=step;
   }
@@ -2209,7 +2355,15 @@ function setGameTab(tab){
   renderGames();
 }
 function toggleDropdown(){
-  document.getElementById('games-dropdown').classList.toggle('open');
+  var dd=document.getElementById('games-dropdown');
+  var menu=dd.querySelector('.dropdown-menu');
+  if(!dd.classList.contains('open')&&menu){
+    menu.style.animationName=pickRandom(DROP_ANIMS);
+    menu.style.animationDuration='.3s';
+    menu.style.animationTimingFunction='cubic-bezier(.34,1.56,.64,1)';
+    menu.style.animationFillMode='both';
+  }
+  dd.classList.toggle('open');
 }
 document.addEventListener('click',function(e){
   if(!e.target.closest('#games-dropdown')){
@@ -2595,6 +2749,30 @@ renderGames();
 renderApps();
 renderUnblocks();
 renderContacts();
+randomizeHomeCards();
+randomizeModalAnim();
+
+function randomizeHomeCards(){
+  var cards=document.querySelectorAll('.home-card');
+  var anim=pickRandom(CARD_ANIMS);
+  cards.forEach(function(c){c.style.animationName=anim});
+}
+function randomizeModalAnim(){
+  var obs=new MutationObserver(function(mutations){
+    mutations.forEach(function(mut){
+      if(mut.type==='attributes'&&mut.attributeName==='class'){
+        var el=mut.target;
+        if(el.classList.contains('open')){
+          var m=el.querySelector('.modal')||el.querySelector('.ac-panel');
+          if(m) m.style.animationName=pickRandom(MODAL_ANIMS);
+        }
+      }
+    });
+  });
+  document.querySelectorAll('.modal-overlay,#ac-modal').forEach(function(ov){
+    obs.observe(ov,{attributes:true,attributeFilter:['class']});
+  });
+}
 
 // ══ OVERLAY / TOOLBAR ══
 var _goOverlay=document.getElementById('game-overlay');
