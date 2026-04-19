@@ -775,13 +775,110 @@ a;o.na=o.makeSaxParser=z;o.oa=o.makeTagPolicy=g;o.qa=o.normalizeRCData=p;o.ra=o.
 gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","proxyUrl":"//www.gmodules.com/gadgets/proxy/refresh=%refresh%&container=%container%%rewriteMime%&gadget=%gadget%/%rawurl%"},"shindig.auth":{"authToken":"","trustedJson":""},"core.util":{"core":{}}});
 </script><script>gadgets.Prefs.setMessages_({});gadgets.Prefs.setDefaultPrefs_({});gadgets.io.preloaded_=[];</script><link href="style.css" rel="stylesheet">
 
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="robots" content="noindex,nofollow" />
     
     </head><body dir="ltr"><script src="UnityProgress.js"></script><script src="UnityLoader.js"></script><script>
-      var gameInstance = UnityLoader.instantiate("gameContainer", "totm.json", {onProgress: UnityProgress,Module:{onRuntimeInitialized: function() {UnityProgress(gameInstance, "complete")}}});
+(function(){
+  var _crazyObjName='';
+
+  window.gdsdk={
+    AdType:{Rewarded:'rewarded',Interstitial:'interstitial'},
+    preloadAd:function(){return Promise.resolve()},
+    showAd:function(type){
+      if(typeof SendMessage==='function'){
+        SendMessage('GameDistribution','ResumeGameCallback');
+      }
+    }
+  };
+
+  window.Crazygames={
+    init:function(opts){_crazyObjName=opts.crazySDKObjectName||'';},
+    requestAd:function(type){
+      if(_crazyObjName&&typeof SendMessage==='function'){
+        setTimeout(function(){
+          SendMessage(_crazyObjName,'AdStarted','');
+          setTimeout(function(){
+            SendMessage(_crazyObjName,'AdFinished','');
+          },100);
+        },50);
+      }
+    }
+  };
+
+  window.Garter={game:{
+    ads:function(){},
+    getAdConf:function(){},
+    active:function(){},
+    analytics:function(){},
+    installAsPwa:function(){}
+  }};
+  window.GarterUnityGame=function(){};
+  window.GarterUnityGame.prototype.init=function(){};
+
+  window._ShowAdsPlaceholder=function(){};
+  window.skipAdsPlaceholder=function(){};
+})();
+</script><script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "totm.json", {onProgress: UnityProgress,Module:{onRuntimeInitialized: function() {
+        UnityProgress(gameInstance, "complete");
+        if(typeof _ShowAdsPlaceholder!=='undefined') window._ShowAdsPlaceholder=function(){};
+      }}});
     </script><div class="webgl-content">
         <div id="gameContainer" style="width: 100%; height: 100%; margin: auto"></div>
         </div>
 
+<script>
+(function(){
+  var startX,startY,startT;
+  var SWIPE_MIN=20;
+  var SWIPE_MAX_MS=500;
+  var KEY_MAP={up:38,down:40,left:37,right:39};
+
+  function fireKey(code,type){
+    var e=new KeyboardEvent(type,{keyCode:code,which:code,bubbles:true,cancelable:true});
+    document.dispatchEvent(e);
+    var c=document.querySelector('#gameContainer canvas');
+    if(c) c.dispatchEvent(new KeyboardEvent(type,{keyCode:code,which:code,bubbles:true,cancelable:true}));
+  }
+
+  document.addEventListener('touchstart',function(e){
+    var t=e.touches[0];
+    startX=t.clientX;
+    startY=t.clientY;
+    startT=Date.now();
+  },{passive:false});
+
+  document.addEventListener('touchmove',function(e){
+    e.preventDefault();
+  },{passive:false});
+
+  document.addEventListener('touchend',function(e){
+    if(startX===undefined) return;
+    var t=e.changedTouches[0];
+    var dx=t.clientX-startX;
+    var dy=t.clientY-startY;
+    var dt=Date.now()-startT;
+    startX=undefined;
+    if(dt>SWIPE_MAX_MS) return;
+    var ax=Math.abs(dx),ay=Math.abs(dy);
+    if(ax<SWIPE_MIN&&ay<SWIPE_MIN) return;
+    var dir;
+    if(ax>ay) dir=dx>0?'right':'left';
+    else dir=dy>0?'down':'up';
+    var code=KEY_MAP[dir];
+    fireKey(code,'keydown');
+    setTimeout(function(){fireKey(code,'keyup');},80);
+  },{passive:false});
+
+  document.body.style.overflow='hidden';
+  document.body.style.touchAction='none';
+  document.body.style.position='fixed';
+  document.body.style.width='100%';
+  document.body.style.height='100%';
+  document.documentElement.style.overflow='hidden';
+  document.documentElement.style.touchAction='none';
+})();
+</script>
 <script>gadgets.util.runOnLoadHandlers();</script><script>window.google.csi.tickDl();
 </script></body></html>
