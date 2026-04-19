@@ -782,10 +782,44 @@ gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","p
 (function(){
   var _crazyObjName='';
 
+  var toastCSS=document.createElement('style');
+  toastCSS.textContent=
+    '#jqrg-toast{'+
+      'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.7);'+
+      'z-index:999999;pointer-events:none;opacity:0;'+
+      'background:linear-gradient(135deg,#1a1a2e,#16213e);'+
+      'color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;'+
+      'padding:18px 36px;border-radius:14px;'+
+      'font-size:20px;font-weight:700;letter-spacing:1px;'+
+      'box-shadow:0 0 30px rgba(90,50,255,.5),0 0 0 2px rgba(255,255,255,.12) inset;'+
+      'text-align:center;transition:opacity .35s,transform .35s;'+
+    '}'+
+    '#jqrg-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}'+
+    '#jqrg-toast .label{color:#aaa;font-size:12px;margin-bottom:4px;text-transform:uppercase;letter-spacing:3px;}'+
+    '#jqrg-toast .msg{background:linear-gradient(90deg,#7c3aed,#06b6d4);'+
+      '-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:26px;}';
+  document.head.appendChild(toastCSS);
+
+  function showSkippedAd(){
+    var el=document.getElementById('jqrg-toast');
+    if(!el){
+      el=document.createElement('div');
+      el.id='jqrg-toast';
+      el.innerHTML='<div class="label">JimmyQrg</div><div class="msg">Skipped Ad</div>';
+      document.body.appendChild(el);
+    }
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t=setTimeout(function(){el.classList.remove('show');},1400);
+  }
+
   window.gdsdk={
     AdType:{Rewarded:'rewarded',Interstitial:'interstitial'},
     preloadAd:function(){return Promise.resolve()},
     showAd:function(type){
+      showSkippedAd();
       if(typeof SendMessage==='function'){
         SendMessage('GameDistribution','ResumeGameCallback');
       }
@@ -795,6 +829,7 @@ gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","p
   window.Crazygames={
     init:function(opts){_crazyObjName=opts.crazySDKObjectName||'';},
     requestAd:function(type){
+      showSkippedAd();
       if(_crazyObjName&&typeof SendMessage==='function'){
         setTimeout(function(){
           SendMessage(_crazyObjName,'AdStarted','');
@@ -807,7 +842,7 @@ gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","p
   };
 
   window.Garter={game:{
-    ads:function(){},
+    ads:function(){showSkippedAd();},
     getAdConf:function(){},
     active:function(){},
     analytics:function(){},
@@ -816,7 +851,7 @@ gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","p
   window.GarterUnityGame=function(){};
   window.GarterUnityGame.prototype.init=function(){};
 
-  window._ShowAdsPlaceholder=function(){};
+  window._ShowAdsPlaceholder=function(){showSkippedAd();};
   window.skipAdsPlaceholder=function(){};
 })();
 </script><script>
