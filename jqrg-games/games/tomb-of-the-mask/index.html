@@ -850,17 +850,22 @@ gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","p
   }
 
   document.addEventListener('touchstart',function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
     var t=e.touches[0];
     startX=t.clientX;
     startY=t.clientY;
     startT=Date.now();
-  },{passive:false});
+  },{passive:false,capture:true});
 
   document.addEventListener('touchmove',function(e){
     e.preventDefault();
-  },{passive:false});
+    e.stopImmediatePropagation();
+  },{passive:false,capture:true});
 
   document.addEventListener('touchend',function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
     if(startX===undefined) return;
     var t=e.changedTouches[0];
     var dx=t.clientX-startX;
@@ -876,7 +881,7 @@ gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","p
     var code=KEY_MAP[dir];
     fireKey(code,'keydown');
     setTimeout(function(){fireKey(code,'keyup');},80);
-  },{passive:false});
+  },{passive:false,capture:true});
 
   document.body.style.overflow='hidden';
   document.body.style.touchAction='none';
