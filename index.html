@@ -1733,6 +1733,16 @@ function navigate(page){
   activePage.style.animationName=pickRandom(PAGE_ANIMS);
   activePage.classList.add('active');
   if(page==='home') randomizeHomeCards();
+  var staggerMap={games:'games-container',apps:'apps-container',unblocks:'unblocks-container',contacts:'contacts-container'};
+  if(staggerMap[page]){
+    var sc=document.getElementById(staggerMap[page]);
+    if(sc){
+      var tiles=sc.querySelectorAll('.tile-stagger');
+      tiles.forEach(function(t){t.classList.remove('tile-stagger');t.style.animationName='';t.style.animationDelay=''});
+      void sc.offsetWidth;
+      staggerTiles(sc);
+    }
+  }
   var snavOrder=['home','games','apps','unblocks','contacts'];
   var fromIdx=snavOrder.indexOf(prevPage);
   var toIdx=snavOrder.indexOf(page);
@@ -1880,8 +1890,6 @@ function restoreFromUrl(){
   if(tab!==currentPage) navigate(tab);
 }
 
-restoreFromUrl();
-window.addEventListener('hashchange',function(){restoreFromUrl()});
 
 function isUrl(s){
   return /^https?:\/\//i.test(s)||/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}/i.test(s);
@@ -2649,6 +2657,8 @@ renderUnblocks();
 renderContacts();
 randomizeHomeCards();
 randomizeModalAnim();
+restoreFromUrl();
+window.addEventListener('hashchange',function(){restoreFromUrl()});
 
 function randomizeHomeCards(){
   var cards=document.querySelectorAll('.home-card');
