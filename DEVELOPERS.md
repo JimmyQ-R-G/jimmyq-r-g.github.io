@@ -1,5 +1,11 @@
 # Developers Read This
 
+## Unreadable Code
+
+If there are code that doesn't appear readable to you, that's normal. I have a thing that prevent keyword filter, which messes the texts up.
+
+For more information, please read `PreventKeywordFilter.md`
+
 ## Games
 
 Game files are located in folder `jqrg-games/games/`
@@ -101,10 +107,6 @@ Use it by linking the script: `<script src="/js/preventOpen.js">`
 Use it by linking the script: `<script src="/js/style.js">`
 
 REQUIREMENT: `<link rel="stylesheet" href="/css/main.css">`
-
-## Keyword Filter Prevention
-
-Please read `PreventKeywordFilter.md`
 
 ## Current Work
 
