@@ -4,22 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>App</title>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:#1a1a2e;color:#e0e0e0}
-.wrap{display:flex;flex-direction:column;height:100%}
-.toolbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#16213e;border-bottom:1px solid #0f3460}
-.toolbar h1{font-size:15px;font-weight:600;margin-right:auto;color:#e94560}
-.toolbar button{padding:6px 16px;border:1px solid #0f3460;border-radius:4px;background:#0f3460;color:#e0e0e0;cursor:pointer;font-size:13px;transition:background .15s}
-.toolbar button:hover{background:#e94560;border-color:#e94560;color:#fff}
-.toolbar input[type="text"]{padding:5px 8px;border:1px solid #0f3460;border-radius:4px;background:#1a1a2e;color:#e0e0e0;font-size:13px;width:140px}
-.main{display:flex;flex:1;min-height:0}
-.editor-pane{flex:1;display:flex;flex-direction:column;min-width:0}
-.editor-pane textarea{flex:1;resize:none;border:none;outline:none;padding:12px;font-family:"Consolas","Monaco","Courier New",monospace;font-size:14px;line-height:1.5;background:#0a0a1a;color:#a9b7c6;tab-size:2}
-.preview-pane{flex:1;display:flex;flex-direction:column;border-left:1px solid #0f3460;min-width:0}
-.preview-pane .label{padding:6px 12px;font-size:12px;background:#16213e;border-bottom:1px solid #0f3460;color:#888}
+html,body{height:100%;font-family:"Josefin Sans",sans-serif;background:radial-gradient(1200px 600px at top,#24004d,#050014 60%,#000010);color:#f2e9ff;overflow:hidden}
+.wrap{display:flex;flex-direction:column;height:100%;padding:14px;gap:12px}
+.toolbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.045);border:1px solid rgba(184,77,255,.25);border-radius:12px;backdrop-filter:blur(8px);box-shadow:0 0 20px rgba(170,0,255,.15),inset 0 0 20px rgba(255,255,255,.02);flex-wrap:wrap}
+.toolbar h1{font-size:18px;font-weight:600;letter-spacing:2px;margin-right:auto;color:#fff;text-shadow:0 0 10px rgba(180,0,255,.6)}
+.toolbar button{padding:7px 18px;border:1px solid rgba(184,77,255,.4);border-radius:8px;background:linear-gradient(120deg,rgba(255,255,255,.06),rgba(255,255,255,.02));color:#f2e9ff;cursor:pointer;font-size:13px;font-family:inherit;letter-spacing:.5px;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.toolbar button:hover{transform:translateY(-1px);background:linear-gradient(120deg,rgba(255,255,255,.12),rgba(255,255,255,.05));box-shadow:0 0 14px rgba(190,0,255,.45)}
+.toolbar button:active{transform:translateY(0) scale(.97)}
+.toolbar input[type="text"]{padding:7px 10px;border:1px solid rgba(184,77,255,.3);border-radius:8px;background:rgba(10,0,25,.5);color:#f2e9ff;font-family:inherit;font-size:13px;width:150px;outline:none;transition:border-color .2s,box-shadow .2s}
+.toolbar input[type="text"]:focus{border-color:#b84dff;box-shadow:0 0 10px rgba(184,77,255,.4)}
+.main{display:flex;flex:1;min-height:0;gap:12px}
+.editor-pane,.preview-pane{flex:1;display:flex;flex-direction:column;min-width:0;background:rgba(255,255,255,.045);border:1px solid rgba(184,77,255,.25);border-radius:12px;overflow:hidden;backdrop-filter:blur(8px);box-shadow:0 0 25px rgba(170,0,255,.15),inset 0 0 20px rgba(255,255,255,.02)}
+.pane-label{padding:8px 14px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;background:rgba(184,77,255,.1);border-bottom:1px solid rgba(184,77,255,.25);color:#d8bfff}
+.editor-pane textarea{flex:1;resize:none;border:none;outline:none;padding:14px;font-family:"Consolas","Monaco","Courier New",monospace;font-size:14px;line-height:1.55;background:transparent;color:#e7d9ff;tab-size:2;caret-color:#b84dff}
+.editor-pane textarea::selection{background:rgba(184,77,255,.35)}
 .preview-pane iframe{flex:1;border:none;background:#fff}
-@media(max-width:700px){.main{flex-direction:column}.preview-pane{border-left:none;border-top:1px solid #0f3460}}
+@media(max-width:780px){.main{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -34,6 +37,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   </div>
   <div class="main">
     <div class="editor-pane">
+      <div class="pane-label">Editor</div>
       <textarea id="code" spellcheck="false">&lt;!doctype html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
@@ -47,7 +51,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
 &lt;/html&gt;</textarea>
     </div>
     <div class="preview-pane">
-      <div class="label">Preview</div>
+      <div class="pane-label">Preview</div>
       <iframe id="preview"></iframe>
     </div>
   </div>
@@ -80,6 +84,40 @@ document.getElementById('clearBtn').addEventListener('click',function(){
 document.getElementById('newTabBtn').addEventListener('click',function(){
   var w=window.open('','_blank');
   w.document.open();w.document.write(code.value);w.document.close();
+});
+
+code.addEventListener('keydown',function(e){
+  if(e.key==='Tab'){
+    e.preventDefault();
+    var start=code.selectionStart,end=code.selectionEnd;
+    var val=code.value;
+    if(e.shiftKey){
+      var lineStart=val.lastIndexOf('\n',start-1)+1;
+      var before=val.slice(0,lineStart);
+      var region=val.slice(lineStart,end);
+      var removed=0,firstRemoved=0;
+      var newRegion=region.replace(/^ {1,2}/gm,function(m,off){
+        if(off===0)firstRemoved=m.length;
+        removed+=m.length;
+        return '';
+      });
+      code.value=before+newRegion+val.slice(end);
+      code.selectionStart=Math.max(lineStart,start-firstRemoved);
+      code.selectionEnd=end-removed;
+    }else if(start!==end){
+      var ls=val.lastIndexOf('\n',start-1)+1;
+      var b=val.slice(0,ls);
+      var r=val.slice(ls,end);
+      var added=0,firstAdded=2;
+      var nr=r.replace(/^/gm,function(){added+=2;return '  '});
+      code.value=b+nr+val.slice(end);
+      code.selectionStart=start+firstAdded;
+      code.selectionEnd=end+added;
+    }else{
+      code.value=val.slice(0,start)+'  '+val.slice(end);
+      code.selectionStart=code.selectionEnd=start+2;
+    }
+  }
 });
 
 document.addEventListener('keydown',function(e){
