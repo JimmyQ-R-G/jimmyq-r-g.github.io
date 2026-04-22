@@ -7,20 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:"Josefin Sans",sans-serif;background:radial-gradient(1200px 600px at top,#24004d,#050014 60%,#000010);color:#f2e9ff;overflow:hidden}
-.wrap{display:flex;flex-direction:column;height:100%;padding:14px;gap:12px}
-.toolbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.045);border:1px solid rgba(184,77,255,.25);border-radius:12px;backdrop-filter:blur(8px);box-shadow:0 0 20px rgba(170,0,255,.15),inset 0 0 20px rgba(255,255,255,.02);flex-wrap:wrap}
-.toolbar h1{font-size:18px;font-weight:600;letter-spacing:2px;margin-right:auto;color:#fff;text-shadow:0 0 10px rgba(180,0,255,.6)}
-.toolbar button{padding:7px 18px;border:1px solid rgba(184,77,255,.4);border-radius:8px;background:linear-gradient(120deg,rgba(255,255,255,.06),rgba(255,255,255,.02));color:#f2e9ff;cursor:pointer;font-size:13px;font-family:inherit;letter-spacing:.5px;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
-.toolbar button:hover{transform:translateY(-1px);background:linear-gradient(120deg,rgba(255,255,255,.12),rgba(255,255,255,.05));box-shadow:0 0 14px rgba(190,0,255,.45)}
-.toolbar button:active{transform:translateY(0) scale(.97)}
-.toolbar input[type="text"]{padding:7px 10px;border:1px solid rgba(184,77,255,.3);border-radius:8px;background:rgba(10,0,25,.5);color:#f2e9ff;font-family:inherit;font-size:13px;width:150px;outline:none;transition:border-color .2s,box-shadow .2s}
-.toolbar input[type="text"]:focus{border-color:#b84dff;box-shadow:0 0 10px rgba(184,77,255,.4)}
-.main{display:flex;flex:1;min-height:0;gap:12px}
-.editor-pane,.preview-pane{flex:1;display:flex;flex-direction:column;min-width:0;background:rgba(255,255,255,.045);border:1px solid rgba(184,77,255,.25);border-radius:12px;overflow:hidden;backdrop-filter:blur(8px);box-shadow:0 0 25px rgba(170,0,255,.15),inset 0 0 20px rgba(255,255,255,.02)}
-.pane-label{padding:8px 14px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;background:rgba(184,77,255,.1);border-bottom:1px solid rgba(184,77,255,.25);color:#d8bfff}
-.editor-pane textarea{flex:1;resize:none;border:none;outline:none;padding:14px;font-family:"Consolas","Monaco","Courier New",monospace;font-size:14px;line-height:1.55;background:transparent;color:#e7d9ff;tab-size:2;caret-color:#b84dff}
-.editor-pane textarea::selection{background:rgba(184,77,255,.35)}
+html,body{height:100%;font-family:"Josefin Sans",sans-serif;color:#f2e9ff;overflow:hidden}
+body{background:#0a0014 url("background.png") center/cover no-repeat fixed}
+.wrap{display:flex;flex-direction:column;height:100%;padding:12px;gap:10px;background:rgba(10,0,20,.55)}
+.toolbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(20,10,35,.75);border:1px solid rgba(184,77,255,.2);border-radius:6px;flex-wrap:wrap}
+.toolbar h1{font-size:16px;font-weight:600;letter-spacing:1px;margin-right:auto;color:#fff}
+.toolbar button,.toolbar label.btn{padding:6px 14px;border:1px solid rgba(184,77,255,.3);border-radius:5px;background:rgba(184,77,255,.1);color:#f2e9ff;cursor:pointer;font-size:13px;font-family:inherit;transition:background .15s}
+.toolbar button:hover,.toolbar label.btn:hover{background:rgba(184,77,255,.25)}
+.toolbar input[type="text"]{padding:6px 9px;border:1px solid rgba(184,77,255,.25);border-radius:5px;background:rgba(10,0,25,.6);color:#f2e9ff;font-family:inherit;font-size:13px;width:140px;outline:none}
+.toolbar input[type="text"]:focus{border-color:#b84dff}
+.toolbar input[type="file"]{display:none}
+.main{display:flex;flex:1;min-height:0;gap:10px}
+.editor-pane,.preview-pane{flex:1;display:flex;flex-direction:column;min-width:0;background:rgba(20,10,35,.75);border:1px solid rgba(184,77,255,.2);border-radius:6px;overflow:hidden}
+.pane-label{padding:6px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;background:rgba(184,77,255,.08);border-bottom:1px solid rgba(184,77,255,.2);color:#c8a8ff}
+.editor-pane textarea{flex:1;resize:none;border:none;outline:none;padding:12px;font-family:"Consolas","Monaco","Courier New",monospace;font-size:14px;line-height:1.5;background:transparent;color:#e7d9ff;tab-size:2;caret-color:#b84dff}
+.editor-pane textarea::selection{background:rgba(184,77,255,.3)}
 .preview-pane iframe{flex:1;border:none;background:#fff}
 @media(max-width:780px){.main{flex-direction:column}}
 </style>
@@ -31,6 +32,8 @@ html,body{height:100%;font-family:"Josefin Sans",sans-serif;background:radial-gr
     <h1>HTML Tester</h1>
     <input type="text" id="filename" value="page.html" placeholder="filename">
     <button id="runBtn">&#9654; Run</button>
+    <label class="btn" for="importFile">Import</label>
+    <input type="file" id="importFile" accept=".html,.htm,.txt,text/html">
     <button id="dlBtn">Download</button>
     <button id="clearBtn">Clear</button>
     <button id="newTabBtn">Open in Tab</button>
@@ -60,6 +63,7 @@ html,body{height:100%;font-family:"Josefin Sans",sans-serif;background:radial-gr
 var code=document.getElementById('code');
 var preview=document.getElementById('preview');
 var filenameEl=document.getElementById('filename');
+var importFile=document.getElementById('importFile');
 
 function run(){
   var doc=preview.contentDocument||preview.contentWindow.document;
@@ -84,6 +88,20 @@ document.getElementById('clearBtn').addEventListener('click',function(){
 document.getElementById('newTabBtn').addEventListener('click',function(){
   var w=window.open('','_blank');
   w.document.open();w.document.write(code.value);w.document.close();
+});
+
+importFile.addEventListener('change',function(){
+  var f=importFile.files&&importFile.files[0];
+  if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    code.value=r.result;
+    filenameEl.value=f.name;
+    run();
+  };
+  r.onerror=function(){alert('Failed to read file.')};
+  r.readAsText(f);
+  importFile.value='';
 });
 
 code.addEventListener('keydown',function(e){

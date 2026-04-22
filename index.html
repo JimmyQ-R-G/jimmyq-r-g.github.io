@@ -2080,7 +2080,7 @@ var APPS=[
   {n:_('SmltbXlRcmcgVG9vbHM='),img:"jtools",url:"/tools/",proxy:false},
 ];
 var UNBLOCKS=[
-  {n:_('VW5saW5ld2l6ZSBQcm94eQ=='),img:"unlinewize",url:"https://rammerhead.fly.dev"},
+  {n:_('VW5saW5ld2l6ZSBQcm94eQ=='),img:"unlinewize",url:"https://rammerhead.fly.dev/unblocker.html?raw=true&url=https://rammerhead.fly.dev"},
   {n:_('UmFtbWVyaGVhZCBQcm94eQ=='),img:"rammerhead",url:"https://noblock.jimmyqrg.com"},
   {n:_('SGFja1dpemUgUHJveHk='),img:"hackwize",url:"/proxy/"},
   {n:_('SmltbXlRcmcgSW5mbw=='),img:"jinfo",url:"/info/",inPage:true},
@@ -2286,7 +2286,7 @@ function renderApps(){
   filtered.forEach(function(a){
     var loadUrl;
     if(a.proxy){
-      loadUrl=proxyUrl('https://'+a.url,!!a.raw);
+      loadUrl=proxyUrl('https://'+a.url,true);
     }else{
       loadUrl=a.url;
     }
