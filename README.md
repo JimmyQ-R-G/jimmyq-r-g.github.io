@@ -1,4 +1,4 @@
-# Project
+# J-I-M-M-Y Q-R-G
 
 ## Website
 
@@ -10,3 +10,9 @@ The `LICENSE` clearly indicates that this repo is not allowing any copy or forki
 ### If you are a new joined developer
 
 See [DEVELOPERS.md](https://github.com/jimmyqrg/jimmyqrg.github.io/blob/main/DEVELOPERS.md)
+
+### Test site
+
+Please use the main site, it is not recommended at all the use the test site as your data will not be saved at all and might even get erased in some cases. I am not responsible to anything caused to you in the experimental version.
+
+[link](https://jimmyqrg-test.vercel.app)
