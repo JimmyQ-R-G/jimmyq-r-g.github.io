@@ -2088,11 +2088,11 @@ var my4399UnityModule = (function() {
         }
 
         function _JS_Eval_EvalJS(ptr) {
-            
+
         }
 
         function _JS_Eval_OpenURL(ptr) {
-      
+
         }
 
         function _JS_Eval_SetInterval(func, arg, millis) {
@@ -2317,7 +2317,7 @@ var my4399UnityModule = (function() {
                 var resumeInterval = Module.setInterval(tryToResumeAudioContext, 400);
                 WEBAudio.audioWebEnabled = 1
             } catch (e) {
-             
+
             }
         }
 
@@ -2563,7 +2563,7 @@ var my4399UnityModule = (function() {
         }
 
         function _JS_WebRequest_Send(request, ptr, length) {
-           
+
         }
 
         function _JS_WebRequest_SetProgressHandler(request, arg, onprogress) {

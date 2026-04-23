@@ -1,5 +1,82 @@
 # Developers Read This
 
+## Cloud Saves & Sign-in (`js/jqrg-cloud.js` + `js/jqrg-auth-ui.js`)
+
+All same-origin pages on `jimmyqrg.github.io` are auth-gated and sync game progress to the chat backend (`jchat.fly.dev`). Each HTML file pulls in two scripts via the shared inject marker:
+
+```html
+<!-- JQRG_CLOUD_INJECT_BEGIN -->
+<script src="/js/jqrg-cloud.js" defer></script>
+<script src="/js/jqrg-auth-ui.js" defer></script>
+<!-- JQRG_CLOUD_INJECT_END -->
+```
+
+### How it works
+- `jqrg-cloud.js` hijacks `localStorage` and syncs every write to the server, debounced. It also snapshots IndexedDB for Unity WebGL / Construct games (`snapshotIdb` / `restoreIdb` / `autoSyncIdb`), auto-detecting those engines.
+- On first login, any existing local data is bulk-uploaded to the server, then the merged set is pulled back — last-writer-wins per key. Accounts that have no server data keep their local progress (nothing is lost).
+- `jqrg-auth-ui.js` adds the account button to the top bar and drives the sign-in / sign-up / account modal.
+- The account modal now exposes:
+  - **Sync now** – flushes pending writes and pulls the latest server data.
+  - **Export data** – downloads a JSON snapshot of every save (localStorage + idb).
+  - **Import data** – uploads a previously exported (or equivalent) JSON file.
+  - **Delete all data** – confirm dialog that requires typing `DELETE` before wiping both server saves and local storage (the account itself is kept).
+  - **Sign out** – revokes the current token.
+- Pages `/403.html`, `/404.html`, `/404-safe.html`, `/404-building.html` are skipped by the gate. Anything else blocks the user with a non-dismissible modal until they sign in or sign up.
+
+### Key JS APIs
+
+```js
+// Browser globals (after jqrg-cloud.js loads)
+JqrgCloud.isLoggedIn() / getUser()
+JqrgCloud.login(username, password) / JqrgCloud.register({ username, email, password, display_name })
+JqrgCloud.logout()
+JqrgCloud.forceSync()                  // flush pending writes + pull latest
+JqrgCloud.exportAll()                  // -> { format, items: [...] }
+JqrgCloud.importAll(data)              // data = { items: [...] } or plain {key:value}
+JqrgCloud.deleteAll()                  // wipes server saves + synced local keys
+JqrgCloud.snapshotIdb() / restoreIdb() // manual IndexedDB sync for Unity etc.
+JqrgCloud.skipKey('prefix_') / skipKeys(['a_','b_']) // opt keys out of sync
+```
+
+### Server-side
+
+The backend lives in the separate repo `chat/` (deployed at `https://jchat.fly.dev`). It exposes the user/saves APIs used by the client:
+
+- `POST /api/auth/register` / `POST /api/auth/login` – returns a bearer token when called from an off-origin client.
+- `GET /api/auth/me` – current session user.
+- `GET /api/saves?origin=jimmyqrg[&kind=…][&since=…]` – list saves.
+- `PUT /api/saves` / `POST /api/saves/bulk` – single or bulk upsert.
+- `DELETE /api/saves?origin=jimmyqrg[&kind=…][&key=…|all=1]` – delete a key or wipe an origin.
+- `GET /api/saves/stats?origin=jimmyqrg` – key / byte counts.
+- `POST /api/auth/sso` / `GET /api/auth/sso?sso=TOKEN` – exchange a token for a cookie session (used when opening chat from the main site).
+
+CORS, cookies and CSP `frame-ancestors` are configured for `jimmyqrg.github.io` and the local dev origins. Account data, tokens and saves are all stored on the same SQLite DB as chat, so existing accounts are preserved.
+
+### Local development
+
+```bash
+# In the chat/ repo:
+DATA_DIR=/tmp/jchat-smoke PORT=5831 ALLOW_IFRAME=true COOKIE_INSECURE=true \
+  NODE_ENV=development node server/index.js
+
+# In this repo (serves the static site):
+python3 -m http.server 5830
+```
+
+Point the client at the local server by adding this to an HTML page when testing:
+
+```html
+<meta name="jqrg-cloud-server" content="http://127.0.0.1:5831">
+```
+
+### Adding the scripts to new HTML pages
+
+The helper `js/inject-cloud.mjs` walks the repo and injects both script tags into any HTML that doesn't have the marker yet. Run `node js/inject-cloud.mjs` after adding a new page. If the payload between the markers needs to change across every file, update it in `inject-cloud.mjs` and run `node js/update-inject.mjs` to rewrite every existing injection.
+
+### Opting a key out of sync
+
+Some keys (e.g. giant ephemeral caches) shouldn't sync. Add them at runtime via `JqrgCloud.skipKey('my_cache_')`, or contribute a permanent entry to the `SKIP_PREFIXES` array in `js/jqrg-cloud.js`.
+
 ## Unreadable Code
 
 If there are code that doesn't appear readable to you, that's normal. I have a thing that prevent keyword filter, which messes the texts up.

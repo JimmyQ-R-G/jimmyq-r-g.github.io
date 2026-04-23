@@ -4028,11 +4028,12 @@
                     P = this.initOptions.country || T("country");
                 return P && (_ = function() {
                     return Promise.resolve(P)
-                }), window.addEventListener("resize", this.resize.bind(this), !1), window.addEventListener("message", this.onMessage.bind(this), !1), this.debugIsOverwritten || this.setDebug(this.debug || u), this.debugTouchOverlayController && (E() || x()) && mt(), Promise.all([I(), _(), 
-                et(""), 
-                et(""), 
-                et(ct.a), 
-                et("")]).catch((function() {
+                }), window.addEventListener("resize", this.resize.bind(this), !1), window.addEventListener("message", this.onMessage.bind(this), !1), this.debugIsOverwritten || this.setDebug(this.debug || u), this.debugTouchOverlayController && (E() || x()) && mt(), Promise.all([I(), _(),
+                    et(""),
+                    et(""),
+                    et(ct.a),
+                    et("")
+                ]).catch((function() {
                     f.dispatchEvent(A.adblocked)
                 })).then((function(n) {
                     if (void 0 !== n) {
