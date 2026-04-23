@@ -70,6 +70,7 @@ html,body{
   background:var(--bg-deep);
   display:flex;align-items:center;
   padding:0 16px;gap:12px;
+  position:relative;z-index:100;
 }
 
 .body-row{display:flex;flex:1;min-height:0}
@@ -542,7 +543,7 @@ html,body{
 #ac-modal .ac-actions button:hover{filter:brightness(1.15);transform:translateY(-1px)}
 #ac-modal .ac-btn-save{background:linear-gradient(135deg,var(--accent-purple),#7c3aed);color:#fff}
 #ac-modal .ac-btn-stop{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
-#ac-modal #ac-enabled{width:18px;height:18px;accent-color:var(--accent-purple);cursor:pointer}
+
 
 /* ══ UNBLOCKS / CONTACTS ══ */
 #page-unblocks,#page-contacts{padding:10px 16px;gap:12px}
@@ -1573,10 +1574,6 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
     <div class="ac-header">
       <span class="ac-title" id="ac-title-lbl"></span>
       <button class="ac-close" onclick="closeAutoClicker()">&times;</button>
-    </div>
-    <div class="ac-row" style="margin-top:4px">
-      <span style="min-width:auto;opacity:1;font-size:13px;font-weight:600" id="ac-enable-lbl"></span>
-      <input type="checkbox" id="ac-enabled">
     </div>
     <div class="ac-status off" id="ac-status-badge">Inactive</div>
     <div>
@@ -2648,8 +2645,6 @@ function openPrivacyPolicy(){
   if(aw) aw.innerHTML='Welcome to <strong>'+_t(_('SmltbXlRcmc='))+'</strong>! Check here for updates and important information.';
   var acT=document.getElementById('ac-title-lbl');
   if(acT) acT.innerHTML=_t(_('QXV0byBDbGlja2Vy'));
-  var acE=document.getElementById('ac-enable-lbl');
-  if(acE) acE.innerHTML='Enable '+_t(_('QXV0byBDbGlja2Vy'));
 })();
 renderDropdown();
 renderGames();
@@ -2766,7 +2761,7 @@ function updateFavBtn(){
 
 // ══ AC ══
 var acSettings={
-  enabled:false,cps:10,offset:2,clickType:'single',clickBtn:0,
+  enabled:true,cps:10,offset:2,clickType:'single',clickBtn:0,
   toggleKey:'F6',stopKey:'Escape'
 };
 var acRunning=false;
@@ -2781,7 +2776,6 @@ function loadACSettings(){
 loadACSettings();
 
 function saveACSettings(){
-  acSettings.enabled=document.getElementById('ac-enabled').checked;
   acSettings.cps=parseFloat(document.getElementById('ac-cps').value)||10;
   acSettings.offset=parseFloat(document.getElementById('ac-offset').value)||0;
   acSettings.clickType=document.getElementById('ac-click-type').value;
@@ -2797,7 +2791,6 @@ function cancelACSettings(){
 
 function openAutoClicker(){
   var m=document.getElementById('ac-modal');
-  document.getElementById('ac-enabled').checked=acSettings.enabled;
   document.getElementById('ac-cps').value=acSettings.cps;
   document.getElementById('ac-offset').value=acSettings.offset;
   document.getElementById('ac-offset-val').textContent=acSettings.offset;
@@ -2887,7 +2880,6 @@ function stopAutoClicker(){
 
 document.addEventListener('keydown',function(e){
   if(acRecordingKey) return;
-  if(!acSettings.enabled) return;
   if(!_goOverlay||!_goOverlay.classList.contains('active')) return;
   if(e.code===acSettings.toggleKey){
     if(acRunning) stopAutoClicker(); else startAutoClicker();
@@ -2903,7 +2895,7 @@ document.addEventListener('keydown',function(e){
     acLastMousePos.y=e.clientY;
   }
   function onMouseDown(e){
-    if(!acSettings.enabled||!acRunning) return;
+    if(!acRunning) return;
     if(!_goOverlay||!_goOverlay.classList.contains('active')) return;
     acMouseHeld=true;
   }
@@ -2923,7 +2915,7 @@ document.addEventListener('keydown',function(e){
           acLastMousePos.y=e.clientY;
         });
         doc.addEventListener('mousedown',function(){
-          if(!acSettings.enabled||!acRunning) return;
+          if(!acRunning) return;
           acMouseHeld=true;
         });
         doc.addEventListener('mouseup',function(){acMouseHeld=false});
