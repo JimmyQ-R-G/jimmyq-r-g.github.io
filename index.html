@@ -1635,6 +1635,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
       <hr style="border:1px solid var(--border-light);margin:16px 0">
       <p style="font-weight:500">Latest updates:</p>
       <ul style="margin:8px 0 12px 20px;opacity:.85;line-height:1.7">
+        <li>Added Bloxd.io</li>
         <li>Fixed all games related to turbowarp</li>
         <li>Released Magic Tiles 3</li>
         <li>Added ^3</li>
@@ -1643,7 +1644,7 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
         </ul>
       <p style="font-weight:500">History:</p>
       <ul style="margin:8px 0 0 20px;opacity:.85;line-height:1.7">
-        <li>Added in total <b>107</b> games</li>
+        <li>Added in total <b>108</b> games</li>
         </ul>
     </div>
       </div>
@@ -1952,6 +1953,7 @@ var GAMES=[
   {n:_('U2xvcGUgMw=='),img:"slope-3",url:"/jqrg-games/games/slope-3/",tags:[]},
   {n:_('TWluZWNyYWZ0'),img:"minecraft",url:"/jqrg-games/games/mcraft/",tags:["featured"],wo:true},
   {n:_('RWFnbGVyY3JhZnQ='),img:"eaglercraft",url:"/jqrg-games/eaglercraft/eaglercraft.html",tags:["touch"]},
+  {n:_('QmxveGQuaW8='),img:"bloxd",url:"https://rammerhead.fly.dev/unblocker.html?raw=true&url=https%3A%2F%2Fbloxd.io",tags:["featured"]},
   {n:_('T3ZP'),img:"ovo",url:"/jqrg-games/games/ovo/",tags:[]},
   {n:_('T3ZPIDI='),img:"ovo2",url:"/jqrg-games/games/ovo2/",tags:[]},
   {n:_('SG9sbG93IEtuaWdodA=='),img:"hollow-knight",url:"/jqrg-games/games/hollow-knight/",tags:["featured"]},
@@ -1983,7 +1985,6 @@ var GAMES=[
   {n:_('QXBwZWw='),img:"appel",url:"/jqrg-games/games/appel/",tags:[]},
   {n:_('QmFja3Jvb21z'),img:"backrooms",url:"/jqrg-games/games/backrooms/",tags:["featured"]},
   {n:_('Qml0cGxhbmVz'),img:"bitplanes",url:"/jqrg-games/games/bitplanes/",tags:[]},
-  {n:_('QmxveGQuaW8='),img:"bloxd",url:"https://rammerhead.fly.dev/unblocker.html?raw=true&url=https%3A%2F%2Fbloxd.io",tags:[]},
   {n:_('Qm9tYiBQYXNz'),img:"bomb-pass",url:"/jqrg-games/games/bomb-pass/",tags:["jqrg"]},
   {n:_('Qm9vbSBTbGluZ2Vycw=='),img:"boom-slingers",url:"/jqrg-games/games/boom-slingers/",tags:[]},
   {n:_('Qm90dGxlIEZsaXAgM0Q='),img:"bottle-flip-3d",url:"/jqrg-games/games/bottle-flip-3d/",tags:[]},
@@ -2619,19 +2620,21 @@ function openPrivacyPolicy(){
   body.innerHTML=
     '<div style="line-height:1.8;font-size:13px;opacity:.9;max-height:60vh;overflow-y:auto;padding-right:8px">'+
       '<h3 style="margin-bottom:8px">PRIVACY POLICY</h3>'+
-      '<p style="opacity:.6;margin-bottom:12px">Last updated April 17, 2025</p>'+
+      '<p style="opacity:.6;margin-bottom:12px">Last updated April 21, 2026</p>'+
       '<p>This Privacy Notice for '+_t(_('SmltbXlRcmc='))+' (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;), describes how and why we might access, collect, store, use, and/or share (&ldquo;process&rdquo;) your personal information when you use our services (&ldquo;Services&rdquo;), including when you:</p>'+
-      '<ul style="padding-left:20px;margin:8px 0"><li>Visit our website, or any website of ours that links to this Privacy Notice</li><li>Engage with us in other related ways, including any sales, marketing, or events</li></ul>'+
+      '<ul style="padding-left:20px;margin:8px 0"><li>Visit our website, or any website of ours that links to this Privacy Notice</li><li>Play games, use apps, or access unblocker/proxy content through our embedded iframe player</li><li>Engage with us in other related ways, including any sales, marketing, or events</li></ul>'+
       '<p>Questions or concerns? Reading this Privacy Notice will help you understand your privacy rights and choices. We are responsible for making decisions about how your personal information is processed. If you do not agree with our policies and practices, please do not use our Services.</p>'+
       '<h4 style="margin-top:16px">SUMMARY OF KEY POINTS</h4>'+
-      '<p><strong>What personal information do we process?</strong> When you visit, use, or navigate our Services, we may process personal information depending on how you interact with us and the Services, the choices you make, and the products and features you use.</p>'+
-      '<p><strong>Do we process any sensitive personal information?</strong> We do not process sensitive personal information.</p>'+
-      '<p><strong>Do we collect any information from third parties?</strong> We do not collect any information from third parties.</p>'+
-      '<p><strong>How do we process your information?</strong> We process your information to provide, improve, and administer our Services, communicate with you, for security and fraud prevention, and to comply with law. We may also process your information for other purposes with your consent.</p>'+
-      '<p><strong>In what situations and with which parties do we share personal information?</strong> We may share information in specific situations and with specific third parties.</p>'+
-      '<p><strong>How do we keep your information safe?</strong> We have adequate organizational and technical processes and procedures in place to protect your personal information. However, no electronic transmission over the internet or information storage technology can be guaranteed to be 100% secure.</p>'+
-      '<p><strong>What are your rights?</strong> Depending on where you are located geographically, the applicable privacy law may mean you have certain rights regarding your personal information.</p>'+
-      '<p><strong>How do you exercise your rights?</strong> The easiest way to exercise your rights is by contacting us. We will consider and act upon any request in accordance with applicable data protection laws.</p>'+
+      '<p><strong>What personal information do we process?</strong> We ourselves do not run any backend server that logs your activity. Our Services run entirely in your browser and may store preferences (such as language, theme, favorites, auto-clicker configuration, and announcement state) locally in your browser&rsquo;s <em>localStorage</em>. We do not create accounts, track identity, or send this data anywhere.</p>'+
+      '<p><strong>Do we process any sensitive personal information?</strong> No. We never ask for, collect, or process sensitive personal information (such as passwords, payment details, or government IDs). You should never enter sensitive information into any embedded game, app, or proxy tile, as those load third-party content outside of our control.</p>'+
+      '<p><strong>Do we collect any information from third parties?</strong> No. We do not collect, buy, or receive any information about you from third parties.</p>'+
+      '<p><strong>How do we process your information?</strong> Any information you configure (favorites, settings, cloaks, etc.) is processed locally on your device to personalize your experience. It is never transmitted to us or to any third party by us.</p>'+
+      '<p><strong>Third-party content and embedded services.</strong> Our Services embed third-party games, apps, and unblocker/proxy services (including, but not limited to, <em>rammerhead.fly.dev</em>, <em>noblock.jimmyqrg.com</em>, and various hosted game origins) inside iframes. When you launch any tile, your browser connects directly to that third-party origin. Those third parties and the SDKs they use (such as Unity, Construct, Poki, GameDistribution, createjs, howler, and similar) may collect usage data, set cookies, or process input you provide, according to their own privacy practices. We do not control and are not responsible for the privacy practices of any third-party content. Please review the privacy policy of each provider before using their content.</p>'+
+      '<p><strong>Proxied / unblocker traffic.</strong> Tiles that load through an unblocker (for example apps like TikTok, YouTube, GitHub, Twitch, Instagram, Deepseek, and the Bloxd.io game) route your request through a third-party proxy such as <em>rammerhead.fly.dev</em>. The proxy operator, the destination site, and any network along the way may observe your traffic. Do not log in, enter passwords, or share personal data through these proxies.</p>'+
+      '<p><strong>In what situations and with which parties do we share personal information?</strong> We do not share personal information because we do not collect any. However, when you open embedded content, your browser makes normal network requests (IP address, user agent, referrer, etc.) to that third-party origin, which is inherent to how the web works.</p>'+
+      '<p><strong>How do we keep your information safe?</strong> Because all of your preferences remain on your device, the main safeguard is your own browser. No electronic transmission over the internet or information storage technology can be guaranteed to be 100% secure.</p>'+
+      '<p><strong>What are your rights?</strong> Depending on where you are located geographically, applicable privacy law may give you certain rights regarding your personal information. Because we do not hold any personal information about you, most requests should be directed to the specific third-party game or service you have used.</p>'+
+      '<p><strong>How do you exercise your rights?</strong> To clear data we have stored locally, use your browser&rsquo;s &ldquo;Clear site data&rdquo; option or the in-app reset tools. For data held by a third-party game, app, or proxy, contact that provider directly.</p>'+
       '<div style="margin-top:16px"><button class="setting-btn" onclick="openSettings()">Back to Settings</button></div>'+
     '</div>';
   modal.classList.add('open');
