@@ -27,9 +27,20 @@
     '/403.html', '/404.html', '/404-safe.html', '/404-building.html',
   ];
 
+  /** Hosts where the auth gate is disabled (test/staging deployments). */
+  var GATE_SKIP_HOSTS = [
+    'jimmyq-r-g.github.io',
+    '127.0.0.1',
+    'localhost',
+  ];
+
   function shouldGate() {
     if (window.__JqrgAuthGateDisabled) return false;
     if (window.top !== window.self) return false; // don't gate inside iframes
+    var host = (location.hostname || '').toLowerCase();
+    for (var i = 0; i < GATE_SKIP_HOSTS.length; i++) {
+      if (host === GATE_SKIP_HOSTS[i] || host.endsWith('.' + GATE_SKIP_HOSTS[i])) return false;
+    }
     var path = (location.pathname || '').toLowerCase();
     for (var i = 0; i < GATE_SKIP_PATHS.length; i++) {
       if (path === GATE_SKIP_PATHS[i] || path.endsWith(GATE_SKIP_PATHS[i])) return false;
