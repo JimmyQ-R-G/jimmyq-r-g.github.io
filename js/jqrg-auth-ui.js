@@ -33,6 +33,9 @@
     'localhost',
   ];
 
+  /** Returns 'block' if the current page should be redirected to home (sub-pages),
+   *  'gate' if we should show the modal on the current page (home page),
+   *  or false if no gating applies. */
   function shouldGate() {
     if (window.__JqrgAuthGateDisabled) return false;
     if (window.top !== window.self) return false; // don't gate inside iframes
@@ -45,6 +48,18 @@
       if (path === GATE_SKIP_PATHS[i] || path.endsWith(GATE_SKIP_PATHS[i])) return false;
     }
     return true;
+  }
+
+  /** Check if the URL hash points to a non-home tab. */
+  function isSubPage() {
+    var hash = (location.hash || '').slice(1).toLowerCase();
+    return hash === 'g' || hash === 'a' || hash === 'u' || hash === 'c';
+  }
+
+  /** True if the current path is NOT the main index.html page. */
+  function isOffHomePath() {
+    var path = (location.pathname || '').replace(/\/+$/, '').toLowerCase();
+    return path !== '' && path !== '/index.html';
   }
 
   function ready(fn) {
@@ -668,9 +683,17 @@
   function maybeGate() {
     if (!shouldGate()) return;
     if (Cloud.isLoggedIn()) return;
-    // give jqrg-cloud a moment to validate the cached token (or pick up an SSO token from URL)
     setTimeout(function () {
       if (Cloud.isLoggedIn()) return;
+      // If on a sub-page (games/apps/unblocks/contacts hash or a non-index path),
+      // redirect to the home page first, then show the required sign-in modal.
+      if (isSubPage()) {
+        location.hash = '#h';
+      }
+      if (isOffHomePath()) {
+        location.href = '/#h';
+        return;
+      }
       openModal({ required: true });
     }, 250);
   }
@@ -688,6 +711,40 @@
         ensureTopBarButton();
         if (topBarBtn || attempts > 20) clearInterval(retryTimer);
       }, 500);
+    }
+
+    // Intercept the page's navigate() so non-home tabs require sign-in.
+    if (typeof window.navigate === 'function') {
+      var _origNavigate = window.navigate;
+      window.navigate = function (page) {
+        if (page !== 'home' && !Cloud.isLoggedIn() && shouldGate()) {
+          openModal({ required: true });
+          return;
+        }
+        return _origNavigate.apply(this, arguments);
+      };
+    }
+    // Also intercept openGame so launching games requires sign-in.
+    if (typeof window.openGame === 'function') {
+      var _origOpenGame = window.openGame;
+      window.openGame = function () {
+        if (!Cloud.isLoggedIn() && shouldGate()) {
+          openModal({ required: true });
+          return;
+        }
+        return _origOpenGame.apply(this, arguments);
+      };
+    }
+    // Intercept proxyNavigate (unblocks URL bar).
+    if (typeof window.proxyNavigate === 'function') {
+      var _origProxyNavigate = window.proxyNavigate;
+      window.proxyNavigate = function () {
+        if (!Cloud.isLoggedIn() && shouldGate()) {
+          openModal({ required: true });
+          return;
+        }
+        return _origProxyNavigate.apply(this, arguments);
+      };
     }
 
     // Expose a way for page code to open the dialog programmatically.
