@@ -94,21 +94,28 @@
     });
   }
 
+  // Keep references to the native Storage methods so our own bookkeeping writes
+  // bypass the interceptor and never trigger re-entrant enqueue() calls.
+  var _storageProto = LS ? (Object.getPrototypeOf(LS) || Storage.prototype) : null;
+  var _origSetItem = _storageProto ? _storageProto.setItem : null;
+  var _origGetItem = _storageProto ? _storageProto.getItem : null;
+  var _origRemoveItem = _storageProto ? _storageProto.removeItem : null;
+
   function readJSON(key, fallback) {
     if (!LS) return fallback;
     try {
-      var raw = LS.getItem(key);
+      var raw = _origGetItem ? _origGetItem.call(LS, key) : LS.getItem(key);
       if (raw == null) return fallback;
       return JSON.parse(raw);
     } catch (_) { return fallback; }
   }
   function writeJSON(key, value) {
-    if (!LS) return;
-    try { LS.setItem(key, JSON.stringify(value)); } catch (_) {}
+    if (!LS || !_origSetItem) return;
+    try { _origSetItem.call(LS, key, JSON.stringify(value)); } catch (_) {}
   }
   function removeKey(key) {
-    if (!LS) return;
-    try { LS.removeItem(key); } catch (_) {}
+    if (!LS || !_origRemoveItem) return;
+    try { _origRemoveItem.call(LS, key); } catch (_) {}
   }
 
   var authState = readJSON(AUTH_KEY, null);
@@ -221,26 +228,23 @@
   /** Patch localStorage so every write and removal is observed. We replace setItem / removeItem /
    *  clear on Storage.prototype so all tabs/iframes on our origin are covered. */
   function installInterceptor() {
-    if (!LS) return;
+    if (!LS || !_storageProto) return;
     if (window.__jqrg_ls_patched) return;
     window.__jqrg_ls_patched = true;
-    var proto = Object.getPrototypeOf(LS) || Storage.prototype;
-    if (!proto) return;
-    var origSet = proto.setItem;
-    var origRemove = proto.removeItem;
-    var origClear = proto.clear;
-    proto.setItem = function (k, v) {
+    var origSet = _origSetItem;
+    var origRemove = _origRemoveItem;
+    var origClear = _storageProto.clear;
+    _storageProto.setItem = function (k, v) {
       var ret = origSet.apply(this, arguments);
       try { if (this === LS) enqueue(String(k), v == null ? '' : String(v)); } catch (_) {}
       return ret;
     };
-    proto.removeItem = function (k) {
+    _storageProto.removeItem = function (k) {
       var ret = origRemove.apply(this, arguments);
       try { if (this === LS) enqueue(String(k), null); } catch (_) {}
       return ret;
     };
-    proto.clear = function () {
-      // Snapshot keys before wipe so we can turn them all into deletions server-side.
+    _storageProto.clear = function () {
       var keys = [];
       try { for (var i = 0; i < LS.length; i++) keys.push(LS.key(i)); } catch (_) {}
       var ret = origClear.apply(this, arguments);
@@ -300,8 +304,7 @@
     var url = '/api/saves?origin=' + encodeURIComponent(STORAGE_NAMESPACE) + '&since=' + (since || 0);
     return request(url).then(function (data) {
       if (!data || !Array.isArray(data.items)) return data;
-      var origSet = null;
-      try { origSet = Object.getPrototypeOf(LS).setItem; } catch (_) {}
+      var origSet = _origSetItem;
       for (var i = 0; i < data.items.length; i++) {
         var it = data.items[i];
         if (!it || typeof it.key !== 'string') continue;
@@ -499,8 +502,7 @@
     return chain.then(function () {
       // Mirror localStorage kind items into the live localStorage so the user sees them immediately.
       try {
-        var origSet = Object.getPrototypeOf(LS).setItem;
-        items.forEach(function (it) { if (it.kind === 'localStorage') origSet.call(LS, it.key, it.value); });
+        items.forEach(function (it) { if (it.kind === 'localStorage' && _origSetItem) _origSetItem.call(LS, it.key, it.value); });
       } catch (_) {}
       return { accepted: accepted, rejected: rejected, total: total };
     });
@@ -524,8 +526,7 @@
         if (LS) {
           var keys = [];
           for (var i = 0; i < LS.length; i++) keys.push(LS.key(i));
-          var origRemove = Object.getPrototypeOf(LS).removeItem;
-          keys.forEach(function (k) { if (shouldSyncKey(k)) origRemove.call(LS, k); });
+          keys.forEach(function (k) { if (shouldSyncKey(k) && _origRemoveItem) _origRemoveItem.call(LS, k); });
         }
       } catch (_) {}
       pendingQueue = {};
