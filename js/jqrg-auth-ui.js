@@ -301,16 +301,27 @@
   function setTab(tab) {
     currentTab = tab;
     if (!modalEl) return;
-    var tabs = modalEl.querySelectorAll('.jqrg-auth-tab');
-    tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-tab') === tab); });
-    var body = modalEl.querySelector('.jqrg-auth-body');
-    body.innerHTML = '';
+    var tabsEl = modalEl.querySelector('.jqrg-auth-tabs');
+    var content = modalEl.querySelector('.jqrg-auth-content');
+    if (!content) return;
+
     if (Cloud.isLoggedIn()) {
-      body.appendChild(buildProfileForm());
-    } else if (tab === 'signup') {
-      body.appendChild(buildSignupForm());
+      if (tabsEl) tabsEl.style.display = 'none';
+      content.innerHTML = '';
+      content.appendChild(buildProfileForm());
     } else {
-      body.appendChild(buildLoginForm());
+      if (tabsEl) {
+        tabsEl.style.display = '';
+        tabsEl.querySelectorAll('.jqrg-auth-tab').forEach(function (t) {
+          t.classList.toggle('active', t.getAttribute('data-tab') === tab);
+        });
+      }
+      content.innerHTML = '';
+      if (tab === 'signup') {
+        content.appendChild(buildSignupForm());
+      } else {
+        content.appendChild(buildLoginForm());
+      }
     }
   }
 
@@ -615,19 +626,19 @@
     modal.appendChild(head);
 
     var body = h('div', { class: 'jqrg-auth-body' });
-    if (!Cloud.isLoggedIn()) {
-      var tabs = h('div', { class: 'jqrg-auth-tabs' });
-      tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab active', 'data-tab': 'login', onclick: function () { setTab('login'); } }, 'Sign in'));
-      tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab', 'data-tab': 'signup', onclick: function () { setTab('signup'); } }, 'Sign up'));
-      body.appendChild(tabs);
-      body.appendChild(buildLoginForm());
-    } else {
-      body.appendChild(buildProfileForm());
-    }
+    var tabs = h('div', { class: 'jqrg-auth-tabs' });
+    tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab active', 'data-tab': 'login', onclick: function () { setTab('login'); } }, 'Sign in'));
+    tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab', 'data-tab': 'signup', onclick: function () { setTab('signup'); } }, 'Sign up'));
+    body.appendChild(tabs);
+    var content = h('div', { class: 'jqrg-auth-content' });
+    body.appendChild(content);
     modal.appendChild(body);
+    // Now populate the content area via setTab (which uses .jqrg-auth-content).
+    // We need the DOM structure in place first.
     overlay.appendChild(modal);
     modalEl = overlay;
     document.body.appendChild(overlay);
+    setTab(Cloud.isLoggedIn() ? 'profile' : currentTab);
     requestAnimationFrame(function () { overlay.classList.add('open'); });
     syncModalRequired();
     document.addEventListener('keydown', escHandler);
