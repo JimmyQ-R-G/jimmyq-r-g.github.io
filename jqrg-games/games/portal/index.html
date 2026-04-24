@@ -18,18 +18,7 @@
 <!-- JQRG_CLOUD_INJECT_BEGIN --><script src="/js/jqrg-cloud.js" defer></script><script src="/js/jqrg-auth-ui.js" defer></script><!-- JQRG_CLOUD_INJECT_END -->
 </head>
 <body>
-<script>
-    function loadLocalRuffle() {
-        var script = document.createElement('script');
-        script.src = '../../storage/ruffle/ruffle.js';
-        document.body.appendChild(script);
-    }
-
-    var cdnScript = document.createElement('script');
-    cdnScript.src = 'https://unpkg.com/@ruffle-rs/ruffle';
-    cdnScript.onerror = loadLocalRuffle;
-    document.body.appendChild(cdnScript);
-</script>
+<script src="vendor/ruffle.js"></script>
 
 <div height="100%" id="ruffle" width="100%"></div>
 <script>

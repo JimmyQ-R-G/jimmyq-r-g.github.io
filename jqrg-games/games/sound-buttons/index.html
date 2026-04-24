@@ -2,35 +2,11 @@
 <html lang="en">
 
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5521219086088837" crossorigin="anonymous"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WX5VS54ZDW"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-WX5VS54ZDW');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soundboard</title>
-    <script>
-        (function(){
-            var CDN='https://cdn.jsdelivr.net/gh/genizy/soundboard@main/';
-            var _Audio=window.Audio;
-            window.Audio=function(src){
-                if(src&&typeof src==='string'&&!src.startsWith('http')&&!src.startsWith('data:')&&!src.startsWith('blob:'))src=CDN+src;
-                return new _Audio(src);
-            };
-            window.Audio.prototype=_Audio.prototype;
-            var _fetch=window.fetch;
-            window.fetch=function(url,opts){
-                if(typeof url==='string'&&!url.startsWith('http')&&!url.startsWith('data:')&&!url.startsWith('blob:')&&!url.startsWith('/'))url=CDN+url;
-                return _fetch.call(this,url,opts);
-            };
-        })();
-    </script>
-    <script src="https://cdn.jsdelivr.net/gh/genizy/soundboard@main/sounds.js" type="module"></script>
-    <script src="https://cdn.jsdelivr.net/gh/genizy/soundboard@main/main.js" type="module"></script>
+    <script src="sounds.js" type="module"></script>
+    <script src="main.js" type="module"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -164,7 +140,7 @@ body::before{
 .sound-image{
   width:100%;height:100%;
   background-color:var(--btn-color);
-  background-image:url('https://cdn.jsdelivr.net/gh/genizy/soundboard@155ea6666132bde6f7f14c413431e0fd7eaeaba9/button.png');
+  background-image:url('button.png');
   background-size:cover;background-position:center;
   background-blend-mode:multiply;
   border-radius:22px;
@@ -182,7 +158,7 @@ body::before{
 }
 
 .sound-image.pressed{
-  background-image:url('https://cdn.jsdelivr.net/gh/genizy/soundboard@155ea6666132bde6f7f14c413431e0fd7eaeaba9/button_pressed.png');
+  background-image:url('button_pressed.png');
   transform:scale(0.92);
   box-shadow:
     0 0 20px color-mix(in srgb,var(--btn-color) 70%,transparent),

@@ -1,12 +1,5 @@
 <!-- Ultimate Game Stash file--> 
 <!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=WLTG1S4STB"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'WLTG1S4STB');
-</script>
 <!DOCTYPE html>
 <html lang="en-us">
 
@@ -20,7 +13,7 @@
 
   <title>YT Game Wrapper WebGL Template</title>
   <link rel="stylesheet" href="TemplateData/style.css" nonce="we8ZPMAc10sjbMeA8f_pRw">
-  <script src="https://cdn.jsdelivr.net/gh/bubbls/youtube-playables@main/ytgame.js" nonce="we8ZPMAc10sjbMeA8f_pRw">// Load YT Game API code</script>
+  <script src="vendor/ytgame.js" nonce="we8ZPMAc10sjbMeA8f_pRw">// Load YT Game API code</script>
     <style>
       /* Custom Cursor */
       * {
@@ -464,19 +457,6 @@ Unarchiver.loadedFormats = {};
 
       document.body.appendChild(script);
     }
-const originalFetch = window.fetch;
-
-window.fetch = function(input, options) {
-    if (typeof input === 'string' && input.endsWith("AssetBundles/WebGL/planets")) {
-        input = 'https://rawcdn.githack.com/bubbls/youtube-playables/c5eefc5c13316b94c58e63cb5270b99a13c88fea/solar-smash/StreamingAssets/AssetBundles/WebGL/planets';
-        return originalFetch(input, options);
-    } else if (typeof input === 'string' && input.endsWith("AssetBundles/WebGL/planets2")) {
-        input = 'https://rawcdn.githack.com/bubbls/youtube-playables/c5eefc5c13316b94c58e63cb5270b99a13c88fea/solar-smash/StreamingAssets/AssetBundles/WebGL/planets2';
-        return originalFetch(input, options);
-    }
-
-    return originalFetch(input, options);
-};
 
     // Path 1: Use this path if no decompression of your .wasm, .data, .js files are needed
     //InitUnitySection();
