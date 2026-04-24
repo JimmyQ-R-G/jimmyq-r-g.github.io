@@ -59,18 +59,24 @@
   var LS = (function () { try { return window.localStorage; } catch (_) { return null; } })();
 
   /** Internal fetch that wires Authorization header + credentials. */
+  var REQUEST_TIMEOUT_MS = 12000;
+
   function request(path, opts) {
     opts = opts || {};
     var headers = Object.assign({}, opts.headers || {});
     if (authState && authState.token) headers['Authorization'] = 'Bearer ' + authState.token;
     if (opts.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = controller ? setTimeout(function () { controller.abort(); }, REQUEST_TIMEOUT_MS) : null;
     return fetch(SERVER + path, {
       method: opts.method || 'GET',
       credentials: 'include',
       mode: 'cors',
       headers: headers,
       body: opts.body,
+      signal: controller ? controller.signal : undefined,
     }).then(function (res) {
+      if (timer) clearTimeout(timer);
       var ct = res.headers.get('Content-Type') || '';
       var parse = ct.indexOf('application/json') !== -1 ? res.json() : res.text();
       return parse.then(function (data) {
@@ -831,9 +837,9 @@
   };
   window.JqrgCloud = api;
 
-  installInterceptor();
-  installStorageListener();
-  autoWireCommonEngines();
+  try { installInterceptor(); } catch (e) { console.warn('[jqrg-cloud] interceptor failed', e); }
+  try { installStorageListener(); } catch (e) { console.warn('[jqrg-cloud] storage listener failed', e); }
+  try { autoWireCommonEngines(); } catch (e) { console.warn('[jqrg-cloud] engine auto-wire failed', e); }
   if (authState) {
     bootstrapToken().then(function () {
       flushPending();
