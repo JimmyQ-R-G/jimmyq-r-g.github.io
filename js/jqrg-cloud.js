@@ -292,6 +292,9 @@
           body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: items }),
         });
       }).then(function () {
+        // Also push any existing IndexedDB databases (Unity/Godot/etc. saves)
+        return snapshotIdb().catch(function () {});
+      }).then(function () {
         writeJSON(MIGRATION_KEY, { at: Date.now(), user: authState.user && authState.user.id });
       });
     }
@@ -545,7 +548,7 @@
    * ==========================================================================*/
 
   var IDB_KIND_PREFIX = 'idb:';
-  var IDB_SNAPSHOT_BYTES = 4 * 1024 * 1024; // hard cap per DB snapshot
+  var IDB_SNAPSHOT_BYTES = 12 * 1024 * 1024; // hard cap per DB snapshot
 
   function encodeValue(v) {
     if (v == null) return { t: 'null' };
@@ -766,17 +769,29 @@
     } catch (_) {}
   }
 
-  /** Detect Unity WebGL and Construct engines and auto-enable IDB sync once per page load. */
+  /** Detect game engines and auto-enable IDB sync once per page load.
+   *  Covers: Unity WebGL, Construct 2/3, Godot, EmulatorJS, Ruffle/Flash,
+   *  GameMaker HTML5. Falls back to a timed trigger on any /jqrg-games/games/ path. */
   function autoWireCommonEngines() {
     if (window.__jqrg_idb_auto_wired) return;
     window.__jqrg_idb_auto_wired = true;
     var triggered = false;
     var trigger = function () {
-      if (triggered || !authState) return;
+      if (triggered) return;
       triggered = true;
-      // Restore before the game has a chance to persist anything new, then auto-snapshot on unload.
+      if (!authState) {
+        authChangeHandlers.push(function onceAuth() {
+          if (authState) {
+            var idx = authChangeHandlers.indexOf(onceAuth);
+            if (idx !== -1) authChangeHandlers.splice(idx, 1);
+            restoreIdb().catch(function () {}).then(function () { autoSyncIdb(); });
+          }
+        });
+        return;
+      }
       restoreIdb().catch(function () {}).then(function () { autoSyncIdb(); });
     };
+    // Unity: intercept createUnityInstance assignment
     try {
       var desc = Object.getOwnPropertyDescriptor(window, 'createUnityInstance');
       if (!desc) {
@@ -787,18 +802,27 @@
           set: function (v) { currentValue = v; trigger(); },
         });
       } else {
-        // Something already defined it; just trigger now.
         trigger();
       }
     } catch (_) {}
-    // Also watch for Construct runtimes which set window.cr_getC2Runtime or window.C3Runtime.
+    // Poll for Construct, Godot, EmulatorJS, Ruffle, GameMaker globals
     var poll = 0;
     var poller = setInterval(function () {
       poll++;
       if (triggered) { clearInterval(poller); return; }
-      if (window.cr_getC2Runtime || window.C3Runtime) trigger();
-      if (poll > 60) clearInterval(poller); // stop after ~60s
+      if (window.cr_getC2Runtime || window.C3Runtime) trigger();              // Construct 2/3
+      if (window.Engine && window.GODOT_CONFIG) trigger();                    // Godot
+      if (window.EJS_player || window.EJS_emulator) trigger();                // EmulatorJS
+      if (window.RufflePlayer || document.querySelector('ruffle-player')) trigger(); // Ruffle
+      if (window.GameMaker_Init || window.gml_Script_scr_adaptaliases) trigger();   // GameMaker HTML5
+      if (poll > 60) clearInterval(poller);
     }, 1000);
+    // Fallback: any page under /jqrg-games/games/ triggers after 3s regardless
+    try {
+      if (location.pathname.indexOf('/jqrg-games/games/') === 0) {
+        setTimeout(function () { trigger(); }, 3000);
+      }
+    } catch (_) {}
   }
 
   var api = {
