@@ -675,9 +675,17 @@
   ready(function () {
     injectStyles();
     ensureTopBarButton();
-    // In case the top bar renders later (e.g. if the index.html rewrites it).
-    var observer = new MutationObserver(function () { ensureTopBarButton(); });
-    observer.observe(document.body, { childList: true, subtree: true });
+    // In case the top bar renders later (e.g. if the index.html rewrites it),
+    // poll briefly rather than using a MutationObserver on the whole body (which
+    // fires on every DOM mutation and created feedback loops on heavy pages).
+    if (!topBarBtn) {
+      var attempts = 0;
+      var retryTimer = setInterval(function () {
+        attempts++;
+        ensureTopBarButton();
+        if (topBarBtn || attempts > 20) clearInterval(retryTimer);
+      }, 500);
+    }
 
     // Expose a way for page code to open the dialog programmatically.
     window.openJqrgAuth = openModal;

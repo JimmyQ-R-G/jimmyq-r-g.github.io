@@ -796,7 +796,7 @@
     var poller = setInterval(function () {
       poll++;
       if (triggered) { clearInterval(poller); return; }
-      if (window.cr_getC2Runtime || window.C3Runtime || window.Module) trigger();
+      if (window.cr_getC2Runtime || window.C3Runtime) trigger();
       if (poll > 60) clearInterval(poller); // stop after ~60s
     }, 1000);
   }
