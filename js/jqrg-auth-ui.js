@@ -27,9 +27,8 @@
     '/403.html', '/404.html', '/404-safe.html', '/404-building.html',
   ];
 
-  /** Hosts where the auth gate is disabled (test/staging deployments). */
+  /** Hosts where the auth gate is disabled (local dev only). */
   var GATE_SKIP_HOSTS = [
-    'jimmyq-r-g.github.io',
     '127.0.0.1',
     'localhost',
   ];
@@ -187,11 +186,13 @@
     document.head.appendChild(style);
   }
 
+  var USER_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>';
+
   function initials(user) {
     var name = (user && (user.display_name || user.username)) || '';
-    if (!name) return '?';
+    if (!name) return null;
     var parts = String(name).trim().split(/\s+/).filter(Boolean);
-    if (!parts.length) return '?';
+    if (!parts.length) return null;
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
@@ -237,7 +238,7 @@
       title: 'Account',
       onclick: function () { openModal(); },
     });
-    btn.appendChild(h('span', { class: 'jqrg-avatar' }, '?'));
+    btn.appendChild(h('span', { class: 'jqrg-avatar', html: USER_ICON_SVG }));
     btn.appendChild(h('span', { class: 'jqrg-label' }, 'Sign in'));
     return btn;
   }
@@ -249,12 +250,13 @@
     var label = topBarBtn.querySelector('.jqrg-label');
     if (user) {
       topBarBtn.classList.remove('logged-out');
-      if (avatar) avatar.textContent = initials(user);
+      var ini = initials(user);
+      if (avatar) { if (ini) avatar.textContent = ini; else avatar.innerHTML = USER_ICON_SVG; }
       if (label) label.textContent = user.display_name || user.username;
       topBarBtn.title = 'Signed in as ' + (user.username || '');
     } else {
       topBarBtn.classList.add('logged-out');
-      if (avatar) avatar.textContent = '?';
+      if (avatar) avatar.innerHTML = USER_ICON_SVG;
       if (label) label.textContent = 'Sign in';
       topBarBtn.title = 'Sign in';
     }
@@ -391,7 +393,8 @@
     var user = Cloud.getUser();
     var wrap = h('div', { class: 'jqrg-auth-form' });
     var row = h('div', { class: 'jqrg-profile-row' });
-    row.appendChild(h('div', { class: 'jqrg-big-avatar' }, initials(user)));
+    var ini = initials(user);
+    row.appendChild(ini ? h('div', { class: 'jqrg-big-avatar' }, ini) : h('div', { class: 'jqrg-big-avatar', html: USER_ICON_SVG }));
     var info = h('div', { class: 'jqrg-profile-info' });
     info.appendChild(h('div', { class: 'jqrg-profile-name' }, (user && (user.display_name || user.username)) || 'Signed in'));
     info.appendChild(h('div', { class: 'jqrg-profile-user' }, '@' + (user && user.username || '')));
