@@ -1694,6 +1694,23 @@ function proxyUrl(url,raw){
   return PROXY_BASE+'?'+(raw?'raw=true&':'')+'url='+encodeURIComponent(url);
 }
 
+// Search engines used when the user types something that's not a URL into
+// either the home hero search bar or the top URL bar. Each entry's `q` is the
+// full prefix to which we append `encodeURIComponent(query)`. Note: we use
+// "/search?q=" paths (not bare "/?q=") so the unblocker's normalizeUrl can't
+// strip the query string when normalizing bare-origin URLs.
+var SEARCH_ENGINES={
+  google:    {label:'Google',     q:'https://www.google.com/search?q='},
+  duckduckgo:{label:'DuckDuckGo', q:'https://duckduckgo.com/?q='},
+  bing:      {label:'Bing',       q:'https://www.bing.com/search?q='},
+  yahoo:     {label:'Yahoo',      q:'https://search.yahoo.com/search?p='}
+};
+function getSearchUrl(query){
+  var key=localStorage.getItem('searchEngine')||'google';
+  var eng=SEARCH_ENGINES[key]||SEARCH_ENGINES.google;
+  return eng.q+encodeURIComponent(query);
+}
+
 var currentPage='home';
 // proxyHistory stores the REAL (decoded) URLs the user has visited inside the
 // proxy iframe, including link clicks made inside the proxied page. The proxy
@@ -2030,7 +2047,7 @@ function proxyNavigate(input){
     url=trimmed;
     if(!/^https?:\/\//i.test(url)) url='https://'+url;
   }else{
-    url='https://duckduckgo.com/?q='+encodeURIComponent(trimmed);
+    url=getSearchUrl(trimmed);
   }
   if(currentPage!=='home') navigate('home');
   proxyHistory=proxyHistory.slice(0,proxyIndex+1);
@@ -2536,15 +2553,47 @@ function openSettings(){
   var closePrevention=localStorage.getItem('closePreventionEnabled')!=='false';
   var autoAnnounce=localStorage.getItem('autoAnnouncement')||'always';
   var isAuthorized=localStorage.getItem('user')==='authorized';
+  var searchEngine=localStorage.getItem('searchEngine')||'google';
 
   function selOpt(val,cur){return val===cur?' selected':''}
+  function buildSearchEngineOptions(cur){
+    var s='';
+    for(var k in SEARCH_ENGINES){
+      if(!Object.prototype.hasOwnProperty.call(SEARCH_ENGINES,k)) continue;
+      s+='<option value="'+k+'"'+selOpt(k,cur)+'>'+SEARCH_ENGINES[k].label+'</option>';
+    }
+    return s;
+  }
 
   var body=document.getElementById('settings-body');
   body.innerHTML=
+    '<div class="setting-section-title">'+_t(_('QW5ub3VuY2VtZW50cw=='))+'</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Auto Pop Up</span>'+
+      '<select class="setting-select" onchange="localStorage.setItem(\'autoAnnouncement\',this.value)">'+
+        '<option value="always"'+(autoAnnounce==='always'?' selected':'')+'>Always</option>'+
+        '<option value="big"'+(autoAnnounce==='big'?' selected':'')+'>Only big announcements</option>'+
+      '</select>'+
+    '</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">View Announcements</span>'+
+      '<button class="setting-btn" onclick="closeSettings();openAnnouncement()">Open</button>'+
+    '</div>'+
+    '<hr class="setting-divider">'+
+
     '<div class="setting-section-title">'+_t(_('QXBwZWFyYW5jZQ=='))+'</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Cursor</span>'+
       '<div class="toggle-switch'+(cursorEnabled?' active':'')+'" onclick="this.classList.toggle(\'active\');var on=this.classList.contains(\'active\');localStorage.setItem(\'enableCursor\',on);if(on){document.body.classList.add(\'custom-cursor-enabled\')}else{document.body.classList.remove(\'custom-cursor-enabled\')};window.dispatchEvent(new Event(\'cursorSettingChanged\'))"></div>'+
+    '</div>'+
+    '<hr class="setting-divider">'+
+
+    '<div class="setting-section-title">'+_t('Search')+'</div>'+
+    '<div class="setting-row">'+
+      '<span class="setting-label">Search Engine</span>'+
+      '<select class="setting-select" onchange="localStorage.setItem(\'searchEngine\',this.value)">'+
+        buildSearchEngineOptions(searchEngine)+
+      '</select>'+
     '</div>'+
     '<hr class="setting-divider">'+
 
@@ -2618,20 +2667,6 @@ function openSettings(){
       '</div>'+
     '</div>'+
     '<div id="authMsg" class="auth-msg"></div>'+
-    '<hr class="setting-divider">'+
-
-    '<div class="setting-section-title">'+_t(_('QW5ub3VuY2VtZW50cw=='))+'</div>'+
-    '<div class="setting-row">'+
-      '<span class="setting-label">Auto Pop Up</span>'+
-      '<select class="setting-select" onchange="localStorage.setItem(\'autoAnnouncement\',this.value)">'+
-        '<option value="always"'+(autoAnnounce==='always'?' selected':'')+'>Always</option>'+
-        '<option value="big"'+(autoAnnounce==='big'?' selected':'')+'>Only big announcements</option>'+
-      '</select>'+
-    '</div>'+
-    '<div class="setting-row">'+
-      '<span class="setting-label">View Announcements</span>'+
-      '<button class="setting-btn" onclick="closeSettings();openAnnouncement()">Open</button>'+
-    '</div>'+
     '<hr class="setting-divider">'+
 
     '<div class="setting-section-title">'+_t(_('TGVnYWw='))+'</div>'+
