@@ -180,7 +180,7 @@ html,body{
   flex:1 1 auto !important;
   left:auto !important;top:auto !important;width:auto !important;height:auto !important;
 }
-#app[data-page="home"] .tb-home:not(.tb-exiting) .nav-btns button{opacity:1}
+#app[data-page="home"] .tb-home:not(.tb-exiting) .nav-btns button:not(:disabled){opacity:1}
 
 .tb-section .nav-btns{display:flex;gap:4px;align-items:center;flex-shrink:0}
 .tb-section .nav-btns button{
@@ -189,6 +189,12 @@ html,body{
   border-radius:6px;transition:background .3s ease,transform .3s ease;
 }
 .tb-section .nav-btns button:hover{background:rgba(255,255,255,.08);transform:scale(1.1)}
+.tb-section .nav-btns button:disabled{
+  cursor:not-allowed;opacity:.32;filter:grayscale(1);
+}
+.tb-section .nav-btns button:disabled:hover{
+  background:0;transform:none;box-shadow:none;
+}
 .tb-section .nav-btns button svg{
   width:18px;height:18px;stroke:var(--text);stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round;fill:none;
@@ -807,6 +813,142 @@ html,body{
   .collections-list .collection-tile{max-width:100%}
 }
 
+/* Touch/mobile support for the site shell. Keep game iframe/tool UI untouched. */
+@media (hover:none), (pointer:coarse), (max-width:700px){
+  html,body{
+    -webkit-text-size-adjust:100%;
+    overscroll-behavior:none;
+  }
+
+  .top-bar{
+    height:auto;min-height:calc(var(--top-bar-h) + 50px);
+    flex-wrap:wrap;align-content:center;
+    padding:8px max(10px,env(safe-area-inset-right)) 8px max(10px,env(safe-area-inset-left));
+    gap:8px;
+  }
+  .top-bar .brand-wrap{
+    min-width:44px;min-height:44px;justify-content:flex-start;
+    touch-action:manipulation;
+  }
+  .top-bar .brand-svg{height:26px;max-width:138px}
+  .top-bar .settings-top{
+    width:44px;height:44px;border-radius:12px;
+    touch-action:manipulation;
+  }
+  .top-bar .settings-top:first-of-type{margin-left:auto}
+
+  .tb-section{
+    order:3;flex:0 0 100%;width:100%;gap:8px;
+  }
+  .tb-section .nav-btns{gap:6px}
+  .tb-section .nav-btns button{
+    width:44px;height:44px;border-radius:12px;
+    touch-action:manipulation;
+  }
+  .tb-section .nav-btns button svg{width:20px;height:20px}
+  .url-bar,.search-bar{
+    height:44px;border-radius:22px;padding:0 14px;
+  }
+  .url-bar input,.search-bar input,.home-search-bar input,
+  .setting-input,.setting-select{
+    font-size:16px;
+  }
+
+  .sidebar{
+    width:56px;min-width:56px;
+    padding:10px 6px max(12px,env(safe-area-inset-bottom));
+  }
+  .sidebar .logo{width:34px;height:42px}
+  .sidebar nav{gap:8px}
+  .sidebar nav button{
+    width:44px;height:44px;border-radius:14px;
+    touch-action:manipulation;
+  }
+  .sidebar nav button svg{width:21px;height:21px}
+
+  #page-home{
+    padding-top:14px;
+  }
+  .home-hero{
+    width:100%;padding:24px 14px 12px;gap:20px;
+  }
+  .home-hero h1{font-size:clamp(30px,10vw,44px)}
+  .home-search-bar{
+    height:52px;border-radius:26px;padding:0 18px;
+    max-width:min(676px,calc(100vw - 96px));
+  }
+  .home-cards{
+    width:100%;padding:8px 14px 28px;gap:14px;
+  }
+  .home-card{
+    width:100%;max-width:none;min-height:132px;height:auto;
+    padding:18px;touch-action:manipulation;
+  }
+  .home-card svg{width:52px;height:52px}
+  .home-card h2{font-size:28px}
+
+  #page-games,#page-apps{
+    padding:10px;
+  }
+  .apps-grid{
+    grid-template-columns:repeat(auto-fill,minmax(132px,1fr));
+    gap:12px;
+  }
+  .collection-tile,.app-tile,.unblock-tile,.contact-tile,
+  .dropdown-btn,.dropdown-menu button,.search-filter-btn,.filter-check-row,
+  .setting-btn,.setting-select,.toggle-switch,.cloak-icon-opt,.cloak-upload-zone,
+  .modal-close{
+    touch-action:manipulation;
+  }
+  .unblock-tile,.contact-tile{
+    min-height:128px;height:auto;padding:16px 10px;
+  }
+  .dropdown-btn{
+    min-width:0;width:100%;height:44px;font-size:16px;border-radius:12px;
+  }
+  .dropdown-menu button,.filter-check-row{
+    min-height:44px;
+  }
+  .search-filter-btn{
+    width:36px;height:36px;
+  }
+
+  .modal-overlay{
+    align-items:flex-end;
+    padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));
+  }
+  .modal{
+    width:100%;max-width:none;max-height:min(88vh,720px);
+    border-radius:20px;
+  }
+  .modal-header{padding:16px 18px}
+  .modal-close{width:44px;height:44px;border-radius:12px}
+  .modal-body{padding:14px 18px 18px;gap:12px}
+  .setting-row{
+    align-items:stretch;gap:8px;flex-wrap:wrap;padding:4px 0;
+  }
+  .setting-label{
+    width:100%;font-size:14px;
+  }
+  .setting-select,.setting-input,.setting-btn{
+    min-height:44px;border-radius:12px;
+  }
+  .setting-select,.setting-input{
+    width:100%;
+  }
+  .setting-btn{
+    padding:10px 16px;
+  }
+  .toggle-switch{
+    width:52px;height:30px;border-radius:15px;
+  }
+  .toggle-switch::after{
+    width:24px;height:24px;
+  }
+  .toggle-switch.active::after{transform:translateX(22px)}
+  .cloak-icon-grid{grid-template-columns:repeat(3,1fr)}
+}
+
 /* ══ ENHANCED UI TRANSITIONS & ANIMATIONS ══ */
 
 /* --- Text Inputs (url-bar, search-bar, home-search-bar, setting-input, ac-modal inputs) --- */
@@ -1421,6 +1563,32 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
   50%{box-shadow:0 0 0 8px rgba(251,191,36,0)}
 }
 
+@media (hover:none), (pointer:coarse){
+  .sidebar .logo:hover,
+  .top-bar .brand-wrap:hover,
+  .sidebar nav button:hover,
+  .tb-section .nav-btns button:hover,
+  .home-card:hover,
+  .app-tile:hover,
+  .collection-tile:hover,
+  .unblock-tile:hover,
+  .contact-tile:hover,
+  .modal-close:hover,
+  .setting-row:hover,
+  .setting-section-title:hover,
+  .cloak-icon-opt:hover,
+  .cloak-upload-zone:hover{
+    transform:none;filter:none;box-shadow:none;
+  }
+  .sidebar .logo:hover{filter:drop-shadow(0 0 13px var(--accent-purple))}
+  .top-bar .brand-wrap:hover{filter:drop-shadow(0 0 6px rgba(136,65,214,.6))}
+  .url-bar:hover,.search-bar:hover,.home-search-bar:hover,
+  .setting-row:hover,.setting-section-title:hover{
+    animation:none;
+  }
+  .setting-section-title:hover::after{width:0}
+}
+
 </style>
   </head>
   <body>
@@ -1446,13 +1614,13 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 
   <div class="tb-section tb-home">
     <div class="nav-btns">
-      <button onclick="proxyBack()" title="Back">
+      <button id="proxy-back-btn" onclick="proxyBack()" title="Back" disabled>
         <svg viewBox="0 0 24 24"><path d="M19 12H5M5 12L12 19M5 12l7-7"/></svg>
         </button>
-      <button onclick="proxyForward()" title="Forward">
+      <button id="proxy-forward-btn" onclick="proxyForward()" title="Forward" disabled>
         <svg viewBox="0 0 24 24"><path d="M5 12h14M19 12l-7-7M19 12l-7 7"/></svg>
         </button>
-      <button onclick="proxyRefresh()" title="Refresh">
+      <button id="proxy-refresh-btn" onclick="proxyRefresh()" title="Refresh" disabled>
         <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
       </button>
           </div>
@@ -1706,8 +1874,8 @@ var SEARCH_ENGINES={
   yahoo:     {label:'Yahoo',      q:'https://search.yahoo.com/search?p='}
 };
 function getSearchUrl(query){
-  var key=localStorage.getItem('searchEngine')||'google';
-  var eng=SEARCH_ENGINES[key]||SEARCH_ENGINES.google;
+  var key=localStorage.getItem('searchEngine')||'duckduckgo';
+  var eng=SEARCH_ENGINES[key]||SEARCH_ENGINES.duckduckgo;
   return eng.q+encodeURIComponent(query);
 }
 
@@ -1719,6 +1887,16 @@ var currentPage='home';
 var proxyHistory=[];
 var proxyIndex=-1;
 var proxyFrameReady=false;
+
+function updateProxyNavButtons(){
+  var back=document.getElementById('proxy-back-btn');
+  var forward=document.getElementById('proxy-forward-btn');
+  var refresh=document.getElementById('proxy-refresh-btn');
+  var hasCurrent=proxyIndex>=0 && !!proxyHistory[proxyIndex];
+  if(back) back.disabled=proxyIndex<0;
+  if(forward) forward.disabled=!hasCurrent || proxyIndex>=proxyHistory.length-1;
+  if(refresh) refresh.disabled=!hasCurrent;
+}
 
 function setNavUrlDisplay(realUrl){
   var v=(realUrl||'').replace(/^raw!/,'');
@@ -1743,12 +1921,13 @@ window.addEventListener('message',function(ev){
   if(d.type==='jqrg:url-changed' && typeof d.url==='string'){
     var url=d.url;
     setNavUrlDisplay(url);
-    if(proxyHistory[proxyIndex]===url) return;
-    if(proxyHistory[proxyIndex+1]===url){ proxyIndex++; return; }
-    if(proxyIndex>0 && proxyHistory[proxyIndex-1]===url){ proxyIndex--; return; }
+    if(proxyHistory[proxyIndex]===url){ updateProxyNavButtons(); return; }
+    if(proxyHistory[proxyIndex+1]===url){ proxyIndex++; updateProxyNavButtons(); return; }
+    if(proxyIndex>0 && proxyHistory[proxyIndex-1]===url){ proxyIndex--; updateProxyNavButtons(); return; }
     proxyHistory=proxyHistory.slice(0,proxyIndex+1);
     proxyHistory.push(url);
     proxyIndex=proxyHistory.length-1;
+    updateProxyNavButtons();
   }
 },false);
 
@@ -2063,18 +2242,21 @@ function proxyNavigate(input){
   }
   setNavUrlDisplay(url);
   document.getElementById('page-home').classList.add('browsing');
+  updateProxyNavButtons();
 }
 function proxyBack(){
   if(proxyIndex<=0){exitBrowsing();return}
   proxyIndex--;
   proxyPostNavigate(proxyHistory[proxyIndex]);
   setNavUrlDisplay(proxyHistory[proxyIndex]);
+  updateProxyNavButtons();
 }
 function proxyForward(){
   if(proxyIndex>=proxyHistory.length-1) return;
   proxyIndex++;
   proxyPostNavigate(proxyHistory[proxyIndex]);
   setNavUrlDisplay(proxyHistory[proxyIndex]);
+  updateProxyNavButtons();
 }
 function proxyRefresh(){
   if(proxyIndex>=0 && proxyHistory[proxyIndex]){
@@ -2089,6 +2271,7 @@ function exitBrowsing(){
   document.getElementById('proxy-frame').src='';
   document.getElementById('nav-url').value='';
   document.getElementById('home-search').value='';
+  updateProxyNavButtons();
 }
 function openInPage(page,url){
   var frame=document.getElementById(page+'-frame');
@@ -2553,7 +2736,7 @@ function openSettings(){
   var closePrevention=localStorage.getItem('closePreventionEnabled')!=='false';
   var autoAnnounce=localStorage.getItem('autoAnnouncement')||'always';
   var isAuthorized=localStorage.getItem('user')==='authorized';
-  var searchEngine=localStorage.getItem('searchEngine')||'google';
+  var searchEngine=localStorage.getItem('searchEngine')||'duckduckgo';
 
   function selOpt(val,cur){return val===cur?' selected':''}
   function buildSearchEngineOptions(cur){

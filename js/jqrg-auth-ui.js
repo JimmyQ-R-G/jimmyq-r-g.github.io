@@ -464,10 +464,12 @@
         submit.disabled = false; submit.textContent = 'Sign in';
       });
     }});
-    if (modalRequired) {
-      form.appendChild(h('div', { class: 'jqrg-gate-intro' },
-        'JimmyQrg games sync progress to the cloud. Sign in to play, or sign up to create a free account — your existing saves will be uploaded automatically.'));
-    }
+    form.appendChild(h('div', { class: 'jqrg-gate-intro' }, [
+      h('strong', null, 'Sign in to sync your saves.'),
+      ' Your existing browser data ',
+      h('strong', null, 'will not be erased'),
+      '. Game progress, settings, and other local saves stay on this device, and are uploaded to your account automatically the first time you sign in. After that, every save is kept in sync across your devices.'
+    ]));
     form.appendChild(h('label', null, [
       'Username or email',
       h('input', { type: 'text', name: 'login_id', autocomplete: 'username', required: 'required', autofocus: 'autofocus' }),
@@ -478,7 +480,7 @@
     ]));
     form.appendChild(err);
     form.appendChild(h('button', { type: 'submit', class: 'jqrg-auth-submit' }, 'Sign in'));
-    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'Your chat account works here too. After signing in, game save data will sync to the cloud.'));
+    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'Your JimmyQrg Chat account works here too. Nothing already saved in your browser will be deleted - it will be merged into your account automatically.'));
     return form;
   }
 
@@ -511,10 +513,12 @@
         submit.disabled = false; submit.textContent = 'Create account';
       });
     }});
-    if (modalRequired) {
-      form.appendChild(h('div', { class: 'jqrg-gate-intro' },
-        'Create a free account. Any saves already in your browser will become the starting point for your cloud account.'));
-    }
+    form.appendChild(h('div', { class: 'jqrg-gate-intro' }, [
+      h('strong', null, 'Create a free account.'),
+      ' Anything you have already played or saved in this browser ',
+      h('strong', null, 'will not be erased'),
+      '. As soon as your account is created, your local game progress and saves are uploaded to the cloud automatically and become the starting point of your account. From then on, your data syncs across every device you sign in on.'
+    ]));
     form.appendChild(h('label', null, [
       'Username (lowercase, letters + numbers)',
       h('input', { type: 'text', name: 'username', autocomplete: 'username', required: 'required', maxlength: '32', pattern: '[a-z0-9]+', autofocus: 'autofocus' }),
@@ -537,7 +541,7 @@
     ]));
     form.appendChild(err);
     form.appendChild(h('button', { type: 'submit', class: 'jqrg-auth-submit' }, 'Create account'));
-    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'One account signs you in here and on the JimmyQrg chat.'));
+    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'One account signs you in here and on JimmyQrg Chat. Your existing local saves stay on this device and are uploaded to your new account on first sign-in.'));
     return form;
   }
 

@@ -788,7 +788,7 @@ gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","p
 
   function toast(){
     var el=document.getElementById('jqrg-toast');
-    if(!el){el=document.createElement('div');el.id='jqrg-toast';el.textContent='Skipped Ad — JimmyQrg';document.body.appendChild(el)}
+    if(!el){el=document.createElement('div');el.id='jqrg-toast';el.textContent='Skipped Ad \u2014 JimmyQrg';document.body.appendChild(el)}
     el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
     clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show')},1200);
   }
