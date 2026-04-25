@@ -116,8 +116,10 @@
       '.jqrg-auth-btn .jqrg-avatar{',
       '  width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#8841d6,#4f46e5);',
       '  display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;',
-      '  color:#fff;flex-shrink:0;',
+      '  color:#fff;flex-shrink:0;overflow:hidden;',
       '}',
+      '.jqrg-auth-btn .jqrg-avatar.has-img{background:transparent}',
+      '.jqrg-auth-btn .jqrg-avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}',
       '.jqrg-auth-btn .jqrg-label{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.jqrg-auth-btn.logged-out .jqrg-avatar{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}',
       '.jqrg-auth-overlay{',
@@ -173,7 +175,10 @@
       '.jqrg-profile-row .jqrg-big-avatar{',
       '  width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#8841d6,#4f46e5);',
       '  display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:20px;',
+      '  overflow:hidden;flex-shrink:0;',
       '}',
+      '.jqrg-profile-row .jqrg-big-avatar.has-img{background:transparent}',
+      '.jqrg-profile-row .jqrg-big-avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}',
       '.jqrg-profile-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}',
       '.jqrg-profile-name{font-size:15px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.jqrg-profile-user{font-size:12px;color:rgba(255,255,255,.55)}',
@@ -220,13 +225,82 @@
 
   var USER_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>';
 
-  function initials(user) {
-    var name = (user && (user.display_name || user.username)) || '';
-    if (!name) return null;
-    var parts = String(name).trim().split(/\s+/).filter(Boolean);
-    if (!parts.length) return null;
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  // ---------- Avatar logic ported from jchat (chat/public/assets/js/api.js) ----------
+  // Same hash + palette + silhouette SVG, so a user has the same default avatar across
+  // the chat site and the games site.
+  var AVATAR_COLOR_COUNT = 108;
+
+  function avatarSimpleHash(str) {
+    if (!str) return 0;
+    var h = 0;
+    var s = String(str).trim();
+    for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return h >>> 0;
+  }
+
+  function pad2(s) { return s.length < 2 ? '0' + s : s; }
+
+  function hslToHex(hh, ss, ll) {
+    var s = ss / 100;
+    var l = ll / 100;
+    var a = s * Math.min(l, 1 - l);
+    function f(n) {
+      var k = (n + hh / 30) % 12;
+      return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+    }
+    function toHex(x) { return pad2(Math.round(x * 255).toString(16)); }
+    return '#' + toHex(f(0)) + toHex(f(8)) + toHex(f(4));
+  }
+
+  var avatarColors = (function () {
+    var colors = [];
+    var golden = 0.618033988749895;
+    for (var i = 0; i < AVATAR_COLOR_COUNT; i++) {
+      var hue = (i * golden * 360) % 360;
+      var sat = 52 + (avatarSimpleHash(String(i)) % 28);
+      var light = 42 + (avatarSimpleHash(String(i + AVATAR_COLOR_COUNT)) % 26);
+      colors.push(hslToHex(hue, sat, light));
+    }
+    return colors;
+  })();
+
+  function darkenHex(hex, factor) {
+    if (factor == null) factor = 0.35;
+    var n = parseInt(hex.slice(1), 16);
+    function clip(v) { return pad2(Math.round(v * factor).toString(16)); }
+    return '#' + clip((n >> 16) & 255) + clip((n >> 8) & 255) + clip(n & 255);
+  }
+
+  function getDefaultAvatarUrl(userIdOrUsername) {
+    var key = userIdOrUsername != null ? String(userIdOrUsername).trim() : '';
+    var i = key ? avatarSimpleHash(key) % AVATAR_COLOR_COUNT : 0;
+    var fill = avatarColors[i];
+    var bg = darkenHex(fill);
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">' +
+      '<circle cx="32" cy="32" r="32" fill="' + bg + '"/>' +
+      '<circle cx="32" cy="26" r="12" fill="' + fill + '"/>' +
+      '<ellipse cx="32" cy="58" rx="20" ry="14" fill="' + fill + '"/>' +
+      '</svg>';
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
+
+  /** Resolve the avatar URL for a user object, mirroring jchat's resolution.
+   *  - Uploaded avatars are stored as relative `/uploads/...` paths on the chat
+   *    server, so prefix them with `Cloud.SERVER` (e.g. https://jchat.fly.dev).
+   *  - Absolute URLs and `data:` URIs are returned untouched.
+   *  - Falls back to the deterministic colored silhouette if no avatar is set. */
+  function avatarUrlFor(user) {
+    if (!user) return getDefaultAvatarUrl(null);
+    var raw = user.avatar_url;
+    if (raw != null) {
+      raw = String(raw).trim();
+      if (raw) {
+        if (/^(https?:|data:)/i.test(raw)) return raw;
+        if (raw.charAt(0) === '/' && Cloud && Cloud.SERVER) return Cloud.SERVER + raw;
+        return raw;
+      }
+    }
+    return getDefaultAvatarUrl(user.id || user.username);
   }
 
   function downloadBlob(filename, mime, contents) {
@@ -282,16 +356,33 @@
     var label = topBarBtn.querySelector('.jqrg-label');
     if (user) {
       topBarBtn.classList.remove('logged-out');
-      var ini = initials(user);
-      if (avatar) { if (ini) avatar.textContent = ini; else avatar.innerHTML = USER_ICON_SVG; }
+      if (avatar) renderAvatarImg(avatar, user);
       if (label) label.textContent = user.display_name || user.username;
       topBarBtn.title = 'Signed in as ' + (user.username || '');
     } else {
       topBarBtn.classList.add('logged-out');
-      if (avatar) avatar.innerHTML = USER_ICON_SVG;
+      if (avatar) {
+        avatar.classList.remove('has-img');
+        avatar.innerHTML = USER_ICON_SVG;
+      }
       if (label) label.textContent = 'Sign in';
       topBarBtn.title = 'Sign in';
     }
+  }
+
+  /** Replace the contents of an avatar container (`.jqrg-avatar` or `.jqrg-big-avatar`)
+   *  with an <img> showing this user's jchat avatar (uploaded URL or default silhouette).
+   *  Falls back to the default silhouette URL on load error. */
+  function renderAvatarImg(container, user) {
+    container.classList.add('has-img');
+    container.innerHTML = '';
+    var src = avatarUrlFor(user);
+    var fallback = getDefaultAvatarUrl(user && (user.id || user.username));
+    var img = h('img', { src: src, alt: '' });
+    img.addEventListener('error', function () {
+      if (img.src !== fallback) img.src = fallback;
+    });
+    container.appendChild(img);
   }
 
   function ensureTopBarButton() {
@@ -448,8 +539,10 @@
     var user = Cloud.getUser();
     var wrap = h('div', { class: 'jqrg-auth-form' });
     var row = h('div', { class: 'jqrg-profile-row' });
-    var ini = initials(user);
-    row.appendChild(ini ? h('div', { class: 'jqrg-big-avatar' }, ini) : h('div', { class: 'jqrg-big-avatar', html: USER_ICON_SVG }));
+    var bigAvatar = h('div', { class: 'jqrg-big-avatar' });
+    if (user) renderAvatarImg(bigAvatar, user);
+    else bigAvatar.innerHTML = USER_ICON_SVG;
+    row.appendChild(bigAvatar);
     var info = h('div', { class: 'jqrg-profile-info' });
     info.appendChild(h('div', { class: 'jqrg-profile-name' }, (user && (user.display_name || user.username)) || 'Signed in'));
     info.appendChild(h('div', { class: 'jqrg-profile-user' }, '@' + (user && user.username || '')));
