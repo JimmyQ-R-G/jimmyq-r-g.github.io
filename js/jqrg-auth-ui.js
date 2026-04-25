@@ -27,22 +27,13 @@
     '/403.html', '/404.html', '/404-safe.html', '/404-building.html',
   ];
 
-  /** Hosts where the auth gate is disabled (local dev only). */
-  var GATE_SKIP_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-  ];
-
   /** Returns 'block' if the current page should be redirected to home (sub-pages),
    *  'gate' if we should show the modal on the current page (home page),
-   *  or false if no gating applies. */
+   *  or false if no gating applies. To bypass the gate during local development set
+   *  `window.__JqrgAuthGateDisabled = true` before this script runs. */
   function shouldGate() {
     if (window.__JqrgAuthGateDisabled) return false;
     if (window.top !== window.self) return false; // don't gate inside iframes
-    var host = (location.hostname || '').toLowerCase();
-    for (var i = 0; i < GATE_SKIP_HOSTS.length; i++) {
-      if (host === GATE_SKIP_HOSTS[i] || host.endsWith('.' + GATE_SKIP_HOSTS[i])) return false;
-    }
     var path = (location.pathname || '').toLowerCase();
     for (var i = 0; i < GATE_SKIP_PATHS.length; i++) {
       if (path === GATE_SKIP_PATHS[i] || path.endsWith(GATE_SKIP_PATHS[i])) return false;
@@ -88,6 +79,29 @@
     return el;
   }
 
+  // Inline SVG icons used in the account modal action buttons. They use currentColor so the
+  // danger variant (red text) tints the stroke automatically.
+  var ICON_EXPORT_SVG =
+    '<svg viewBox="0 0 29 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M9.34688 17.8643L14.2531 22.75M14.2531 22.75L19.1593 17.8643M14.2531 22.75V11.7571M25.1449 19.1956C26.2113 18.4489 27.0109 17.3832 27.4279 16.1532C27.8448 14.9232 27.8573 13.5929 27.4636 12.3554C27.0698 11.1179 26.2903 10.0375 25.2382 9.27097C24.1861 8.50448 22.916 8.09181 21.6124 8.09282H20.067C19.6981 6.66115 19.0078 5.33147 18.0482 4.20388C17.0886 3.0763 15.8846 2.18019 14.5269 1.58302C13.1692 0.985857 11.6931 0.703194 10.2098 0.756313C8.7265 0.809432 7.27463 1.19695 5.9635 1.88969C4.65236 2.58243 3.51612 3.56235 2.64031 4.75566C1.7645 5.94898 1.17196 7.3246 0.907278 8.77896C0.642598 10.2333 0.712684 11.7285 1.11226 13.152C1.51183 14.5755 2.23048 15.8902 3.21411 16.9971" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>';
+  var ICON_IMPORT_SVG =
+    '<svg viewBox="0 0 29 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M9.34688 16.6428L14.2531 11.7571M14.2531 11.7571L19.1593 16.6428M14.2531 11.7571V22.75M25.1449 19.1956C26.2113 18.4489 27.0109 17.3832 27.4279 16.1532C27.8448 14.9232 27.8573 13.593 27.4636 12.3554C27.0698 11.1179 26.2903 10.0375 25.2382 9.27097C24.1861 8.50448 22.916 8.09181 21.6124 8.09282H20.067C19.6981 6.66115 19.0078 5.33147 18.0482 4.20388C17.0886 3.0763 15.8846 2.18019 14.5269 1.58302C13.1692 0.985857 11.6931 0.703194 10.2098 0.756313C8.7265 0.809432 7.27463 1.19695 5.96349 1.88969C4.65236 2.58243 3.51612 3.56235 2.64031 4.75566C1.7645 5.94898 1.17196 7.3246 0.907278 8.77896C0.642598 10.2333 0.712684 11.7285 1.11226 13.152C1.51183 14.5755 2.23048 15.8902 3.21411 16.9971" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>';
+  var ICON_TRASH_SVG =
+    '<svg viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M0.75 5.15H2.97222M2.97222 5.15H20.75M2.97222 5.15V20.55C2.97222 21.1335 3.20635 21.6931 3.6231 22.1056C4.03984 22.5182 4.60507 22.75 5.19444 22.75H16.3056C16.8949 22.75 17.4602 22.5182 17.8769 22.1056C18.2937 21.6931 18.5278 21.1335 18.5278 20.55V5.15M6.30556 5.15V2.95C6.30556 2.36652 6.53968 1.80695 6.95643 1.39437C7.37318 0.981785 7.93841 0.75 8.52778 0.75H12.9722C13.5616 0.75 14.1268 0.981785 14.5436 1.39437C14.9603 1.80695 15.1944 2.36652 15.1944 2.95V5.15M8.52778 10.65V17.25M12.9722 10.65V17.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>';
+  var ICON_SIGNOUT_SVG =
+    '<svg viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M9.71447 5.75V3.25C9.71447 1.86929 10.8338 0.75 12.2145 0.75H23.2145C24.5952 0.75 25.7145 1.86929 25.7145 3.25V20.25C25.7145 21.6307 24.5952 22.75 23.2145 22.75H12.2145C10.8338 22.75 9.71447 21.6307 9.71447 20.25V17.75M6.71447 9.75H17.7145C18.819 9.75 19.7145 10.6454 19.7145 11.75C19.7145 12.8546 18.819 13.75 17.7145 13.75H6.71447M5.71447 5.75L1.48223 9.98223C0.505923 10.9585 0.505922 12.5415 1.48223 13.5178L5.71447 17.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+    '</svg>';
+
+  function actionIcon(svgMarkup) {
+    return h('span', { class: 'icon', html: svgMarkup });
+  }
+
   function injectStyles() {
     if (document.getElementById('jqrg-auth-ui-css')) return;
     var style = h('style', { id: 'jqrg-auth-ui-css' });
@@ -115,8 +129,10 @@
       '.jqrg-auth-overlay.required::before{',
       '  content:"";position:fixed;inset:0;pointer-events:none;',
       '  box-shadow:inset 0 0 0 9999px rgba(0,0,0,.55);',
+      '  z-index:0;',
       '}',
       '.jqrg-auth-modal{',
+      '  position:relative;z-index:1;',
       '  background:#17102a;border:1px solid rgba(255,255,255,.08);border-radius:16px;',
       '  padding:22px;max-width:440px;width:100%;color:#fff;box-shadow:0 24px 70px rgba(0,0,0,.55);',
       '  max-height:90vh;overflow:auto;',
@@ -171,7 +187,8 @@
       '.jqrg-profile-action:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}',
       '.jqrg-profile-action.danger{color:#ff7a7a;border-color:rgba(255,122,122,.25)}',
       '.jqrg-profile-action.danger:hover{background:rgba(255,122,122,.08)}',
-      '.jqrg-profile-action .icon{width:18px;display:inline-flex;justify-content:center}',
+      '.jqrg-profile-action .icon{width:22px;height:18px;display:inline-flex;justify-content:center;align-items:center;color:inherit}',
+      '.jqrg-profile-action .icon svg{display:block;width:auto;height:18px;color:inherit}',
       '.jqrg-sync-status{font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;text-align:center}',
       '.jqrg-sync-status.active{color:#7affa0}',
       '.jqrg-forgot-hint{font-size:12px;color:rgba(255,255,255,.55);text-align:center;margin-top:4px}',
@@ -330,15 +347,22 @@
     var form = h('form', { class: 'jqrg-auth-form', onsubmit: function (ev) {
       ev.preventDefault();
       err.textContent = '';
-      var id = form.elements['id'].value.trim();
+      var id = form.elements['login_id'].value.trim();
       var pw = form.elements['pw'].value;
       if (!id || !pw) { err.textContent = 'Enter a username/email and password.'; return; }
       var submit = form.querySelector('.jqrg-auth-submit');
       submit.disabled = true; submit.textContent = 'Signing in…';
+      // Lock onAuthChange's auto-navigation so the profile view doesn't flicker before we
+      // decide whether to show the sync prompt. Cleared by maybeOfferLocalSync / finish().
+      syncPromptInFlight = true;
       Cloud.login(id, pw).then(function () {
-        setTab('profile');
         onSignedIn();
+        maybeOfferLocalSync(function () {
+          syncPromptInFlight = false;
+          setTab('profile');
+        });
       }).catch(function (e) {
+        syncPromptInFlight = false;
         err.textContent = (e && e.message) || 'Login failed.';
         submit.disabled = false; submit.textContent = 'Sign in';
       });
@@ -349,7 +373,7 @@
     }
     form.appendChild(h('label', null, [
       'Username or email',
-      h('input', { type: 'text', name: 'id', autocomplete: 'username', required: 'required', autofocus: 'autofocus' }),
+      h('input', { type: 'text', name: 'login_id', autocomplete: 'username', required: 'required', autofocus: 'autofocus' }),
     ]));
     form.appendChild(h('label', null, [
       'Password',
@@ -377,10 +401,15 @@
       if (pw !== pw2) { err.textContent = 'Passwords do not match.'; return; }
       var submit = form.querySelector('.jqrg-auth-submit');
       submit.disabled = true; submit.textContent = 'Creating account…';
+      syncPromptInFlight = true;
       Cloud.register({ username: username, email: email, password: pw, display_name: displayName || username }).then(function () {
-        setTab('profile');
         onSignedIn();
+        maybeOfferLocalSync(function () {
+          syncPromptInFlight = false;
+          setTab('profile');
+        });
       }).catch(function (e) {
+        syncPromptInFlight = false;
         err.textContent = (e && e.message) || 'Sign-up failed.';
         submit.disabled = false; submit.textContent = 'Create account';
       });
@@ -435,42 +464,20 @@
     actions.appendChild(h('button', {
       class: 'jqrg-profile-action',
       type: 'button',
-      onclick: function () {
-        syncStatus.textContent = 'Syncing…';
-        Cloud.forceSync().then(function () {
-          syncStatus.textContent = 'Up to date';
-          syncStatus.classList.add('active');
-          setTimeout(function () { syncStatus.classList.remove('active'); syncStatus.textContent = 'Game saves are syncing to the cloud'; }, 2000);
-        }).catch(function (e) {
-          syncStatus.textContent = 'Sync failed: ' + ((e && e.message) || 'unknown');
-        });
-      },
-    }, [h('span', { class: 'icon' }, '\u21BB'), 'Sync now']));
-
-    actions.appendChild(h('a', {
-      class: 'jqrg-profile-action',
-      href: Cloud.openSsoChatUrl(),
-      target: '_blank',
-      rel: 'noopener',
-    }, [h('span', { class: 'icon' }, '\u2709'), 'Open chat (already signed in)']));
-
-    actions.appendChild(h('button', {
-      class: 'jqrg-profile-action',
-      type: 'button',
       onclick: function () { doExport(syncStatus); },
-    }, [h('span', { class: 'icon' }, '\u21E9'), 'Export data']));
+    }, [actionIcon(ICON_EXPORT_SVG), 'Export data']));
 
     actions.appendChild(h('button', {
       class: 'jqrg-profile-action',
       type: 'button',
       onclick: function () { doImport(syncStatus); },
-    }, [h('span', { class: 'icon' }, '\u21E7'), 'Import data']));
+    }, [actionIcon(ICON_IMPORT_SVG), 'Import data']));
 
     actions.appendChild(h('button', {
       class: 'jqrg-profile-action danger',
       type: 'button',
       onclick: function () { doDeleteAll(); },
-    }, [h('span', { class: 'icon' }, '\u2717'), 'Delete all data']));
+    }, [actionIcon(ICON_TRASH_SVG), 'Delete all data']));
 
     actions.appendChild(h('button', {
       class: 'jqrg-profile-action danger',
@@ -480,7 +487,7 @@
           onSignedOut();
         });
       },
-    }, [h('span', { class: 'icon' }, '\u21AA'), 'Sign out']));
+    }, [actionIcon(ICON_SIGNOUT_SVG), 'Sign out']));
 
     wrap.appendChild(actions);
     return wrap;
@@ -606,6 +613,136 @@
     };
   }
 
+  // Track sync-prompt state for this session so we don't re-prompt mid-flow or nest prompts.
+  var syncPromptInFlight = false;
+
+  /** Show the "you have local data not synced" prompt inside the open modal's content area.
+   *  `onDone(result)` runs after the user has either completed the sync (result === 'pushed'
+   *  or 'overwritten'), dismissed it ('skipped'), or cancelled the overwrite warning
+   *  ('cancelled'). Must be called with the modal already open. */
+  function showSyncPrompt(onDone) {
+    if (!modalEl) { if (onDone) onDone('no-modal'); return; }
+    var tabsEl = modalEl.querySelector('.jqrg-auth-tabs');
+    var content = modalEl.querySelector('.jqrg-auth-content');
+    var titleEl = modalEl.querySelector('.jqrg-auth-title');
+    if (!content) { if (onDone) onDone('no-content'); return; }
+    if (tabsEl) tabsEl.style.display = 'none';
+    if (titleEl) titleEl.textContent = 'Sync local data?';
+    content.innerHTML = '';
+
+    syncPromptInFlight = true;
+
+    var wrap = h('div', { class: 'jqrg-auth-form' });
+    wrap.appendChild(h('div', { class: 'jqrg-confirm-msg' }, [
+      'We found ',
+      h('span', { class: 'jqrg-confirm-danger' }, 'game save data on this device'),
+      ' that hasn\'t been uploaded to your account yet.',
+    ]));
+    wrap.appendChild(h('div', { class: 'jqrg-confirm-note' }, 'Upload it so your progress follows you to every device you sign in on?'));
+    var errBox = h('div', { class: 'jqrg-auth-error' });
+    wrap.appendChild(errBox);
+    var notNow = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Not now');
+    var sync = h('button', { type: 'button', class: 'jqrg-auth-submit' }, 'Sync to my account');
+    wrap.appendChild(h('div', { class: 'jqrg-confirm-actions' }, [notNow, sync]));
+    content.appendChild(wrap);
+
+    var finish = function (result, summary) {
+      syncPromptInFlight = false;
+      if (onDone) onDone(result, summary);
+    };
+
+    notNow.onclick = function () {
+      try { Cloud.skipLocalMigration(); } catch (_) {}
+      finish('skipped');
+    };
+
+    sync.onclick = function () {
+      sync.disabled = true; notNow.disabled = true;
+      sync.textContent = 'Checking your account…';
+      errBox.textContent = '';
+      Cloud.isAccountEmpty().then(function (empty) {
+        if (empty) {
+          sync.textContent = 'Uploading…';
+          return Cloud.pushAllLocal().then(function (summary) { finish('pushed', summary); });
+        }
+        showOverwriteWarning(finish);
+      }).catch(function (err) {
+        errBox.textContent = (err && err.message) || 'Sync failed.';
+        sync.disabled = false; notNow.disabled = false;
+        sync.textContent = 'Sync to my account';
+      });
+    };
+  }
+
+  /** Second-step confirmation shown when the server already has saved data. Replaces the
+   *  content pane of the same modal. `onDone('overwritten'|'cancelled')` fires when the user
+   *  completes or cancels. */
+  function showOverwriteWarning(onDone) {
+    if (!modalEl) { if (onDone) onDone('no-modal'); return; }
+    var content = modalEl.querySelector('.jqrg-auth-content');
+    var titleEl = modalEl.querySelector('.jqrg-auth-title');
+    if (!content) { if (onDone) onDone('no-content'); return; }
+    if (titleEl) titleEl.textContent = 'Overwrite account data?';
+    content.innerHTML = '';
+
+    var wrap = h('div', { class: 'jqrg-auth-form' });
+    wrap.appendChild(h('div', { class: 'jqrg-confirm-msg' }, [
+      'Your account already has saved data. Continuing will ',
+      h('span', { class: 'jqrg-confirm-danger' }, 'overwrite everything currently stored on the account'),
+      ' with the data from this device.',
+    ]));
+    wrap.appendChild(h('div', { class: 'jqrg-confirm-note' }, 'This cannot be undone. Export your account data first from the account page if you want to keep it.'));
+    var errBox = h('div', { class: 'jqrg-auth-error' });
+    wrap.appendChild(errBox);
+    var cancel = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Cancel');
+    var proceed = h('button', { type: 'button', class: 'jqrg-btn-danger' }, 'Upload & overwrite');
+    wrap.appendChild(h('div', { class: 'jqrg-confirm-actions' }, [cancel, proceed]));
+    content.appendChild(wrap);
+
+    cancel.onclick = function () { if (onDone) onDone('cancelled'); };
+
+    proceed.onclick = function () {
+      cancel.disabled = true; proceed.disabled = true;
+      proceed.textContent = 'Uploading…';
+      errBox.textContent = '';
+      Cloud.pushAllLocal().then(function (summary) {
+        if (onDone) onDone('overwritten', summary);
+      }).catch(function (err) {
+        errBox.textContent = (err && err.message) || 'Upload failed.';
+        cancel.disabled = false; proceed.disabled = false;
+        proceed.textContent = 'Upload & overwrite';
+      });
+    };
+  }
+
+  /** Entry point: check whether the signed-in user has unsynced local data and, if so, open
+   *  the sync prompt. When finished it restores the profile view. Safe to call whether or
+   *  not a modal is already visible. `afterFn` is invoked after the prompt resolves (or
+   *  immediately if no prompt is shown). */
+  function maybeOfferLocalSync(afterFn) {
+    var done = function () { if (afterFn) try { afterFn(); } catch (_) {} };
+    if (!Cloud.isLoggedIn()) { done(); return; }
+    if (syncPromptInFlight) { done(); return; }
+    Cloud.hasUnsyncedLocalData().then(function (has) {
+      if (!has) { done(); return; }
+      var openedHere = false;
+      if (!modalEl) {
+        openModal({ skipSyncCheck: true });
+        openedHere = true;
+      }
+      // Defer to the next tick so the modal DOM is present.
+      setTimeout(function () {
+        showSyncPrompt(function () {
+          // After the user is done with the prompt, show the profile view. If we opened
+          // the modal ourselves purely for the prompt, leave it open so the user can
+          // see the result of their action — they can dismiss with the close button.
+          setTab('profile');
+          done();
+        });
+      }, openedHere ? 50 : 0);
+    }).catch(function () { done(); });
+  }
+
   function openModal(opts) {
     opts = opts || {};
     var wantRequired = !!opts.required;
@@ -642,6 +779,11 @@
     requestAnimationFrame(function () { overlay.classList.add('open'); });
     syncModalRequired();
     document.addEventListener('keydown', escHandler);
+    // If the user is already signed in and has local data that hasn't been pushed yet,
+    // offer to sync it the first time they open the account modal this session.
+    if (Cloud.isLoggedIn() && !opts.skipSyncCheck) {
+      setTimeout(function () { maybeOfferLocalSync(function () { setTab('profile'); }); }, 50);
+    }
   }
 
   function syncModalRequired() {
@@ -687,7 +829,10 @@
     if (modalEl) {
       var head = modalEl.querySelector('.jqrg-auth-title');
       if (head) head.textContent = Cloud.isLoggedIn() ? 'Your account' : (modalRequired ? 'Sign in to continue' : 'Sign in');
-      setTab(Cloud.isLoggedIn() ? 'profile' : currentTab);
+      // Don't auto-navigate if a sync prompt is (about to be) shown — the caller handles it.
+      if (!syncPromptInFlight) {
+        setTab(Cloud.isLoggedIn() ? 'profile' : currentTab);
+      }
     }
   });
 

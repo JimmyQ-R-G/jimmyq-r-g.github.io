@@ -50,9 +50,27 @@
     '__JqrgCloud',
     '__autoclick_', // the existing auto-clicker runtime state is noisy and per-tab
   ];
+  // Keys that index.html / the main shell uses for *site preferences*. These are
+  // intentionally per-device (cloaking, cursor toggle, toolbar position, panic key,
+  // etc.) and must never be flagged as "syncable game data" — otherwise opening the
+  // site for the first time pops the "you have local data to sync" modal even though
+  // the user hasn't touched a single game.
   var SYNC_SKIP_KEYS = new Set([
     'jqrg_redirect_after_login',
     'jqrg_redirect_after_signup',
+    // Site cloak (home page tab + favicon disguise)
+    'mainPageCloak', 'mainCloakTitle', 'mainCloakIcon',
+    // Per-game cloak inside iframes
+    'cloakSiteTitle', 'cloakSiteIcon', 'cloakMethod',
+    // UI/UX preferences
+    'enableCursor', 'gameToolbarPosition',
+    // Panic-key shortcut
+    'panicKey', 'panicKeyLink',
+    // Misc shell preferences
+    'closePreventionEnabled', 'autoAnnouncement',
+    'user', // legacy authorized/normal flag for the access-code modal
+    'autoClickerSettings',
+    'favoriteGames', // favorites are stored per-device; no game progress here
   ]);
   var userSkipPrefixes = [];
 
@@ -267,38 +285,98 @@
     } catch (_) {}
   }
 
-  /** On first login, push every local key to the server (one-shot migration) then pull the server's
-   *  snapshot and merge. Subsequent logins do incremental sync only. */
-  function migrateAndPull() {
-    if (!authState) return Promise.resolve();
-    var already = readJSON(MIGRATION_KEY, null);
-    var chain = Promise.resolve();
-    if (!already) {
-      chain = chain.then(function () {
-        var items = [];
-        try {
-          for (var i = 0; i < LS.length; i++) {
-            var k = LS.key(i);
-            if (!k || !shouldSyncKey(k)) continue;
-            var v = LS.getItem(k);
-            if (v == null) continue;
-            if (v.length > MAX_VALUE_BYTES) continue;
-            items.push({ key: k, value: v, updated_at: 1 }); // priority 1 = very old so server wins if present
-          }
-        } catch (_) {}
-        if (!items.length) return null;
-        return request('/api/saves/bulk', {
+  /** Enumerate every local syncable key (localStorage). */
+  function listLocalSyncableKeys() {
+    var keys = [];
+    if (!LS) return keys;
+    try {
+      for (var i = 0; i < LS.length; i++) {
+        var k = LS.key(i);
+        if (k && shouldSyncKey(k)) keys.push(k);
+      }
+    } catch (_) {}
+    return keys;
+  }
+
+  /** True if this device has any syncable localStorage keys or IndexedDB databases. */
+  function hasLocalSyncableData() {
+    if (listLocalSyncableKeys().length > 0) return true;
+    // IDB check is async; treat unknown-at-sync-time as "no" for the synchronous helper.
+    return false;
+  }
+
+  /** Async: true if the current signed-in user hasn't pushed their local data on this device yet AND
+   *  local data exists. Safe to call before or after UI interactions. */
+  function hasUnsyncedLocalData() {
+    if (!authState) return Promise.resolve(false);
+    var rec = readJSON(MIGRATION_KEY, null);
+    var currentUserId = authState.user && authState.user.id;
+    if (rec && rec.user === currentUserId) return Promise.resolve(false);
+    // Check localStorage first (cheap) and then ask the browser about IDB databases.
+    if (listLocalSyncableKeys().length > 0) return Promise.resolve(true);
+    return listIdbDatabases().then(function (names) {
+      return (names || []).length > 0;
+    }).catch(function () { return false; });
+  }
+
+  /** Async: true if the signed-in user's server account has zero saves across every kind we sync. */
+  function isAccountEmpty() {
+    if (!authState) return Promise.resolve(true);
+    return request('/api/saves?origin=' + encodeURIComponent(STORAGE_NAMESPACE))
+      .then(function (data) {
+        return !data || !Array.isArray(data.items) || data.items.length === 0;
+      })
+      .catch(function () { return false; });
+  }
+
+  /** Push every local syncable LS entry AND every IndexedDB snapshot to the server. The server
+   *  upserts with last-writer-wins semantics, so callers that want an overwrite should push with
+   *  a current timestamp. Returns a summary. */
+  function pushAllLocal(opts) {
+    if (!authState) return Promise.reject(new Error('Not signed in'));
+    opts = opts || {};
+    var ts = Date.now();
+    var items = [];
+    try {
+      for (var i = 0; i < LS.length; i++) {
+        var k = LS.key(i);
+        if (!k || !shouldSyncKey(k)) continue;
+        var v = LS.getItem(k);
+        if (v == null) continue;
+        if (v.length > MAX_VALUE_BYTES) continue;
+        items.push({ key: k, value: v, updated_at: ts });
+      }
+    } catch (_) {}
+    var chain = items.length
+      ? request('/api/saves/bulk', {
           method: 'POST',
           body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: items }),
-        });
-      }).then(function () {
-        // Also push any existing IndexedDB databases (Unity/Godot/etc. saves)
-        return snapshotIdb().catch(function () {});
-      }).then(function () {
+        })
+      : Promise.resolve({ accepted: 0, rejected: 0 });
+    return chain.then(function (res) {
+      return snapshotIdb().catch(function () { return []; }).then(function (idbResults) {
         writeJSON(MIGRATION_KEY, { at: Date.now(), user: authState.user && authState.user.id });
+        return {
+          localStorage: items.length,
+          indexedDB: Array.isArray(idbResults) ? idbResults.length : 0,
+          server: res || null,
+        };
       });
-    }
-    return chain.then(function () { return pullFromServer(0); });
+    });
+  }
+
+  /** Record that the sync prompt was dismissed without uploading, so the user isn't pestered on
+   *  every page load. They can still manually trigger a push later. */
+  function skipLocalMigration() {
+    if (!authState) return;
+    writeJSON(MIGRATION_KEY, { at: Date.now(), user: authState.user && authState.user.id, skipped: true });
+  }
+
+  /** True if the current account has been marked as migrated (pushed or explicitly skipped). */
+  function hasRecordedMigration() {
+    if (!authState) return false;
+    var rec = readJSON(MIGRATION_KEY, null);
+    return !!(rec && rec.user === (authState.user && authState.user.id));
   }
 
   /** Fetch everything from the server newer than `since` (0 means full snapshot) and apply to localStorage. */
@@ -373,7 +451,9 @@
       if (data.error) throw new Error(data.error);
       if (!data.user || !data.token) throw new Error('Invalid login response');
       setAuth(data.user, data.token);
-      return migrateAndPull().then(function () { startPeriodicSync(); return data.user; });
+      // Pull what's on the server so the UI reflects it. The auth UI is responsible for
+      // detecting unsynced local data afterwards and asking the user what to do.
+      return pullFromServer(0).then(function () { startPeriodicSync(); return data.user; });
     });
   }
 
@@ -391,7 +471,9 @@
       if (data.error) throw new Error(data.error);
       if (!data.user || !data.token) throw new Error('Invalid register response');
       setAuth(data.user, data.token);
-      return migrateAndPull().then(function () { startPeriodicSync(); return data.user; });
+      // Brand-new accounts are always empty server-side, but still ask the UI to run its
+      // local-data detection: a signup flow may opt to auto-push if it decides to.
+      return pullFromServer(0).then(function () { startPeriodicSync(); return data.user; });
     });
   }
 
@@ -853,6 +935,13 @@
     restoreIdb: restoreIdb,
     autoSyncIdb: autoSyncIdb,
     whoAmI: whoAmI,
+    hasUnsyncedLocalData: hasUnsyncedLocalData,
+    hasLocalSyncableData: hasLocalSyncableData,
+    listLocalSyncableKeys: listLocalSyncableKeys,
+    isAccountEmpty: isAccountEmpty,
+    pushAllLocal: pushAllLocal,
+    skipLocalMigration: skipLocalMigration,
+    hasRecordedMigration: hasRecordedMigration,
     openSsoChatUrl: function (next) {
       if (!authState) return SERVER + '/';
       var tail = next && typeof next === 'string' && next.charAt(0) === '/' ? next : '/';
@@ -882,7 +971,7 @@
         .then(function (data) {
           if (data && data.user) {
             setAuth(data.user, sso);
-            migrateAndPull().then(function () { startPeriodicSync(); }).catch(function () {});
+            pullFromServer(0).then(function () { startPeriodicSync(); }).catch(function () {});
           }
         })
         .catch(function () {})

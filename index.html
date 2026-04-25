@@ -1798,7 +1798,7 @@ function animateTopBar(from,to){
   var AC=['nav-flow-out-right','nav-flow-in-from-right','nav-flow-out-left','nav-flow-in-from-left','tb-item-in','tb-item-out'];
 
   allAnimEls.forEach(function(el){AC.forEach(function(c){el.classList.remove(c)});el.style.animationName=''});
-  [tbHome,tbGames,tbApps].forEach(function(s){if(s)s.classList.remove('tb-exiting')});
+  [tbHome,tbGames,tbApps].forEach(function(s){if(!s) return;s.classList.remove('tb-exiting');s.style.position='';s.style.left='';s.style.top='';s.style.width='';s.style.height='';s.style.flex=''});
   void document.body.offsetWidth;
 
   var hasBar={home:true,games:true,apps:true};
@@ -1806,10 +1806,33 @@ function animateTopBar(from,to){
   var outR=pickRandom(NAV_OUT_RIGHT),inR=pickRandom(NAV_IN_RIGHT);
   var outL=pickRandom(NAV_OUT_LEFT),inL=pickRandom(NAV_IN_LEFT);
 
+  // Freeze the exiting section at its current rect so the incoming section gets full flex
+  // space immediately. Without this, both sections briefly share flex:1, which shrinks the
+  // exiting section's url/search bar mid-animation and makes the icons' flow-out look like
+  // the whole bar is sliding with them.
   function exitSection(section,dur){
     if(!section) return;
+    var topBar=section.parentElement;
+    if(topBar){
+      var sRect=section.getBoundingClientRect();
+      var tRect=topBar.getBoundingClientRect();
+      section.style.position='absolute';
+      section.style.left=(sRect.left-tRect.left)+'px';
+      section.style.top=(sRect.top-tRect.top)+'px';
+      section.style.width=sRect.width+'px';
+      section.style.height=sRect.height+'px';
+      section.style.flex='none';
+    }
     section.classList.add('tb-exiting');
-    setTimeout(function(){section.classList.remove('tb-exiting')},dur);
+    setTimeout(function(){
+      section.classList.remove('tb-exiting');
+      section.style.position='';
+      section.style.left='';
+      section.style.top='';
+      section.style.width='';
+      section.style.height='';
+      section.style.flex='';
+    },dur);
   }
   function applyNavOut(cls,animName){navBtns.forEach(function(b){b.classList.add(cls);b.style.animationName=animName})}
 
