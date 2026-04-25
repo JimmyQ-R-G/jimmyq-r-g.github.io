@@ -122,21 +122,27 @@
       '.jqrg-auth-btn .jqrg-avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}',
       '.jqrg-auth-btn .jqrg-label{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.jqrg-auth-btn.logged-out .jqrg-avatar{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}',
+      // The overlay's BACKGROUND is the only darken layer. We intentionally do NOT
+      // use a ::before pseudo-element here — earlier attempts stacked the pseudo
+      // (position:fixed, z-index:0) above the modal in some browsers because each
+      // creates its own stacking context and Safari/Chromium occasionally paint the
+      // fixed-position child on top of relative siblings inside the same parent.
+      // Using only `background` avoids the issue entirely: the overlay's background
+      // is always painted underneath any child element.
       '.jqrg-auth-overlay{',
-      '  position:fixed;inset:0;background:rgba(5,0,15,.85);backdrop-filter:blur(6px);',
+      '  position:fixed;inset:0;background:rgba(5,0,15,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);',
       '  display:flex;align-items:center;justify-content:center;z-index:2147483000;',
-      '  opacity:0;pointer-events:none;transition:opacity .25s ease;padding:16px;',
+      '  opacity:0;pointer-events:none;transition:opacity .25s ease,background-color .25s ease;padding:16px;',
+      '  isolation:isolate;', // self-contained stacking context, just to be safe
       '}',
       '.jqrg-auth-overlay.open{opacity:1;pointer-events:auto}',
-      '.jqrg-auth-overlay.required::before{',
-      '  content:"";position:fixed;inset:0;pointer-events:none;',
-      '  box-shadow:inset 0 0 0 9999px rgba(0,0,0,.55);',
-      '  z-index:0;',
-      '}',
+      // Required mode just darkens the overlay further. No pseudo-element involved.
+      '.jqrg-auth-overlay.required{background:rgba(2,0,8,.94)}',
       '.jqrg-auth-modal{',
       '  position:relative;z-index:1;',
-      '  background:#17102a;border:1px solid rgba(255,255,255,.08);border-radius:16px;',
-      '  padding:22px;max-width:440px;width:100%;color:#fff;box-shadow:0 24px 70px rgba(0,0,0,.55);',
+      '  background:#1d1635;border:1px solid rgba(255,255,255,.12);border-radius:16px;',
+      '  padding:22px;max-width:440px;width:100%;color:#fff;',
+      '  box-shadow:0 24px 70px rgba(0,0,0,.6),0 0 0 1px rgba(136,65,214,.18);',
       '  max-height:90vh;overflow:auto;',
       '}',
       '.jqrg-auth-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}',
@@ -286,7 +292,7 @@
 
   /** Resolve the avatar URL for a user object, mirroring jchat's resolution.
    *  - Uploaded avatars are stored as relative `/uploads/...` paths on the chat
-   *    server, so prefix them with `Cloud.SERVER` (e.g. https://jchat.fly.dev).
+   *    server, so prefix them with `Cloud.SERVER` (e.g. https://chat.jimmyqrg.com).
    *  - Absolute URLs and `data:` URIs are returned untouched.
    *  - Falls back to the deterministic colored silhouette if no avatar is set. */
   function avatarUrlFor(user) {

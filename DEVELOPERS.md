@@ -2,7 +2,7 @@
 
 ## Cloud Saves & Sign-in (`js/jqrg-cloud.js` + `js/jqrg-auth-ui.js`)
 
-All same-origin pages on `jimmyqrg.github.io` are auth-gated and sync game progress to the chat backend (`jchat.fly.dev`). Each HTML file pulls in two scripts via the shared inject marker:
+All same-origin pages on `jimmyqrg.github.io` are auth-gated and sync game progress to the chat backend (`chat.jimmyqrg.com`). Each HTML file pulls in two scripts via the shared inject marker:
 
 ```html
 <!-- JQRG_CLOUD_INJECT_BEGIN -->
@@ -40,7 +40,7 @@ JqrgCloud.skipKey('prefix_') / skipKeys(['a_','b_']) // opt keys out of sync
 
 ### Server-side
 
-The backend lives in the separate repo `chat/` (deployed at `https://jchat.fly.dev`). It exposes the user/saves APIs used by the client:
+The backend lives in the separate repo `chat/` (deployed at `https://chat.jimmyqrg.com`). It exposes the user/saves APIs used by the client:
 
 - `POST /api/auth/register` / `POST /api/auth/login` – returns a bearer token when called from an off-origin client.
 - `GET /api/auth/me` – current session user.

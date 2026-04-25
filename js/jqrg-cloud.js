@@ -1,5 +1,5 @@
 /* jqrg-cloud.js
- * Client for jchat.fly.dev auth + per-user save sync. Dropped into every same-origin page on
+ * Client for chat.jimmyqrg.com auth + per-user save sync. Dropped into every same-origin page on
  * jimmyqrg.github.io so games inherit cloud saves automatically. The file is idempotent and
  * safe to include multiple times.
  *
@@ -34,7 +34,7 @@
       var meta = document.querySelector && document.querySelector('meta[name="jqrg-cloud-server"]');
       if (meta && meta.content) return meta.content.replace(/\/+$/, '');
     } catch (_) {}
-    return 'https://jchat.fly.dev';
+    return 'https://chat.jimmyqrg.com';
   })();
   var STORAGE_NAMESPACE = 'jimmyqrg';
   var AUTH_KEY = '__jqrg_auth_v1';

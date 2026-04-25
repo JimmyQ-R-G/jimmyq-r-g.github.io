@@ -168,6 +168,19 @@ html,body{
 #app[data-page="games"] .tb-games,
 #app[data-page="apps"] .tb-apps{display:flex}
 .tb-section.tb-exiting{display:flex;pointer-events:none}
+/* Defensive: when home is the active page and the section is NOT mid-exit, force it
+   back to its normal flex/relative box. This wipes any inline "position:absolute /
+   flex:none" leftover from an interrupted exitSection cleanup, which otherwise made
+   the URL bar + back/forward/refresh row look like it had vanished after the user
+   hovered (the hover triggers searchPulse which made the half-cleaned bar visible
+   for a moment before it reverted). */
+#app[data-page="home"] .tb-home:not(.tb-exiting){
+  position:relative !important;
+  display:flex !important;
+  flex:1 1 auto !important;
+  left:auto !important;top:auto !important;width:auto !important;height:auto !important;
+}
+#app[data-page="home"] .tb-home:not(.tb-exiting) .nav-btns button{opacity:1}
 
 .tb-section .nav-btns{display:flex;gap:4px;align-items:center;flex-shrink:0}
 .tb-section .nav-btns button{
@@ -1654,14 +1667,52 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 
 <script src="/js/openGame.js"></script>
           <script>
-var PROXY_BASE='https://rammerhead.fly.dev/unblocker.html';
+var PROXY_BASE='https://unlinewize.jimmyqrg.com/unblocker.html';
+var PROXY_ORIGIN='https://unlinewize.jimmyqrg.com';
 function proxyUrl(url,raw){
   return PROXY_BASE+'?'+(raw?'raw=true&':'')+'url='+encodeURIComponent(url);
 }
 
 var currentPage='home';
+// proxyHistory stores the REAL (decoded) URLs the user has visited inside the
+// proxy iframe, including link clicks made inside the proxied page. The proxy
+// iframe (unlinewize.jimmyqrg.com/unblocker.html) reports each navigation back
+// to us via postMessage, which keeps the address bar + back/forward in sync.
 var proxyHistory=[];
 var proxyIndex=-1;
+var proxyFrameReady=false;
+
+function setNavUrlDisplay(realUrl){
+  var v=(realUrl||'').replace(/^raw!/,'');
+  var n=document.getElementById('nav-url'); if(n && document.activeElement!==n) n.value=v;
+}
+
+function proxyPostNavigate(realUrl){
+  var f=document.getElementById('proxy-frame');
+  if(!f) return;
+  if(proxyFrameReady && f.contentWindow){
+    try{ f.contentWindow.postMessage({type:'jqrg:navigate',url:realUrl}, PROXY_ORIGIN); return; }
+    catch(_){}
+  }
+  proxyFrameReady=false;
+  f.src=proxyUrl(realUrl);
+}
+
+window.addEventListener('message',function(ev){
+  if(ev.origin!==PROXY_ORIGIN) return;
+  var d=ev.data; if(!d||typeof d!=='object') return;
+  if(d.type==='jqrg:ready'){ proxyFrameReady=true; return; }
+  if(d.type==='jqrg:url-changed' && typeof d.url==='string'){
+    var url=d.url;
+    setNavUrlDisplay(url);
+    if(proxyHistory[proxyIndex]===url) return;
+    if(proxyHistory[proxyIndex+1]===url){ proxyIndex++; return; }
+    if(proxyIndex>0 && proxyHistory[proxyIndex-1]===url){ proxyIndex--; return; }
+    proxyHistory=proxyHistory.slice(0,proxyIndex+1);
+    proxyHistory.push(url);
+    proxyIndex=proxyHistory.length-1;
+  }
+},false);
 
 function morphSearchBar(fromRect,toEl){
   var morph=document.createElement('div');
@@ -1798,7 +1849,16 @@ function animateTopBar(from,to){
   var AC=['nav-flow-out-right','nav-flow-in-from-right','nav-flow-out-left','nav-flow-in-from-left','tb-item-in','tb-item-out'];
 
   allAnimEls.forEach(function(el){AC.forEach(function(c){el.classList.remove(c)});el.style.animationName=''});
-  [tbHome,tbGames,tbApps].forEach(function(s){if(!s) return;s.classList.remove('tb-exiting');s.style.position='';s.style.left='';s.style.top='';s.style.width='';s.style.height='';s.style.flex=''});
+  // Cancel any in-flight exitSection cleanup on these sections before we re-stage
+  // them; otherwise an older setTimeout can fire mid-animation and rip off the
+  // tb-exiting / inline position:absolute that the *current* navigation just set,
+  // which shows up as the top bar's URL row "disappearing after hover".
+  [tbHome,tbGames,tbApps].forEach(function(s){
+    if(!s) return;
+    if(s.__exitTimer){clearTimeout(s.__exitTimer);s.__exitTimer=null}
+    s.classList.remove('tb-exiting');
+    s.style.position='';s.style.left='';s.style.top='';s.style.width='';s.style.height='';s.style.flex='';
+  });
   void document.body.offsetWidth;
 
   var hasBar={home:true,games:true,apps:true};
@@ -1812,6 +1872,9 @@ function animateTopBar(from,to){
   // the whole bar is sliding with them.
   function exitSection(section,dur){
     if(!section) return;
+    // If a previous exit is still pending cleanup for this same section, cancel it
+    // so it can't fire mid-way through the new exit and wipe our inline styles.
+    if(section.__exitTimer){clearTimeout(section.__exitTimer);section.__exitTimer=null}
     var topBar=section.parentElement;
     if(topBar){
       var sRect=section.getBoundingClientRect();
@@ -1824,7 +1887,8 @@ function animateTopBar(from,to){
       section.style.flex='none';
     }
     section.classList.add('tb-exiting');
-    setTimeout(function(){
+    section.__exitTimer=setTimeout(function(){
+      section.__exitTimer=null;
       section.classList.remove('tb-exiting');
       section.style.position='';
       section.style.left='';
@@ -1886,6 +1950,25 @@ function animateTopBar(from,to){
       if(appSearchBar) appSearchBar.classList.add('tb-item-in');
     }
   }
+
+  // Safety net: when an OUT animation finishes, peel its class + inline animationName
+  // off the button. The class has `animation-fill-mode: forwards`, so without this
+  // a stranded `nav-flow-out-*` would keep the button at opacity:0 forever if the
+  // next animateTopBar call somehow didn't run (e.g. interrupted by a same-page
+  // re-navigation). After cleanup the button reverts to its base CSS (opacity:1).
+  navBtns.forEach(function(b){
+    if(b.__animEndWired) return;
+    b.__animEndWired=true;
+    b.addEventListener('animationend',function(e){
+      var n=e.animationName||'';
+      // Only clean up "out" animations — IN animations want to keep their forwards
+      // fill so the button visibly stays on screen between navigations.
+      if(/Out/i.test(n)){
+        b.classList.remove('nav-flow-out-right','nav-flow-out-left','tb-item-out');
+        b.style.animationName='';
+      }
+    });
+  });
 }
 
 
@@ -1919,38 +2002,51 @@ function isUrl(s){
   return /^https?:\/\//i.test(s)||/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}/i.test(s);
 }
 function proxyNavigate(input){
-  if(!input.trim()) return;
+  if(!input || !input.trim()) return;
   var url;
-  if(isUrl(input.trim())){
-    url=input.trim();
+  var trimmed=input.trim();
+  if(isUrl(trimmed)){
+    url=trimmed;
     if(!/^https?:\/\//i.test(url)) url='https://'+url;
   }else{
-    url='https://duckduckgo.com/?q='+encodeURIComponent(input.trim());
+    url='https://duckduckgo.com/?q='+encodeURIComponent(trimmed);
   }
   if(currentPage!=='home') navigate('home');
-  var pUrl=proxyUrl(url);
   proxyHistory=proxyHistory.slice(0,proxyIndex+1);
-  proxyHistory.push(pUrl);
+  proxyHistory.push(url);
   proxyIndex=proxyHistory.length-1;
-  document.getElementById('proxy-frame').src=pUrl;
-  document.getElementById('nav-url').value=input.trim();
+  var f=document.getElementById('proxy-frame');
+  if(proxyFrameReady && f && f.contentWindow){
+    try{ f.contentWindow.postMessage({type:'jqrg:navigate',url:url}, PROXY_ORIGIN); }
+    catch(_){ proxyFrameReady=false; f.src=proxyUrl(url); }
+  } else {
+    proxyFrameReady=false;
+    f.src=proxyUrl(url);
+  }
+  setNavUrlDisplay(url);
   document.getElementById('page-home').classList.add('browsing');
 }
 function proxyBack(){
   if(proxyIndex<=0){exitBrowsing();return}
   proxyIndex--;
-  document.getElementById('proxy-frame').src=proxyHistory[proxyIndex];
+  proxyPostNavigate(proxyHistory[proxyIndex]);
+  setNavUrlDisplay(proxyHistory[proxyIndex]);
 }
 function proxyForward(){
   if(proxyIndex>=proxyHistory.length-1) return;
   proxyIndex++;
-  document.getElementById('proxy-frame').src=proxyHistory[proxyIndex];
+  proxyPostNavigate(proxyHistory[proxyIndex]);
+  setNavUrlDisplay(proxyHistory[proxyIndex]);
 }
 function proxyRefresh(){
+  if(proxyIndex>=0 && proxyHistory[proxyIndex]){
+    proxyPostNavigate(proxyHistory[proxyIndex]);
+    return;
+  }
   try{var f=document.getElementById('proxy-frame');f.src=f.src}catch(e){}
 }
 function exitBrowsing(){
-  proxyHistory=[];proxyIndex=-1;
+  proxyHistory=[];proxyIndex=-1;proxyFrameReady=false;
   document.getElementById('page-home').classList.remove('browsing');
   document.getElementById('proxy-frame').src='';
   document.getElementById('nav-url').value='';
@@ -1978,7 +2074,7 @@ var GAMES=[
   {n:_('U2xvcGUgMw=='),img:"slope-3",url:"/jqrg-games/games/slope-3/",tags:[]},
   {n:_('TWluZWNyYWZ0'),img:"minecraft",url:"/jqrg-games/games/mcraft/",tags:["featured"],wo:true},
   {n:_('RWFnbGVyY3JhZnQ='),img:"eaglercraft",url:"/jqrg-games/eaglercraft/eaglercraft.html",tags:["touch"]},
-  {n:_('QmxveGQuaW8='),img:"bloxd",url:"https://rammerhead.fly.dev/unblocker.html?raw=true&url=https%3A%2F%2Fbloxd.io",tags:["featured"]},
+  {n:_('QmxveGQuaW8='),img:"bloxd",url:"https://unlinewize.jimmyqrg.com/unblocker.html?raw=true&url=https%3A%2F%2Fbloxd.io",tags:["featured"]},
   {n:_('T3ZP'),img:"ovo",url:"/jqrg-games/games/ovo/",tags:[]},
   {n:_('T3ZPIDI='),img:"ovo2",url:"/jqrg-games/games/ovo2/",tags:[]},
   {n:_('SG9sbG93IEtuaWdodA=='),img:"hollow-knight",url:"/jqrg-games/games/hollow-knight/",tags:["featured"]},
@@ -2104,13 +2200,13 @@ var APPS=[
   {n:_('SmltbXlRcmcgVG9vbHM='),img:"jtools",url:"/tools/",proxy:false},
 ];
 var UNBLOCKS=[
-  {n:_('VW5saW5ld2l6ZSBQcm94eQ=='),img:"unlinewize",url:"https://rammerhead.fly.dev/unblocker.html?raw=true&url=https://rammerhead.fly.dev"},
+  {n:_('VW5saW5ld2l6ZSBQcm94eQ=='),img:"unlinewize",url:"https://unlinewize.jimmyqrg.com/unblocker.html?raw=true&url=https://unlinewize.jimmyqrg.com"},
   {n:_('UmFtbWVyaGVhZCBQcm94eQ=='),img:"rammerhead",url:"https://noblock.jimmyqrg.com"},
   {n:_('SGFja1dpemUgUHJveHk='),img:"hackwize",url:"/proxy/"},
   {n:_('SmltbXlRcmcgSW5mbw=='),img:"jinfo",url:"/info/",inPage:true},
 ];
 var CONTACTS=[
-  {n:_('SmltbXlRcmcgQ2hhdA=='),img:"jchat",url:"https://jchat.fly.dev"},
+  {n:_('SmltbXlRcmcgQ2hhdA=='),img:"jchat",url:"https://chat.jimmyqrg.com"},
   {n:_('RGlzY29yZCBTZXJ2ZXI='),img:"discord",url:"https://discord.com/invite/UWY8p8mn"},
   {n:_('UmVwb3J0IEJ1Z3M='),img:"report-bugs",url:"https://docs.google.com/forms/d/e/1FAIpQLScYdbpe_9Q3w2kpAfy-ntLAoCMtf9wg2vkfHOt6xrYwMvDFNg/viewform?usp=header",form:true},
   {n:_('R2FtZSBTdWdnZXN0aW9ucw=='),img:"game-suggestions",url:"https://docs.google.com/forms/d/e/1FAIpQLSceujZ8Li1ycYrRIK9MR9GUqI1OkANZiMoO1guu9hytfU5hlg/viewform?usp=header",form:true},
@@ -2628,9 +2724,9 @@ function openDMCA(){
           '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'+
           '<div><div style="font-weight:600;font-size:13px">Email</div><div style="font-size:12px;opacity:.6">ikunbeautiful@gmail.com</div></div>'+
         '</a>'+
-        '<a href="https://jchat.fly.dev" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);text-decoration:none;transition:background .3s ease,border-color .3s ease" onmouseover="this.style.background=\'rgba(136,65,214,.1)\';this.style.borderColor=\'rgba(136,65,214,.3)\'" onmouseout="this.style.background=\'rgba(255,255,255,.06)\';this.style.borderColor=\'rgba(255,255,255,.1)\'">'+
+        '<a href="https://chat.jimmyqrg.com" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);text-decoration:none;transition:background .3s ease,border-color .3s ease" onmouseover="this.style.background=\'rgba(136,65,214,.1)\';this.style.borderColor=\'rgba(136,65,214,.3)\'" onmouseout="this.style.background=\'rgba(255,255,255,.06)\';this.style.borderColor=\'rgba(255,255,255,.1)\'">'+
           '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>'+
-          '<div><div style="font-weight:600;font-size:13px">'+_t(_('SmltbXlRcmcgQ2hhdA=='))+'</div><div style="font-size:12px;opacity:.6">jchat.fly.dev</div></div>'+
+          '<div><div style="font-weight:600;font-size:13px">'+_t(_('SmltbXlRcmcgQ2hhdA=='))+'</div><div style="font-size:12px;opacity:.6">chat.jimmyqrg.com</div></div>'+
         '</a>'+
       '</div>'+
       '<p style="font-size:12px;opacity:.5;margin-top:8px">Please include proof of ownership in your message. We will respond and remove the content as soon as possible.</p>'+
@@ -2654,8 +2750,8 @@ function openPrivacyPolicy(){
       '<p><strong>Do we process any sensitive personal information?</strong> No. We never ask for, collect, or process sensitive personal information (such as passwords, payment details, or government IDs). You should never enter sensitive information into any embedded game, app, or proxy tile, as those load third-party content outside of our control.</p>'+
       '<p><strong>Do we collect any information from third parties?</strong> No. We do not collect, buy, or receive any information about you from third parties.</p>'+
       '<p><strong>How do we process your information?</strong> Any information you configure (favorites, settings, cloaks, etc.) is processed locally on your device to personalize your experience. It is never transmitted to us or to any third party by us.</p>'+
-      '<p><strong>Third-party content and embedded services.</strong> Our Services embed third-party games, apps, and unblocker/proxy services (including, but not limited to, <em>rammerhead.fly.dev</em>, <em>noblock.jimmyqrg.com</em>, and various hosted game origins) inside iframes. When you launch any tile, your browser connects directly to that third-party origin. Those third parties and the SDKs they use (such as Unity, Construct, Poki, GameDistribution, createjs, howler, and similar) may collect usage data, set cookies, or process input you provide, according to their own privacy practices. We do not control and are not responsible for the privacy practices of any third-party content. Please review the privacy policy of each provider before using their content.</p>'+
-      '<p><strong>Proxied / unblocker traffic.</strong> Tiles that load through an unblocker (for example apps like TikTok, YouTube, GitHub, Twitch, Instagram, Deepseek, and the Bloxd.io game) route your request through a third-party proxy such as <em>rammerhead.fly.dev</em>. The proxy operator, the destination site, and any network along the way may observe your traffic. Do not log in, enter passwords, or share personal data through these proxies.</p>'+
+      '<p><strong>Third-party content and embedded services.</strong> Our Services embed third-party games, apps, and unblocker/proxy services (including, but not limited to, <em>unlinewize.jimmyqrg.com</em>, <em>noblock.jimmyqrg.com</em>, and various hosted game origins) inside iframes. When you launch any tile, your browser connects directly to that third-party origin. Those third parties and the SDKs they use (such as Unity, Construct, Poki, GameDistribution, createjs, howler, and similar) may collect usage data, set cookies, or process input you provide, according to their own privacy practices. We do not control and are not responsible for the privacy practices of any third-party content. Please review the privacy policy of each provider before using their content.</p>'+
+      '<p><strong>Proxied / unblocker traffic.</strong> Tiles that load through an unblocker (for example apps like TikTok, YouTube, GitHub, Twitch, Instagram, Deepseek, and the Bloxd.io game) route your request through a third-party proxy such as <em>unlinewize.jimmyqrg.com</em>. The proxy operator, the destination site, and any network along the way may observe your traffic. Do not log in, enter passwords, or share personal data through these proxies.</p>'+
       '<p><strong>In what situations and with which parties do we share personal information?</strong> We do not share personal information because we do not collect any. However, when you open embedded content, your browser makes normal network requests (IP address, user agent, referrer, etc.) to that third-party origin, which is inherent to how the web works.</p>'+
       '<p><strong>How do we keep your information safe?</strong> Because all of your preferences remain on your device, the main safeguard is your own browser. No electronic transmission over the internet or information storage technology can be guaranteed to be 100% secure.</p>'+
       '<p><strong>What are your rights?</strong> Depending on where you are located geographically, applicable privacy law may give you certain rights regarding your personal information. Because we do not hold any personal information about you, most requests should be directed to the specific third-party game or service you have used.</p>'+
