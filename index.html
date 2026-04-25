@@ -303,7 +303,15 @@ html,body{
   opacity:0;animation:fadeInUp .5s ease forwards;
 }
 .home-search-bar{
-  opacity:0;animation:fadeInUp .5s ease .08s forwards;
+  /* fadeInUp uses fill-mode:both so the `from` keyframe (opacity:0;
+     translateY(20px)) is automatically applied during the .08s delay -
+     this means we DO NOT keep `opacity:0` baked into the static rule.
+     If we did, then any :hover / :focus-within rule that overwrites the
+     `animation` shorthand would drop the entry's `forwards` fill, the
+     element would revert to that static `opacity:0`, and the bar would
+     vanish for as long as the cursor was on it - which is the bug the
+     user reported. */
+  animation:fadeInUp .5s ease .08s both;
   width:100%;max-width:676px;height:57px;border-radius:28.5px;
   background:var(--search-pill-bg);border:1.5px solid #fff;
   display:flex;align-items:center;padding:0 24px;gap:12px;
@@ -1245,9 +1253,22 @@ input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.05)}
 }
 .url-bar:hover,.search-bar:hover{animation:searchPulse 1.5s ease infinite}
 .url-bar:hover svg,.search-bar:hover svg{animation:searchIconBounce .5s ease}
-.home-search-bar:focus-within{animation:searchGlow 2s ease infinite}
+/* IMPORTANT: keep the entry animation (`fadeInUp ... both`) FIRST in the
+   list and exactly identical to the static rule. Per CSS Animations,
+   when the animation list changes, animations whose name matches an
+   existing one are kept running - they are NOT restarted. Adding the
+   pulse/glow as the *second* item therefore lets us decorate the bar on
+   hover/focus without ever touching the entry animation. If we instead
+   wrote `animation:searchPulse ...` here, the entry animation would be
+   removed -> static opacity reverts -> bar disappears -> on un-hover
+   the entry replays from `opacity:0` and "flows in upward". */
+.home-search-bar:focus-within{
+  animation:fadeInUp .5s ease .08s both,searchGlow 2s ease infinite;
+}
 .home-search-bar:focus-within svg{transform:scale(1.1) rotate(-8deg)}
-.home-search-bar:hover{animation:searchPulse 1.5s ease infinite}
+.home-search-bar:hover{
+  animation:fadeInUp .5s ease .08s both,searchPulse 1.5s ease infinite;
+}
 .home-search-bar:hover svg{animation:searchIconBounce .5s ease}
 
 /* --- Game/App tiles: image zoom, label slide up, glow border, pressed sink --- */
