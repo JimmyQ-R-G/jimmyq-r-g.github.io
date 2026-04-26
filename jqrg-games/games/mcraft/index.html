@@ -43,12 +43,30 @@
     }
 
     .warning {
-      margin: 0 0 20px;
+      margin: 0 0 16px;
       font-size: clamp(20px, 3.4vw, 34px);
       line-height: 1.35;
       font-weight: 700;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
     }
+
+    .sync-info {
+      margin: 0 0 18px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(72, 175, 117, 0.18);
+      border: 1px solid rgba(72, 175, 117, 0.45);
+      font-size: clamp(13px, 1.6vw, 15px);
+      line-height: 1.45;
+      text-align: left;
+    }
+
+    .sync-info.signed-out {
+      background: rgba(255, 196, 0, 0.18);
+      border-color: rgba(255, 196, 0, 0.45);
+    }
+
+    .sync-info strong { color: #fff; }
 
     .countdown {
       margin: 0 0 24px;
@@ -85,28 +103,75 @@
 <body>
   <main class="panel">
     <p class="warning">This version of Minecraft is extremely unstable and has many bugs.</p>
+    <div class="sync-info" id="syncInfo">Checking your account&hellip;</div>
     <p class="countdown" id="countdownText">Starting in 5</p>
     <button class="skip-btn" id="skipBtn" type="button">Skip Countdown</button>
   </main>
 
   <script>
-    const REDIRECT_URL = "https://mcraft.fly.dev";
+    const REDIRECT_BASE = "https://mcraft.fly.dev";
     const countdownText = document.getElementById("countdownText");
     const skipBtn = document.getElementById("skipBtn");
+    const syncInfo = document.getElementById("syncInfo");
 
     let secondsRemaining = 5;
     let redirected = false;
 
+    function buildRedirectUrl() {
+      let token = null;
+      try {
+        if (window.JqrgCloud && typeof window.JqrgCloud.getToken === "function") {
+          token = window.JqrgCloud.getToken();
+        }
+      } catch (_) {}
+      if (!token) return REDIRECT_BASE;
+      const sep = REDIRECT_BASE.indexOf("?") === -1 ? "?" : "&";
+      return REDIRECT_BASE + sep + "sso=" + encodeURIComponent(token);
+    }
+
     function goToGame() {
       if (redirected) return;
       redirected = true;
-      window.location.href = REDIRECT_URL;
+      window.location.href = buildRedirectUrl();
     }
 
     function renderCountdown() {
       countdownText.textContent = "Starting in " + secondsRemaining;
     }
 
+    function renderSyncInfo() {
+      let user = null;
+      try {
+        if (window.JqrgCloud && typeof window.JqrgCloud.getUser === "function") {
+          user = window.JqrgCloud.getUser();
+        }
+      } catch (_) {}
+      if (user) {
+        syncInfo.classList.remove("signed-out");
+        syncInfo.innerHTML =
+          "<strong>World saves will sync to your account.</strong> " +
+          "Your singleplayer worlds, server list and settings stay in sync " +
+          "across every device you sign in on \u2014 nothing is erased.";
+      } else {
+        syncInfo.classList.add("signed-out");
+        syncInfo.innerHTML =
+          "<strong>You are not signed in.</strong> " +
+          "World saves will only live on this device. " +
+          "Sign in on the home page first if you want them to sync to your account.";
+      }
+    }
+
+    function whenCloudReady(cb, timeoutMs) {
+      const start = Date.now();
+      const tick = function () {
+        if (window.JqrgCloud) { cb(); return; }
+        if (Date.now() - start > (timeoutMs || 1500)) { cb(); return; }
+        setTimeout(tick, 60);
+      };
+      tick();
+    }
+
+    whenCloudReady(renderSyncInfo);
     renderCountdown();
 
     const timer = setInterval(() => {

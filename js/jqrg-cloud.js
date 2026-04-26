@@ -36,7 +36,19 @@
     } catch (_) {}
     return 'https://chat.jimmyqrg.com';
   })();
-  var STORAGE_NAMESPACE = 'jimmyqrg';
+  // Server-side bucket identifier. External JimmyQrg apps (e.g. mcraft.fly.dev) override this so
+  // their saves don't collide with key names used on the main site. Same user account, different
+  // origins on the server.
+  var STORAGE_NAMESPACE = (function () {
+    try {
+      if (typeof window !== 'undefined' && typeof window.__JqrgCloudNamespace === 'string' && window.__JqrgCloudNamespace) {
+        return window.__JqrgCloudNamespace;
+      }
+      var meta = document.querySelector && document.querySelector('meta[name="jqrg-cloud-namespace"]');
+      if (meta && meta.content) return meta.content;
+    } catch (_) {}
+    return 'jimmyqrg';
+  })();
   var AUTH_KEY = '__jqrg_auth_v1';
   var LAST_SYNC_KEY = '__jqrg_cloud_last_sync';
   var MIGRATION_KEY = '__jqrg_cloud_migrated_v1';
