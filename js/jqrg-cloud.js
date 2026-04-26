@@ -865,7 +865,8 @@
 
   /** Detect game engines and auto-enable IDB sync once per page load.
    *  Covers: Unity WebGL, Construct 2/3, Godot, EmulatorJS, Ruffle/Flash,
-   *  GameMaker HTML5. Falls back to a timed trigger on any /jqrg-games/games/ path. */
+   *  GameMaker HTML5, Eaglercraft (1.5.2, 1.8.x, 1.12.x). Falls back to a timed
+   *  trigger on any /jqrg-games/games/ or /jqrg-games/eaglercraft/ path. */
   function autoWireCommonEngines() {
     if (window.__jqrg_idb_auto_wired) return;
     window.__jqrg_idb_auto_wired = true;
@@ -899,7 +900,7 @@
         trigger();
       }
     } catch (_) {}
-    // Poll for Construct, Godot, EmulatorJS, Ruffle, GameMaker globals
+    // Poll for Construct, Godot, EmulatorJS, Ruffle, GameMaker, Eaglercraft globals
     var poll = 0;
     var poller = setInterval(function () {
       poll++;
@@ -909,11 +910,19 @@
       if (window.EJS_player || window.EJS_emulator) trigger();                // EmulatorJS
       if (window.RufflePlayer || document.querySelector('ruffle-player')) trigger(); // Ruffle
       if (window.GameMaker_Init || window.gml_Script_scr_adaptaliases) trigger();   // GameMaker HTML5
+      // Eaglercraft sets one of these globals during launcher bootstrap. The 1.5.2
+      // legacy build uses `eaglercraftOpts`; 1.8.x / 1.12.x (TeaVM and WASM)
+      // use `eaglercraftXOpts` or its early `eaglercraftXOptsHints` companion.
+      if (window.eaglercraftXOpts || window.eaglercraftXOptsHints || window.eaglercraftOpts) trigger();
       if (poll > 60) clearInterval(poller);
     }, 1000);
-    // Fallback: any page under /jqrg-games/games/ triggers after 3s regardless
+    // Fallback: any page under /jqrg-games/games/ or /jqrg-games/eaglercraft/
+    // triggers after 3s regardless. Eaglercraft variants don't expose any of the
+    // engine globals the poller looks for, so this fallback is the main hook
+    // that gets world-save IndexedDBs (`worlds`, `_eaglercraft.*`) backed up.
     try {
-      if (location.pathname.indexOf('/jqrg-games/games/') === 0) {
+      var p = location.pathname || '';
+      if (p.indexOf('/jqrg-games/games/') === 0 || p.indexOf('/jqrg-games/eaglercraft/') === 0) {
         setTimeout(function () { trigger(); }, 3000);
       }
     } catch (_) {}
