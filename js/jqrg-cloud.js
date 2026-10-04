@@ -104,6 +104,9 @@
     'cloakSiteTitle', 'cloakSiteIcon', 'cloakMethod',
     // UI/UX preferences
     'enableCursor', 'gameToolbarPosition',
+    // Background visuals are device preferences; keep them in localStorage
+    // so the particle bootstrap can read them synchronously after a reload.
+    'bgParticleStyle', 'bgParticleQuality',
     // Panic-key shortcut
     'panicKey', 'panicKeyLink',
     // Misc shell preferences

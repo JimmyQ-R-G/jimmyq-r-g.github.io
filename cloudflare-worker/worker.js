@@ -1,6 +1,7 @@
 const ALLOWED_ORIGINS = [
   'https://tintly555.github.io',
   'https://perfectnip.github.io',
+  'https://jimmyq-r-g.github.io',
   'https://discord.jimmyqrg.com',
   'https://lausd.schoology.com',
   'https://ulw-app.fly.dev',

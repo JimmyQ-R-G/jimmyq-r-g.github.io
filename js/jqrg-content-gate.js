@@ -75,6 +75,9 @@
           window.JqrgCloud.onAuthChange(function() {
             applyGate();
             refreshShell();
+            // The main router can see a protected hash before auth restoration
+            // injects its <template> page. Retry that route after insertion.
+            try { if (typeof window.restoreFromUrl === 'function') window.restoreFromUrl(); } catch (e) {}
           });
         } catch (e) {}
         return;

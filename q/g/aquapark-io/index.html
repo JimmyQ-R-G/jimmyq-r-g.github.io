@@ -14,6 +14,14 @@
 </head>
 
 <body>
+  <script>
+    // Aquapark is launched by the catalog in a sandboxed iframe. Keep a
+    // normal top-level visit on the catalog path so it goes through the
+    // site's sign-in flow instead of skipping the launcher UI.
+    if (window.self === window.top) {
+      window.location.replace('/#g');
+    }
+  </script>
   <div id="unity-container" class="unity-desktop">
     <canvas id="unity-canvas" width=100% height=100% tabindex="-1"></canvas>
     <div id="unity-loading-bar" class="unity-preload-1">
@@ -28,6 +36,38 @@
   </div>
 
   <script src="unarchiver.min.js" nonce="gAKBBT4aLfaZvJiS8jIdUw">// used for decompression if zip files are used</script>
+  <script>
+    // Unity resolves streamingAssetsUrl against the document URL, not the
+    // <base> above. The build and its Addressables live together in the
+    // youtube-playables asset repository, so point StreamingAssets there
+    // before the Unity loader starts.
+    (function () {
+      var gameRoot = new URL('.', document.querySelector('base').href);
+      var loaderPath = /\/Build\/aquapark_v1\.5\.loader\.js(?:[?#]|$)/;
+      var patched = false;
+
+      document.addEventListener('load', function (event) {
+        var script = event.target;
+        if (patched || !script || script.tagName !== 'SCRIPT' || !loaderPath.test(script.src || '')) return;
+
+        var createUnityInstance = window.createUnityInstance;
+        if (typeof createUnityInstance !== 'function') return;
+
+        window.createUnityInstance = function (canvas, config) {
+          var args = Array.prototype.slice.call(arguments);
+          args[1] = Object.assign({}, config, {
+            streamingAssetsUrl: new URL('StreamingAssets/', gameRoot).href
+          });
+          return createUnityInstance.apply(this, args);
+        };
+        patched = true;
+      }, true);
+    })();
+  </script>
+  <script>
+    // The upstream loader assigns this on its first Play-button click.
+    var playBtnClicked = false;
+  </script>
   <script src="main.js" nonce="gAKBBT4aLfaZvJiS8jIdUw"> // Logic for Unity contianer</script>
 </body>
 </html>

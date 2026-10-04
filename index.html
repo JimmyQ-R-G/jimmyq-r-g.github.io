@@ -3686,12 +3686,16 @@ function morphSearchBar(fromRect,toEl){
 }
 
 function navigate(page){
+  // Auth-gated pages are inserted from <template> after auth state restores.
+  // A URL hash can request one before that template exists; leave the current
+  // page intact and let the content-gate auth callback retry the route.
+  var requestedPage=document.getElementById('page-'+page);
+  if(!requestedPage) return;
   if(currentPage===page){
     if(page==='home') exitBrowsing();
     else exitPageBrowsing(page);
     _cO();
-    var el=document.getElementById('page-'+page);
-    if(el) el.scrollTop=0;
+    requestedPage.scrollTop=0;
     return;
   }
   var prevPage=currentPage;
@@ -3722,7 +3726,7 @@ function navigate(page){
   }
   document.getElementById('app').setAttribute('data-page',page);
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');p.style.animationName=''});
-  var activePage=document.getElementById('page-'+page);
+  var activePage=requestedPage;
   activePage.style.animationName=pickRandom(PAGE_ANIMS);
   activePage.classList.add('active');
   if(page==='home'){ randomizeHomeCards(); try{renderHome()}catch(e){} }
@@ -3980,7 +3984,7 @@ var _D1=[
   {n:_('T3ZP'),img:_("b3Zv"),url:_("L3EvZy9vdm8v"),tags:["platformer","parkour","single-player","offline"]},
   {n:_('T3ZPIDI='),img:_("b3ZvMg=="),url:_("L3EvZy9vdm8yLw=="),tags:["platformer","parkour","single-player","offline"]},
   {n:_('SG9sbG93IEtuaWdodA=='),img:_("aG9sbG93LWtuaWdodA=="),url:_("aHR0cHM6Ly9wZXJmZWN0bmlwLmdpdGh1Yi5pby9qZzIvZy9ob2xsb3cta25pZ2h0Lw=="),tags:["featured","platformer","adventure","single-player","offline"]},
-  {n:_('U2lsa1Nvbmc='),img:_("c2lsa3Nvbmc="),url:_("L3EvZy9zaWxrc29uZy8="),tags:["featured","platformer","adventure","single-player","offline"]},
+  {n:_('U2lsa1Nvbmc='),img:_("c2lsa3Nvbmc="),url:_("aHR0cHM6Ly9yYXcuZ2l0aGFjay5jb20vaW5kaWFtb25kYS9wZXJmZWN0bmlwLmdpdGh1Yi5pby9naC1wYWdlcy9xL2cvc2lsa3NvbmcvaW5kZXguaHRtbA=="),tags:["featured","platformer","adventure","single-player","offline"]},
   {n:_('U3Vid2F5IFN1cmZlcnM='),img:_("c3Vid2F5LXN1cmZlcnM="),url:_("L3EvZy9zdWJ3YXktc3VyZmVycy8="),tags:["touch","runner","arcade","single-player","offline"]},
   {n:_('U3Vid2F5IFN1cmZlcnMgQmVpamluZw=='),img:_("c3Vid2F5LXN1cmZlcnMtYmVpamluZw=="),url:_("L3EvZy9zdWJ3YXktc3VyZmVycy1iZWlqaW5nLw=="),tags:["touch","runner","arcade","single-player","offline"]},
   {n:_('U3Vid2F5IFN1cmZlcnMgSG91c3Rvbg=='),img:_("c3Vid2F5LXN1cmZlcnMtaG91c3Rvbg=="),url:_("L3EvZy9zdWJ3YXktc3VyZmVycy1ob3VzdG9uLw=="),tags:["touch","runner","arcade","single-player","offline"]},
@@ -3989,8 +3993,8 @@ var _D1=[
   {n:_('RmxhcHB5IEJpcmQ='),img:_("ZmxhcHB5LWJpcmQ="),url:_("L3EvZy9mbGFwcHktYmlyZC8="),tags:["touch","arcade","single-player","offline"]},
   {n:_('RmxhcHB5IEJpcmQgTmlnaHRtYXJlcw=='),img:_("ZmxhcHB5LWJpcmQtbmlnaHRtYXJlcw=="),url:_("L3EvZy9mbGFwcHktYmlyZC1uaWdodG1hcmVzLw=="),tags:["arcade","single-player","offline"]},
   {n:_('RmxhcHB5IER1bms='),img:_("ZmxhcHB5LWR1bms="),url:_("L3EvZy9mbGFwcHktZHVuay8="),tags:["touch","sports","arcade","single-player","offline"]},
-  {n:_('SW5maW5pdGUgV29yZGxl'),img:_("d29yZGxl"),url:_("L3dvcmRsZS8="),tags:["touch","jqrg","puzzle","single-player","offline"]},
-  {n:_('SW5maW5pdGUgV29yZGxlIChObyBEZXRlY3Rpb24p'),img:_("d29yZGxlLW5vbGV0dGVyZGV0ZWN0aW9u"),url:_("L3dvcmRsZS9uby13b3JkLWRldGVjdGlvbi8="),tags:["touch","puzzle","single-player","offline"]},
+  {n:_('SW5maW5pdGUgV29yZGxl'),img:_("d29yZGxl"),url:_("L3EvZy93b3JkbGUv"),tags:["touch","jqrg","puzzle","single-player","offline"]},
+  {n:_('SW5maW5pdGUgV29yZGxlIChObyBEZXRlY3Rpb24p'),img:_("d29yZGxlLW5vbGV0dGVyZGV0ZWN0aW9u"),url:_("L3EvZy93b3JkbGUvbm8td29yZC1kZXRlY3Rpb24v"),tags:["touch","puzzle","single-player","offline"]},
   {n:_('U3RpY2ttYW4gSG9vaw=='),img:_("c3RpY2ttYW4taG9vaw=="),url:_("L3EvZy9zdGlja21hbi1ob29rLw=="),tags:["featured","touch","parkour","platformer","single-player","offline"]},
   {n:_('U3RpY2ttYW4gQXJlbmE='),img:_("c3RpY2ttYW4tYXJlbmE="),url:_("L3EvZy9zdGlja21hbi1hcmVuYS8="),tags:["featured","fighting","multiplayer","single-player","offline"]},
   {n:_('U291bmQgRWZmZWN0IEJ1dHRvbnM='),img:_("c291bmQtYnV0dG9ucw=="),url:_("L3EvZy9zb3VuZC1idXR0b25zLw=="),tags:["featured","touch","arcade","single-player","offline"]},
@@ -4007,7 +4011,7 @@ var _D1=[
   {n:_('OCBCYWxsIENsYXNzaWM='),img:_("OC1iYWxsLWNsYXNzaWM="),url:_("L3EvZy84LWJhbGwtY2xhc3NpYy8="),tags:["touch","sports","single-player","offline"],wo:true},
   {n:_('QSBEYW5jZSBvZiBGaXJlIGFuZCBJY2U='),img:_("YS1kYW5jZS1vZi1maXJlLWFuZC1pY2U="),url:_("L3EvZy9hLWRhbmNlLW9mLWZpcmUtYW5kLWljZS8="),tags:["featured","touch","rhythm","puzzle","single-player","offline"]},
   {n:_('QW1hemU='),img:_("YW1hemU="),url:_("L3EvZy9hbWF6ZS8="),tags:["touch","puzzle","single-player","offline"],wo:true},
-  {n:_('QW1lbmRhIFRoZSBBZHZlbnR1cmVy'),img:_("YW1lbmRh"),url:_("L2pnL2cvYW1lbmRhLw=="),tags:["featured","horror","puzzle","single-player","offline"]},
+  {n:_('QW1lbmRhIFRoZSBBZHZlbnR1cmVy'),img:_("YW1lbmRh"),url:_("L3EvZy9hbWVuZGEv"),tags:["featured","horror","puzzle","single-player","offline"]},
   {n:_('QW1vbmcgVXM='),img:_("YW1vbmctdXM="),url:_("L3EvZy9hbW9uZy11cy8="),tags:["touch","multiplayer","online","strategy"]},
   {n:_('QW5keXMgQXBwbGUgRmFybQ=='),img:_("YW5keXMtYXBwbGUtZmFybQ=="),url:_("L3EvZy9hbmR5cy1hcHBsZS1mYXJtLw=="),tags:["adventure","horror","single-player","offline"],wo:true},
   {n:_('QW5ncnkgQmlyZHM='),img:_("YW5ncnktYmlyZHM="),url:_("L3EvZy9hbmdyeS1iaXJkcy8="),tags:["featured","touch","puzzle","arcade","single-player","offline"]},
@@ -4031,10 +4035,10 @@ var _D1=[
   {n:_('Qm91bmNlbWFzdGVycw=='),img:_("Ym91bmNlbWFzdGVycw=="),url:_("L3EvZy9ib3VuY2VtYXN0ZXJzLw=="),tags:["touch","arcade","single-player","offline"],wo:true},
   {n:_('Qm93bWFzdGVycw=='),img:_("Ym93bWFzdGVycw=="),url:_("L3EvZy9ib3dtYXN0ZXJzLw=="),tags:["touch","arcade","fighting","multiplayer","single-player","offline"],wo:true},
   {n:_('Qm94aW5nIFJhbmRvbQ=='),img:_("Ym94aW5nLXJhbmRvbQ=="),url:_("L3EvZy9ib3hpbmctcmFuZG9tLw=="),tags:["fighting","sports","multiplayer","single-player","offline"]},
-  {n:_('QnJhd2wgU3RhciBTaW11bGF0b3I='),img:_("YnJhd2wtc3Rhcg=="),url:_("L2pnL2cvYnJhd2wtc3Rhci8="),tags:["featured","shooter","multiplayer","single-player","offline"]},
+  {n:_('QnJhd2wgU3RhciBTaW11bGF0b3I='),img:_("YnJhd2wtc3Rhcg=="),url:_("L3EvZy9icmF3bC1zdGFyLw=="),tags:["featured","shooter","multiplayer","single-player","offline"]},
   {n:_('QnJpZGQgSnVtcA=='),img:_("YnJpZGQtanVtcA=="),url:_("L3EvZy9icmlkZC1qdW1wL1YxLjMuMS8="),tags:["featured","touch","jqrg"]},
   {n:_('QnJpZGdlIFJhY2U='),img:_("YnJpZGdlLXJhY2U="),url:_("L3EvZy9icmlkZ2UtcmFjZS8="),tags:["touch","racing","arcade","single-player","offline"],wo:true},
-  {n:_('QnJvdGF0bw=='),img:_("YnJvdGF0bw=="),url:_("L2pnL2cvYnJvdGF0by8="),tags:["featured","touch","shooter","survival","single-player","offline"]},
+  {n:_('QnJvdGF0bw=='),img:_("YnJvdGF0bw=="),url:_("L2pnMy9nL2Jyb3RhdG8v"),tags:["featured","touch","shooter","survival","single-player","offline"]},
   {n:_('QnJvd3NlciBRdWVzdA=='),img:_("YnJvd3Nlci1xdWVzdA=="),url:_("aHR0cHM6Ly9icm93c2VyLXF1ZXN0LmZseS5kZXY="),tags:["featured","adventure","multiplayer","online"],wo:true},
   {n:_('QnVja3Nob3QgUm91bGV0dGU='),img:_("YnVja3Nob3Qtcm91bGV0dGU="),url:_("L2pnL2cvYnVja3Nob3Qtcm91bGV0dGUv"),tags:["featured","horror","multiplayer","online"]},
   {n:_('QnVpbGQgQSBRdWVlbg=='),img:_("YnVpbGQtYS1xdWVlbg=="),url:_("L3EvZy9idWlsZC1hLXF1ZWVuLw=="),tags:["touch","puzzle","arcade","single-player","offline"],wo:true},
@@ -4060,8 +4064,8 @@ var _D1=[
   {n:_('RGVhZCBQbGF0ZQ=='),img:_("ZGVhZC1wbGF0ZQ=="),url:_("L3EvZy9kZWFkLXBsYXRlLw=="),tags:["horror","puzzle","single-player","offline"],wo:true},
   {n:_('RGVhZHNlYXQ='),img:_("ZGVhZHNlYXQ="),url:_("L3EvZy9kZWFkc2VhdC8="),tags:["horror","puzzle","single-player","offline"],wo:true},
   {n:_('RGVsdGF0cmF2ZWxlcg=='),img:_("ZGVsdGF0cmF2ZWxlcg=="),url:_("L3EvZy9kZWx0YXRyYXZlbGVyLw=="),tags:["adventure","rpg","single-player","offline"],wo:true},
-  {n:_('RGlnIERlZXA='),img:_("ZGlnLWRlZXA="),url:_("L3EvZy9kaWctZGVlcC8="),tags:["touch","arcade","single-player","offline"],wo:true},
-  {n:_('RGlubw=='),img:_("ZGlubw=="),url:_("L2Rpbm8v"),tags:["touch","runner","arcade","single-player","offline"],wo:true},
+  {n:_('RGlnIERlZXA='),img:_("ZGlnLWRlZXA="),url:_("aHR0cHM6Ly9yYXcuZ2l0aGFjay5jb20vaW5kaWFtb25kYS9wZXJmZWN0bmlwLmdpdGh1Yi5pby9naC1wYWdlcy9xL2cvZGlnLWRlZXAvaW5kZXguaHRtbA=="),tags:["touch","arcade","single-player","offline"],wo:true},
+  {n:_('RGlubw=='),img:_("ZGlubw=="),url:_("L3EvZy9kaW5vLw=="),tags:["touch","runner","arcade","single-player","offline"],wo:true},
   {n:_('RG9uJ3QgVGFrZSBUaGlzIENhdCBIb21l'),img:_("ZG9ub3R0YWtldGhpc2NhdGhvbWU="),url:_("L3EvZy9kb25vdHRha2V0aGlzY2F0aG9tZS8="),tags:["horror","adventure","single-player","offline"]},
   {n:_('RG9vZGxlIEp1bXA='),img:_("ZG9vZGxlLWp1bXA="),url:_("L3EvZy9kb29kbGUtanVtcC8="),tags:["platformer","arcade","single-player","offline"]},
   {n:_('RHJhdyBUaGUgTGluZQ=='),img:_("ZHJhdy10aGUtbGluZQ=="),url:_("L3EvZy9kcmF3LXRoZS1saW5lLw=="),tags:["touch","puzzle","single-player","offline"],wo:true},
@@ -4072,6 +4076,7 @@ var _D1=[
   {n:_('RXNjYXBlIFJvYWQgMg=='),img:_("ZXNjYXBlLXJvYWQtMg=="),url:_("L3EvZy9lc2NhcGUtcm9hZC0yLw=="),tags:["racing","arcade","single-player","offline"]},
   {n:_('RXNjYXBlIFJvYWQgQ2l0eSAy'),img:_("ZXNjYXBlLXJvYWQtY2l0eQ=="),url:_("L3EvZy9lc2NhcGUtcm9hZC1jaXR5Lw=="),tags:["racing","arcade","single-player","offline"]},
   {n:_('RXVnZW5lJ3MgTGlmZQ=='),img:_("ZXVnZW5lcy1saWZl"),url:_("L3EvZy9FdWdlbmVzLWxpZmUv"),tags:[]},
+  {n:_('RXZhdw=='),img:_("ZXZhdw=="),url:_("L3EvZy9ldmF3Lw=="),tags:["featured","arcade","single-player","offline"]},
   {n:_('RmFzaGlvbiBCYXR0bGU='),img:_("ZmFzaGlvbi1iYXR0bGU="),url:_("L3EvZy9mYXNoaW9uLWJhdHRsZS8="),tags:["touch","puzzle","arcade","single-player","offline"],wo:true},
   {n:_('RmluZCBUaGUgQWxpZW4='),img:_("ZmluZC10aGUtYWxpZW4="),url:_("L3EvZy9maW5kLXRoZS1hbGllbi8="),tags:["touch","puzzle","adventure","single-player","offline"],wo:true},
   {n:_('Rm9yayBOIFNhdXNhZ2U='),img:_("Zm9yay1uLXNhdXNhZ2U="),url:_("L3EvZy9mb3JrLW4tc2F1c2FnZS8="),tags:["touch","puzzle","arcade","single-player","offline"],wo:true},
@@ -4080,7 +4085,7 @@ var _D1=[
   {n:_('R2VvbWV0cnkgRGFzaCBMaXRl'),img:_("Z2VvLWRhc2g="),url:_("L3EvZy9nZW8tZGFzaC8="),tags:["touch","rhythm","platformer","single-player","offline"]},
   {n:_('R2V0dGluZyBPdmVyIEl0'),img:_("Z2V0dGluZy1vdmVyLWl0"),url:_("aHR0cHM6Ly9tZWVwbW9vcC5pdGNoLmlvL2dvaS13aXRoLW1lZXAtbW9vcA=="),tags:["platformer","arcade","single-player","offline"],wo:true},
   {n:_('R2xhZGlob3BwZXJz'),img:_("Z2xhZGlob3BwZXJz"),url:_("L3EvZy9nbGFkaWhvcHBlcnMv"),tags:["fighting","sports","single-player","offline"]},
-  {n:_('R3Vlc3MgVGhlaXIgQW5zd2Vy'),img:_("Z3Vlc3MtdGhlaXItYW5zd2Vy"),url:_("L3EvZy9ndWVzcy10aGVpci1hbnN3ZXIv"),tags:["touch","puzzle","multiplayer","online"],wo:true},
+  {n:_('R3Vlc3MgVGhlaXIgQW5zd2Vy'),img:_("Z3Vlc3MtdGhlaXItYW5zd2Vy"),url:_("aHR0cHM6Ly9yYXcuZ2l0aGFjay5jb20vaW5kaWFtb25kYS9wZXJmZWN0bmlwLmdpdGh1Yi5pby9naC1wYWdlcy9xL2cvZ3Vlc3MtdGhlaXItYW5zd2VyL2luZGV4Lmh0bWw="),tags:["touch","puzzle","multiplayer","online"],wo:true},
   {n:_('SGFsZiBMaWZl'),img:_("aGFsZi1saWZl"),url:_("L2pnL2cvaGFsZi1saWZlLw=="),tags:["featured","shooter","single-player","offline"]},
   {n:_('SGFwcHkgU2hlZXBpZXM='),img:_("aGFwcHktc2hlZXBpZXM="),url:_("L3EvZy9oYXBweS1zaGVlcGllcy8="),tags:["simulator","idle","single-player","offline"],wo:true},
   {n:_('SGFydmVzdCAuaW8='),img:_("aGFydmVzdC1pbw=="),url:_("L3EvZy9oYXJ2ZXN0LWlvLw=="),tags:["touch","io","multiplayer","online","arcade"],wo:true},
@@ -4134,7 +4139,7 @@ var _D1=[
   {n:_('U25vdyBSaWRlcg=='),img:_("c25vdy1yaWRlcg=="),url:_("L3EvZy9zbm93LXJpZGVyLw=="),tags:["racing","sports","single-player","offline"]},
   {n:_('U29jY2VyIERhc2g='),img:_("c29jY2VyLWRhc2g="),url:_("aHR0cHM6Ly9hcmRhMjMxLml0Y2guaW8vc3VwZXItZGFzaC1zb2NjZXI="),tags:["touch","sports","runner","single-player","offline"],wo:true},
   {n:_('U29jY2VyIFJhbmRvbQ=='),img:_("c29jY2VyLXJhbmRvbQ=="),url:_("L3EvZy9zb2NjZXItcmFuZG9tLw=="),tags:["sports","multiplayer","single-player","offline"]},
-  {n:_('U29sYXIgU21hc2g='),img:_("c29sYXItc21hc2g="),url:_("L2pnL2cvc29sYXItc21hc2gv"),tags:["featured","touch","sandbox","simulator","single-player","offline"]},
+  {n:_('U29sYXIgU21hc2g='),img:_("c29sYXItc21hc2g="),url:_("L3EvZy9zb2xhci1zbWFzaC8="),tags:["featured","touch","sandbox","simulator","single-player","offline"]},
   {n:_('U29uaWMuZXhl'),img:_("c29uaWMtZXhl"),url:_("L3EvZy9zb25pYy1leGUv"),tags:["horror","platformer","single-player","offline"],wo:true},
   {n:_('U3BlZWQgU3RhcnM='),img:_("c3BlZWQtc3RhcnM="),url:_("L3EvZy9zcGVlZC1zdGFycy8="),tags:["racing","arcade","single-player","offline"],wo:true},
   {n:_('U3RhY2t5IERhc2g='),img:_("c3RhY2t5LWRhc2g="),url:_("L3EvZy9zdGFja3ktZGFzaC8="),tags:["touch","runner","arcade","single-player","offline"],wo:true},
