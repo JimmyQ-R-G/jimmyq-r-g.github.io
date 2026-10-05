@@ -399,7 +399,7 @@
   var topBarBtn = null;
   var modalEl = null;
   var modalRequired = false;
-  var currentTab = 'login';
+  var currentTab = 'signup';
 
   function buildButton() {
     var btn = h('button', {
@@ -1921,8 +1921,8 @@
 
     var body = h('div', { class: 'jqrg-auth-body' });
     var tabs = h('div', { class: 'jqrg-auth-tabs' });
-    tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab active', 'data-tab': 'login', onclick: function () { setTab('login'); } }, 'Sign in'));
-    tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab', 'data-tab': 'signup', onclick: function () { setTab('signup'); } }, 'Sign up'));
+    tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab', 'data-tab': 'login', onclick: function () { setTab('login'); } }, 'Sign in'));
+    tabs.appendChild(h('button', { type: 'button', class: 'jqrg-auth-tab active', 'data-tab': 'signup', onclick: function () { setTab('signup'); } }, 'Sign up'));
     body.appendChild(tabs);
     var content = h('div', { class: 'jqrg-auth-content' });
     body.appendChild(content);

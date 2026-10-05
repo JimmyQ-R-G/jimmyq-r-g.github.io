@@ -1273,6 +1273,11 @@
 
 <!-- JQRG_CLOUD_INJECT_BEGIN --><script src="/js/jqrg-cloud.js" defer></script><script src="/js/jqrg-auth-ui.js" defer></script><!-- JQRG_CLOUD_INJECT_END -->
 <script src="/js/gg-detect.js"></script>
+<!-- JQRG theme (Settings → Theme). The attribute is set before first paint
+     so a Study-theme user never sees a flash of the dark theme. -->
+<script>try{if(localStorage.getItem('jqrgTheme')!=='jimmyqrg')document.documentElement.setAttribute('data-theme','study')}catch(e){}</script>
+<link rel="stylesheet" href="/css/jqrg-theme.css">
+<script src="/js/jqrg-theme.js" defer></script>
 </head>
 <body class="portal-page">
 <!-- Back button -->

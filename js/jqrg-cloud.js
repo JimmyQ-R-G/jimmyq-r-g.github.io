@@ -104,6 +104,9 @@
     'cloakSiteTitle', 'cloakSiteIcon', 'cloakMethod',
     // UI/UX preferences
     'enableCursor', 'gameToolbarPosition',
+    // Theme choice (Settings -> Theme). A per-device display preference:
+    // never synced, never leaves the browser.
+    'jqrgTheme',
     // Background visuals are device preferences; keep them in localStorage
     // so the particle bootstrap can read them synchronously after a reload.
     'bgParticleStyle', 'bgParticleQuality',

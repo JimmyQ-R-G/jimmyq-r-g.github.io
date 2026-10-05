@@ -2988,6 +2988,11 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
 
 </style>
 <script src="/js/gg-detect.js"></script>
+<!-- JQRG theme (Settings → Theme). The attribute is set before first paint
+     so a Study-theme user never sees a flash of the dark theme. -->
+<script>try{if(localStorage.getItem('jqrgTheme')!=='jimmyqrg')document.documentElement.setAttribute('data-theme','study')}catch(e){}</script>
+<link rel="stylesheet" href="/css/jqrg-theme.css">
+<script src="/js/jqrg-theme.js" defer></script>
 </head>
   <body>
 <div id="learn-cover">
@@ -6244,21 +6249,20 @@ document.addEventListener('keydown',function(e){
  *   1. it runs on every navigation (no separate JS file to be cached),
  *   2. `updateViaCache:'none'` forces the browser to always re-fetch sw.js
  *      itself from network (defaults to 24h cache, which was the trap),
- *   3. as soon as a new SW finishes installing we tell it to skipWaiting
- *      and reload the page once so the user lands on the fresh code.
+ *   3. as soon as a new SW finishes installing we tell it to skipWaiting so it
+ *      takes over the following requests.
  *
- * The reload guard (`__jqrgReloaded`) is critical — without it, two tabs
- * racing to update would loop. We also bail entirely if SW is unsupported
- * or if the user disabled it via DevTools. */
+ * We deliberately do NOT reload the page. An earlier revision reloaded on
+ * `controllerchange`, which fires mid-session because the install precache
+ * takes 10-20s on a slow connection: the site would refresh out of nowhere
+ * and destroy whatever the user was doing — a half-filled signup, an
+ * in-flight navigation, in-memory auth state — leaving a blank page until
+ * another manual refresh (reported 2026-10-04). The new worker already
+ * applies to the next navigation/request, so the reload bought nothing.
+ *
+ * We also bail entirely if SW is unsupported or if the user disabled it via DevTools. */
 (function(){
   if (!('serviceWorker' in navigator)) return;
-  var reloaded = false;
-  function reloadOnce(){
-    if (reloaded) return;
-    reloaded = true;
-    try { window.location.reload(); } catch (_) {}
-  }
-  navigator.serviceWorker.addEventListener('controllerchange', reloadOnce);
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
       .then(function(reg){
