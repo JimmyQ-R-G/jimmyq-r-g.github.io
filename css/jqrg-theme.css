@@ -297,6 +297,51 @@ html[data-theme="study"] .jqrg-send-code-btn{
 .jqrg-theme-choose-btn strong{font-size:15px;font-weight:600;color:#111827}
 .jqrg-theme-choose-btn span{font-size:13px;line-height:1.45;color:#4b5563}
 
+/* The settings panel is a SIBLING of #app (index.html: #app closes at 3477,
+ * #settings-modal opens at 3523), so every `#app …` control rule above misses
+ * it entirely. In Study that left the whole panel with the dark-theme chrome:
+ * `.setting-btn` keeps `border:1px solid rgba(255,255,255,.16)`, which is a
+ * white 16% border on a white panel — no visible button at all. The theme row
+ * showed it worst: the UNSELECTED option ("JimmyQrg") was a bare word with an
+ * invisible border, so the option looked like it was missing. Cover the panel
+ * explicitly, and give the theme options real chrome in every theme. */
+html[data-theme="study"] #settings-modal input,
+html[data-theme="study"] #settings-modal select,
+html[data-theme="study"] #settings-modal textarea,
+html[data-theme="study"] #settings-modal .setting-btn,
+html[data-theme="study"] #settings-modal .setting-select{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
+}
+html[data-theme="study"] #settings-modal .setting-btn:hover,
+html[data-theme="study"] #settings-modal .setting-select:hover{background:var(--study-band) !important}
+
+/* Theme options: always a visible control, selected or not. The dark default
+   stays close to the app's own .setting-btn so the row does not look foreign. */
+.jqrg-theme-pick .setting-btn{
+  border:1px solid #6b7280 !important;
+  background:rgba(255,255,255,.08) !important;
+  color:#ffffff !important;
+}
+.jqrg-theme-pick .setting-btn[aria-pressed="true"]{
+  border-color:#1a73e8 !important;
+  background:#e8f0fe !important;
+  color:#1a73e8 !important;
+  font-weight:600 !important;
+}
+html[data-theme="study"] #settings-modal .jqrg-theme-pick .setting-btn{
+  border:1px solid var(--study-line) !important;
+  background:var(--study-surface) !important;
+  color:var(--study-ink) !important;
+}
+html[data-theme="study"] #settings-modal .jqrg-theme-pick .setting-btn[aria-pressed="true"]{
+  border-color:#0b4f9e !important;
+  background:#e8f0fe !important;
+  color:#0b4f9e !important;
+  font-weight:600 !important;
+}
+
 /* --- 11. chrome that lives OUTSIDE #app -----------------------------------
  * The pre-app cover (#learn-cover) is a sibling of #app, so the ink rules above
  * never reached it — that is exactly how "Unlimited Learning" stayed white on
