@@ -452,6 +452,10 @@
       .log-line { white-space: normal; width: auto; animation: fadeIn 0.6s ease forwards; border-right: none; }
     }
   </style>
+<!-- JQRG theme (Settings → Theme). Shell pages opt in with data-jqrg-shell so the Study stylesheet can redesign them end to end; the theme attribute is set before first paint to avoid a flash of the dark theme. -->
+<script>try{document.documentElement.setAttribute('data-jqrg-shell','1');if(localStorage.getItem('jqrgTheme')!=='jimmyqrg')document.documentElement.setAttribute('data-theme','study')}catch(e){}</script>
+<link rel="stylesheet" href="/css/jqrg-theme.css">
+<script src="/js/jqrg-theme.js" defer></script>
 </head>
 <body>
 

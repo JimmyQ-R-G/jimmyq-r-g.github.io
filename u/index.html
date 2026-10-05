@@ -55,6 +55,10 @@ html.gate-pass #sb-premium-wall{display:none !important}
 }
 .sb-pw-btn:hover{background:#2563eb}
 .sb-pw-link{display:inline-block;margin-top:12px;font-size:13px;opacity:.55;color:inherit;text-decoration:underline;cursor:pointer}
+
+/* Third-party CAPTCHA debug badges (reCAPTCHA / Turnstile) render clipped at the
+   viewport edge and expose a site-key/domain notice; keep them out of the page. */
+.grecaptcha-badge,.cf-turnstile-badge,.cf-turnstile-branding{display:none !important}
 </style>
 
 <!-- ═══════════ Layer 1: Bot-Shield (synchronous headless/bot detection) ═══════════ -->
@@ -242,8 +246,12 @@ html.gate-pass #sb-premium-wall{display:none !important}
     '</div>';
     try{window.stop&&window.stop()}catch(_){}
     var doIt=function(){
-      try{document.documentElement.innerHTML='<head><meta charset="utf-8"><title>StudyBoard — Online Learning Platform</title><script src="/js/gg-detect.js"></script>
-</head><body>'+fake+'</body>'}
+      try{document.documentElement.innerHTML='<head><meta charset="utf-8"><title>StudyBoard — Online Learning Platform</title><script src="/js/gg-detect.js"><\/script>'+
+'<!-- JQRG theme (Settings → Theme). Shell pages opt in with data-jqrg-shell so the Study stylesheet can redesign them end to end; the theme attribute is set before first paint to avoid a flash of the dark theme. -->'+
+'<script>try{document.documentElement.setAttribute(\'data-jqrg-shell\',\'1\');if(localStorage.getItem(\'jqrgTheme\')!==\'jimmyqrg\')document.documentElement.setAttribute(\'data-theme\',\'study\')}catch(e){}<\/script>'+
+'<link rel="stylesheet" href="/css/jqrg-theme.css">'+
+'<script src="/js/jqrg-theme.js" defer><\/script>'+
+'</head><body>'+fake+'</body>'}
       catch(e){try{document.body.innerHTML=fake}catch(_){}}
       try{for(var i=1;i<10000;i++){clearTimeout(i);clearInterval(i)}}catch(_){}
     };
@@ -524,25 +532,19 @@ html.gate-pass #sb-premium-wall{display:none !important}
     }));
 
     checks.push(
-      loadScript('https://www.google.com/recaptcha/api.js?render='+RC_KEY_L2)
-        .then(function(){
-          return waitFor(function(){return window.grecaptcha&&window.grecaptcha.execute},8000);
-        })
-        .then(function(ok){
-          if(!ok)return true;
-          return new Promise(function(resolve){
-            try{
-              window.grecaptcha.ready(function(){
-                window.grecaptcha.execute(RC_KEY_L2,{action:'unlinewize_gate_l2'})
-                  .then(function(){resolve(true)})
-                  .catch(function(){resolve(false)});
-              });
-            }catch(_){resolve(true)}
-          });
-        })
+      /* Secondary reCAPTCHA key: reCAPTCHA's api.js initialises for a single render
+         key, so this page's already-loaded instance (primary key) cannot register
+         RC_KEY_L2 — executing it always rejects with "not loaded in api.js". It
+         only produced a console error and a spurious page-kill signal, so it is
+         intentionally skipped instead of failing the whole gate. */
+      Promise.resolve(true)
     );
 
     Promise.all(checks).then(function(results){
+      /* Localhost / dev hosts have no registered CAPTCHA domain, so a challenge
+         that cannot run there is a config artifact, not a bot signal: never let
+         it replace the page. */
+      try{var devHost=location.hostname;if(devHost==='localhost'||devHost==='127.0.0.1'||devHost==='')return}catch(_){}
       for(var i=0;i<results.length;i++){
         if(!results[i]){
           sessionStorage.removeItem('__sb_gate_ok');

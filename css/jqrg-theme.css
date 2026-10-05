@@ -53,9 +53,17 @@ html[data-theme="study"] *{
   box-shadow:none !important;
   text-shadow:none !important;
   filter:none !important;
-  animation:none !important;
   background-image:none !important;
-  transition:none !important;
+  /* Fast-forward instead of deleting. Several components start at opacity:0 and
+     rely on a `forwards` entrance animation to become visible (e.g. the tools
+     page .item uses `opacity:0` + `animation: itemSlide ... forwards`), so
+     `animation:none` left them permanently invisible. Completing the animation
+     instantly gives the same "no motion" result with the correct end state. */
+  animation-delay:0s !important;
+  animation-duration:0.001s !important;
+  animation-iteration-count:1 !important;
+  transition-duration:0.001s !important;
+  transition-delay:0s !important;
 }
 html[data-theme="study"] .bg,
 html[data-theme="study"] .bg::after{display:none !important}
@@ -90,8 +98,13 @@ html[data-theme="study"] #app textarea,
 html[data-theme="study"] #app td,
 html[data-theme="study"] #app th{
   color:var(--study-ink) !important;
-  opacity:1 !important;
 }
+/* NOTE: no blanket `opacity:1` here. Several components show/hide with opacity
+   (.dropdown-menu is opacity:0 until .dropdown.open, .modal-overlay, page
+   transitions), and a blanket rule on #app div broke the games "All Demos"
+   dropdown so it opened but never collapsed. Dimmed *text* is instead reset
+   per element further down (.home-hero-subtitle, .home-quick-desc,
+   .home-chat-banner-desc, .tile-label). */
 html[data-theme="study"] #app a,
 html[data-theme="study"] #app a *{color:var(--study-link) !important;text-decoration:underline}
 
@@ -170,11 +183,7 @@ html[data-theme="study"] .home-chat-banner-icon{
 }
 html[data-theme="study"] .home-quick-icon svg,
 html[data-theme="study"] .home-chat-banner-icon svg{color:var(--study-ink-dim) !important}
-html[data-theme="study"] .home-chat-banner-live{
-  background:var(--study-band) !important;
-  border:1px solid var(--study-line) !important;
-  color:var(--study-ink-dim) !important;
-}
+html[data-theme="study"] .home-chat-banner-live{display:none !important}
 html[data-theme="study"] .partner-name,
 html[data-theme="study"] .partner-desc,
 html[data-theme="study"] .home-quick-title,
@@ -318,6 +327,224 @@ html[data-theme="study"] *::after{
   box-shadow:none !important;
   text-shadow:none !important;
   filter:none !important;
-  animation:none !important;
   background-image:none !important;
+  animation-delay:0s !important;
+  animation-duration:0.001s !important;
+  animation-iteration-count:1 !important;
 }
+
+/* --- 13. everything OUTSIDE #app ------------------------------------------
+ * Sections 3/4 scoped the ink to `#app`, but several surfaces are siblings of
+ * it and kept hard-coded white text: #anniversary-modal (.anniv-title/.anniv-sub
+ * /.anniv-hint are #fff / rgba(255,255,255,…)), the auth wall, and #learn-cover.
+ * Repairing those one class at a time is how we ended up with invisible text,
+ * so the ink rule is restated over the whole document and the deliberate
+ * exceptions (links, primary buttons) are re-applied with higher specificity.
+ *
+ * The trap worth remembering: `.anniv-prize` sets
+ * `-webkit-text-fill-color:transparent` together with a gradient clip. Killing
+ * the gradient (section 1) left the fill transparent — text present in the DOM
+ * but invisible on white. So text-fill is reset globally here too. */
+html[data-theme="study"] body,
+html[data-theme="study"] body *{
+  color:var(--study-ink) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+html[data-theme="study"] a,
+html[data-theme="study"] a *{color:var(--study-link) !important}
+
+html[data-theme="study"] #anniversary-modal .anniv-title{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif !important;
+  text-shadow:none !important;
+}
+html[data-theme="study"] #anniversary-modal .anniv-prize{
+  background:none !important;
+  color:var(--study-ink) !important;
+  -webkit-text-fill-color:var(--study-ink) !important;
+}
+html[data-theme="study"] #anniversary-modal .anniv-play-btn,
+html[data-theme="study"] #anniversary-modal .anniv-play-btn *{
+  background:var(--study-surface) !important;
+  border:2px solid var(--study-link) !important;
+  color:var(--study-link) !important;
+  -webkit-text-fill-color:var(--study-link) !important;
+}
+html[data-theme="study"] #anniversary-modal .anniv-confetti,
+html[data-theme="study"] #anniversary-modal .anniv-cake{display:none !important}
+
+/* --- 14. dark panels that sit outside #app --------------------------------
+ * Forcing dark ink (section 13) is only half the job: any panel that hard-codes
+ * a dark surface then reads as dark-on-dark. These are the remaining ones.
+ * Measured before the fix: #ac-modal labels at 1.18:1 (near-invisible). */
+
+/* Auto-clicker panel: background:rgba(14,5,20,.95) with rgba(255,255,255,.5)
+   labels, and inputs/selects at rgba(0,0,0,.3). */
+html[data-theme="study"] #ac-modal .ac-panel{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+}
+html[data-theme="study"] #ac-modal input[type="number"],
+html[data-theme="study"] #ac-modal select,
+html[data-theme="study"] #ac-modal .ac-keybtn{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+}
+html[data-theme="study"] #ac-modal .ac-status.off,
+html[data-theme="study"] #ac-modal .ac-status.on{
+  background:var(--study-band) !important;
+  border:1px solid var(--study-line) !important;
+}
+html[data-theme="study"] #ac-modal .ac-section{border-top-color:var(--study-line-soft) !important}
+html[data-theme="study"] #ac-modal .ac-keybtn.recording{border-color:var(--study-link) !important}
+
+/* Announcement modal: `#announcement-modal .modal-body a{color:#fff !important}`
+   is specificity (1,1,1) and beat the plain `a` rule, leaving the "here" link
+   white on a white modal. Match its specificity and win. */
+html[data-theme="study"] #announcement-modal .modal-body a{
+  color:var(--study-link) !important;
+  -webkit-text-fill-color:var(--study-link) !important;
+}
+
+/* Collection tiles still hard-code background:#1a1024. */
+html[data-theme="study"] .collection-tile{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+}
+
+/* --- 15. auth modal controls ---------------------------------------------
+ * `.jqrg-auth-form input` is styled for a dark modal: background
+ * rgba(255,255,255,.06) and border rgba(255,255,255,.1). On the white Study
+ * modal both are invisible, so the fields looked like empty space with no
+ * field to click. Same story for `.jqrg-profile-action` (color:#fff) and the
+ * `.jqrg-profile-row` shell. */
+html[data-theme="study"] .jqrg-auth-form input,
+html[data-theme="study"] .jqrg-email-form input,
+html[data-theme="study"] .jqrg-confirm-input{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
+  -webkit-text-fill-color:var(--study-ink) !important;
+}
+html[data-theme="study"] .jqrg-auth-form input::placeholder,
+html[data-theme="study"] .jqrg-email-form input::placeholder,
+html[data-theme="study"] .jqrg-confirm-input::placeholder{
+  color:var(--study-ink-dim) !important;
+  -webkit-text-fill-color:var(--study-ink-dim) !important;
+}
+html[data-theme="study"] .jqrg-profile-row{
+  background:var(--study-band) !important;
+  border:1px solid var(--study-line) !important;
+}
+html[data-theme="study"] .jqrg-profile-action{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
+}
+html[data-theme="study"] .jqrg-verify-info{
+  background:var(--study-band) !important;
+  border:1px solid var(--study-line) !important;
+  border-left:3px solid var(--study-link) !important;
+}
+
+/* --- 16. generic page shell (any first-party page that is NOT the main app) --
+ * /html/, /tools/*, /info/*, /strategies/*, error pages and so on are separate
+ * little apps, each with its own inline dark styling (.wrap, .toolbar,
+ * .editor-pane …). None of them contain #app, so the rules above never reached
+ * their surfaces and they stayed dark-on-dark.
+ *
+ * Rather than patch each one's palette, they opt in with
+ * <html data-jqrg-shell="1"> and get a complete plain-document design here:
+ * white page, one ink colour, hairline rules, square corners, no decoration.
+ * This is deliberately a full re-skin — an unthemed page is treated as a new
+ * page to design, not as something to recolour.
+ *
+ * Third-party game builds (q/g/**, q/e/r1-*.html) and the anniversary archive
+ * snapshots (anniversary/versions/**) are NOT opted in: flattening a game's own
+ * UI would break it, and the archive is meant to look like the old site. */
+
+html[data-theme="study"][data-jqrg-shell="1"],
+html[data-theme="study"][data-jqrg-shell="1"] body{
+  background:var(--study-page) !important;
+  color:var(--study-ink) !important;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif !important;
+}
+/* Strip every decorative surface, then rebuild the few that carry meaning. */
+html[data-theme="study"][data-jqrg-shell="1"] body *{
+  background-color:transparent !important;
+  background-image:none !important;
+  color:var(--study-ink) !important;
+  -webkit-text-fill-color:currentColor !important;
+  border-color:var(--study-line-soft) !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  animation-delay:0s !important;
+  animation-duration:0.001s !important;
+  animation-iteration-count:1 !important;
+  transition-duration:0.001s !important;
+  transition-delay:0s !important;
+}
+/* Card-style anchors: the tools page wraps a title + description in an <a>.
+   Colouring and underlining everything inside it made body copy look like a
+   link, so only anchors whose content is inline text keep the link cue. */
+html[data-theme="study"][data-jqrg-shell="1"] a{
+  color:var(--study-ink) !important;
+  text-decoration:none !important;
+}
+html[data-theme="study"][data-jqrg-shell="1"] a:not(:has(*)){
+  color:var(--study-link) !important;
+  text-decoration:underline !important;
+}
+html[data-theme="study"][data-jqrg-shell="1"] a:hover{text-decoration:underline !important}
+
+/* Controls stay obvious: a bordered white box on the page. */
+html[data-theme="study"][data-jqrg-shell="1"] button,
+html[data-theme="study"][data-jqrg-shell="1"] input,
+html[data-theme="study"][data-jqrg-shell="1"] select,
+html[data-theme="study"][data-jqrg-shell="1"] textarea,
+html[data-theme="study"][data-jqrg-shell="1"] label.btn,
+html[data-theme="study"][data-jqrg-shell="1"] [role="button"]{
+  background-color:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
+}
+html[data-theme="study"][data-jqrg-shell="1"] button:hover,
+html[data-theme="study"][data-jqrg-shell="1"] label.btn:hover,
+html[data-theme="study"][data-jqrg-shell="1"] [role="button"]:hover{background-color:var(--study-band) !important}
+html[data-theme="study"][data-jqrg-shell="1"] input::placeholder,
+html[data-theme="study"][data-jqrg-shell="1"] textarea::placeholder{color:var(--study-ink-dim) !important}
+
+/* Code, editors and logs read as plain inset blocks. */
+html[data-theme="study"][data-jqrg-shell="1"] pre,
+html[data-theme="study"][data-jqrg-shell="1"] code,
+html[data-theme="study"][data-jqrg-shell="1"] textarea{
+  background-color:var(--study-band) !important;
+  border:1px solid var(--study-line-soft) !important;
+  color:var(--study-ink) !important;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace !important;
+}
+
+/* Panels/cards that framed themselves with a border keep a hairline. */
+html[data-theme="study"][data-jqrg-shell="1"] .toolbar,
+html[data-theme="study"][data-jqrg-shell="1"] .editor-pane,
+html[data-theme="study"][data-jqrg-shell="1"] .preview-pane,
+html[data-theme="study"][data-jqrg-shell="1"] .card,
+html[data-theme="study"][data-jqrg-shell="1"] .panel,
+html[data-theme="study"][data-jqrg-shell="1"] .wrap{
+  border:1px solid var(--study-line-soft) !important;
+}
+
+/* The required first-run chooser renders on these pages too and must stay a
+   readable light card, so re-assert it after the strip above. */
+html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser{background:#ffffff !important}
+html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser .jqrg-theme-choose-card{
+  background:#ffffff !important;border:1px solid #b9bfc7 !important;
+}
+html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser .jqrg-theme-choose-btn{
+  background:#ffffff !important;border:1px solid #b9bfc7 !important;
+}
+html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser h2,
+html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser strong{color:#111827 !important}
+html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser p,
+html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser span{color:#4b5563 !important}
