@@ -91,11 +91,15 @@ Game files are split across the site repository and GitHub Pages asset repositor
 | [`jg2`](https://github.com/perfectnip/jg2) | Game files; includes the working Hollow Knight page at `g/hollow-knight/` | `https://perfectnip.github.io/jg2/` |
 | [`jg3`](https://github.com/perfectnip/jg3) | Game files, including `g/amenda/` and `g/brotato/` | `https://perfectnip.github.io/jg3/` |
 | [`jg4`](https://github.com/perfectnip/jg4), [`jg5`](https://github.com/perfectnip/jg5), [`jg6`](https://github.com/perfectnip/jg6) | Additional split game files | `https://perfectnip.github.io/jg4/`, `/jg5/`, `/jg6/` |
-| [`games-cdn`](https://github.com/perfectnip/games-cdn), [`games-cdn2`](https://github.com/perfectnip/games-cdn2), [`games-cdn3`](https://github.com/perfectnip/games-cdn3) | Migrated game/CDN payloads; verify the owning repo before routing | Repo-specific Pages or CDN URL |
+| [`games-cdn`](https://github.com/perfectnip/games-cdn) | Self-hosted web-port game payloads under `q/g/`: `dead-plate`, `deadseat`, `andys-apple-farm`, `yume-nikki`, `raft`, `tattletail`, `sonic.exe`, and `happy-sheepies` | `https://perfectnip.github.io/games-cdn/q/g/` |
+| [`games-cdn2`](https://github.com/perfectnip/games-cdn2) | Self-hosted web-port game payloads under `q/g/`: `deltatraveler`, `getting-over-it`, `lacysflashgames`, `pizza-tower`, `repo`, `schoolboy-runaway`, `the-man-in-the-window`, and `web-fishing` | `https://perfectnip.github.io/games-cdn2/q/g/` |
+| [`games-cdn3`](https://github.com/perfectnip/games-cdn3) | Self-hosted payloads for 59 YouTube Playables under `q/g/`, plus shared `ytgame.js` / `gamesnacks.js` shims | `https://perfectnip.github.io/games-cdn3/q/g/` |
 | [`hollow-knight`](https://github.com/perfectnip/hollow-knight) | Standalone Hollow Knight WebGL source and assets | `https://perfectnip.github.io/hollow-knight/` |
 | [`silksong-data`](https://github.com/perfectnip/silksong-data) | Silksong Unity WebGL payload: build, 100-part WebGL archive, Addressables catalog, and videos. The launch page lives in this repo at `q/g/silksong/` and loads payloads from the raw repo URL. | `https://perfectnip.github.io/q/g/silksong/` |
 | [`bend-io`](https://github.com/perfectnip/bend-io) | Partial Bend Jo Unity WebGL build imported into this repository at `q/g/bend-jo/` (launcher, loader, data, and WASM files). The repo's original page title was stale; use the product metadata (`Bendjo`) to identify the build. | `https://perfectnip.github.io/q/g/bend-jo/` |
 | [`gx-launcher`](https://github.com/perfectnip/gx-launcher) | GX Eaglercraft client builds | Use `https://raw.githack.com/perfectnip/gx-launcher/main/...` to render HTML; `raw.githubusercontent.com` displays source text. |
+
+The 75 game launch pages for these imports remain in this repository under `q/g/<game>/`; their runtime assets are hosted by the asset repository listed above. The upstream `youtube-playables` and `web-port` repositories are source archives, not runtime dependencies for these pages. Keep each asset bundle in its assigned repository so the main Pages deployment stays under the 10 GB limit.
 
 **Known routes:** Hollow Knight is served from `https://perfectnip.github.io/jg2/g/hollow-knight/`; Silksong uses the local Unity launch page at `q/g/silksong/` and fetches the large payload from `silksong-data`.
 
