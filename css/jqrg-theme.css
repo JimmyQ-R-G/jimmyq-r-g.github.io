@@ -31,6 +31,7 @@ html[data-theme="study"]{
   --study-page:#ffffff;
   --study-band:#f4f5f6;
   --study-link:#0b4f9e;
+  --study-ok:#15803d;
 
   /* the site's own tokens, so anything driven by them follows along */
   --bg-deep:#ffffff;
@@ -353,21 +354,48 @@ html[data-theme="study"] body *{
 html[data-theme="study"] a,
 html[data-theme="study"] a *{color:var(--study-link) !important}
 
+/* The anniversary experience is not part of Study. Hiding the modal here is the
+   reliable half (it cannot be defeated by a stray .open class);
+   js/jqrg-theme.js disables the entry points as well. Every part is styled
+   explicitly rather than leaning on the generic document pass, so nothing here
+   depends on a fallback. */
+html[data-theme="study"] #anniversary-modal{display:none !important}
+
+/* The announcement list links straight into the anniversary; drop that line
+   rather than leave a dead button behind. */
+html[data-theme="study"] #announcement-body li:has(button[onclick*="openAnniversary"]){display:none !important}
+
+html[data-theme="study"] #anniversary-modal .modal{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+}
+html[data-theme="study"] #anniversary-modal .modal-close{color:var(--study-ink-dim) !important}
 html[data-theme="study"] #anniversary-modal .anniv-title{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif !important;
+  font-size:17px !important;
+  font-weight:700 !important;
+  color:var(--study-ink) !important;
   text-shadow:none !important;
 }
+html[data-theme="study"] #anniversary-modal .anniv-sub,
+html[data-theme="study"] #anniversary-modal .anniv-hint{
+  color:var(--study-ink-dim) !important;
+  -webkit-text-fill-color:var(--study-ink-dim) !important;
+}
+/* .anniv-prize paints its text with a gradient clip and a transparent fill, so
+   killing the gradient (section 1) left it invisible until the fill was reset. */
 html[data-theme="study"] #anniversary-modal .anniv-prize{
   background:none !important;
   color:var(--study-ink) !important;
   -webkit-text-fill-color:var(--study-ink) !important;
+  font-weight:700 !important;
 }
 html[data-theme="study"] #anniversary-modal .anniv-play-btn,
 html[data-theme="study"] #anniversary-modal .anniv-play-btn *{
-  background:var(--study-surface) !important;
-  border:2px solid var(--study-link) !important;
-  color:var(--study-link) !important;
-  -webkit-text-fill-color:var(--study-link) !important;
+  background:var(--study-link) !important;
+  border:1px solid var(--study-link) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
 }
 html[data-theme="study"] #anniversary-modal .anniv-confetti,
 html[data-theme="study"] #anniversary-modal .anniv-cake{display:none !important}
@@ -548,3 +576,75 @@ html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser h2,
 html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser strong{color:#111827 !important}
 html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser p,
 html[data-theme="study"][data-jqrg-shell="1"] #jqrg-theme-chooser span{color:#4b5563 !important}
+
+/* --- 17. email verification step (light) ---------------------------------
+ * The auth UI styles the verification step for the dark modal: a translucent
+ * purple status box, a dark tracked code field, a ghosty resend link. On the
+ * white Study modal those become unreadable, so restate each piece as a plain
+ * light control while keeping the OTP treatment (monospace, tracked, centred). */
+html[data-theme="study"] .jqrg-verify-info{
+  background:var(--study-band) !important;
+  border:1px solid var(--study-line) !important;
+  border-left:3px solid var(--study-link) !important;
+  color:var(--study-ink) !important;
+}
+html[data-theme="study"] .jqrg-verify-info strong{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
+}
+html[data-theme="study"] .jqrg-verify-info.ok{
+  background:var(--study-band) !important;
+  border-color:var(--study-line) !important;
+  border-left-color:var(--study-ok) !important;
+  color:var(--study-ink) !important;
+}
+html[data-theme="study"] .jqrg-verify-info.ok strong{color:var(--study-ink) !important}
+html[data-theme="study"] .jqrg-verify-row label{
+  color:var(--study-ink-dim) !important;
+  letter-spacing:.06em !important;
+  text-transform:uppercase !important;
+}
+html[data-theme="study"] input.jqrg-code-input{
+  background:var(--study-surface) !important;
+  border:1.5px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
+  -webkit-text-fill-color:var(--study-ink) !important;
+  caret-color:var(--study-ink) !important;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace !important;
+  font-size:24px !important;
+  font-weight:700 !important;
+  letter-spacing:.42em !important;
+  text-indent:.42em !important;
+  text-align:center !important;
+}
+html[data-theme="study"] input.jqrg-code-input::placeholder{
+  color:var(--study-line) !important;
+  -webkit-text-fill-color:var(--study-line) !important;
+  letter-spacing:.42em !important;
+}
+html[data-theme="study"] input.jqrg-code-input:focus{
+  outline:none !important;
+  border-color:var(--study-link) !important;
+  box-shadow:0 0 0 3px rgba(11,79,158,.15) !important;
+}
+html[data-theme="study"] .jqrg-verify-hint{color:var(--study-ink-dim) !important}
+html[data-theme="study"] .jqrg-verify-resend{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-link) !important;
+}
+/* "Send verification code" is the primary action of this step. Leaving it as an
+   outline button next to the outlined resend pill removed the hierarchy, so in
+   Study it stays filled like the other primary buttons. */
+html[data-theme="study"] .jqrg-send-code-btn{
+  background:var(--study-link) !important;
+  border:1px solid var(--study-link) !important;
+  color:#ffffff !important;
+}
+html[data-theme="study"] .jqrg-verify-resend:disabled,
+html[data-theme="study"] .jqrg-send-code-btn:disabled{
+  color:var(--study-ink-dim) !important;
+  background:var(--study-band) !important;
+  border-color:var(--study-line-soft) !important;
+}

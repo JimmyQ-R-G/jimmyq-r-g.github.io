@@ -379,6 +379,36 @@
     savedAttrNodes = [];
   }
 
+  /* ---------------------------------------------------- anniversary (Study)
+   * The anniversary experience is not part of Study. The stylesheet hides the
+   * modal unconditionally; this disables the entry points too, so the
+   * announcement list link, the auto-open on sign-in, or any other caller
+   * cannot bring up the modal or the full-screen experience. */
+  function blockAnniversary() {
+    if (read() !== 'study') return;
+    try {
+      var modal = document.getElementById('anniversary-modal');
+      if (modal) modal.classList.remove('open');
+      if (typeof window.openAnniversary === 'function' && !window.openAnniversary.__jqrgStudyBlocked) {
+        var origOpen = window.openAnniversary;
+        window.openAnniversary = function () {
+          if (read() === 'study') return;
+          return origOpen.apply(this, arguments);
+        };
+        window.openAnniversary.__jqrgStudyBlocked = true;
+      }
+      var ann = window.JqrgAnniversary;
+      if (ann && typeof ann.launch === 'function' && !ann.launch.__jqrgStudyBlocked) {
+        var origLaunch = ann.launch;
+        ann.launch = function () {
+          if (read() === 'study') return;
+          return origLaunch.apply(this, arguments);
+        };
+        ann.launch.__jqrgStudyBlocked = true;
+      }
+    } catch (_) {}
+  }
+
   function applyCopy() {
     var study = read() === 'study';
     for (var i = 0; i < STUDY_COPY.length; i++) {
@@ -392,7 +422,7 @@
     // re-randomise the subtitle and make it flicker.
     if (study) { if (!subtitleIsStudy()) applyStudyGreeting(); }
     else if (origGreeting) origGreeting();
-    if (study) applyWording(); else restoreWording();
+    if (study) { applyWording(); blockAnniversary(); } else restoreWording();
   }
 
   /* renderHomeGreeting() rewrites the hero on every home render, so wrap it
@@ -456,7 +486,7 @@
       new MutationObserver(function () {
         if (read() !== 'study') return;
         if (pending) clearTimeout(pending);
-        pending = setTimeout(function () { applyWording(); }, 300);
+        pending = setTimeout(function () { applyWording(); blockAnniversary(); }, 300);
       }).observe(document.body, { childList: true, subtree: true, characterData: true });
     } catch (_) {}
     if (!isChosen()) showChooser();

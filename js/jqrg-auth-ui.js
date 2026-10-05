@@ -178,20 +178,64 @@
       '  background:rgba(136,65,214,.15);border:1px solid rgba(136,65,214,.35);border-radius:12px;',
       '  padding:12px 14px;margin-bottom:6px;color:rgba(255,255,255,.85);font-size:13px;line-height:1.45;',
       '}',
-      '.jqrg-verify-info{font-size:12px;color:rgba(255,255,255,.7);line-height:1.4;padding:8px 10px;background:rgba(136,65,214,.12);border-radius:8px;border-left:3px solid #8841d6;margin-bottom:8px}',
-      '.jqrg-verify-info strong{color:rgba(255,255,255,.9)}',
-      '.jqrg-verify-info.ok{color:#7affa0;background:rgba(122,255,160,.08);border-left-color:#34d399}',
-      '.jqrg-verify-info.ok strong{color:#b8ffd0}',
-      '.jqrg-verify-row{display:flex;flex-direction:column;gap:6px}',
-      '.jqrg-verify-row label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(255,255,255,.75)}',
-      '.jqrg-verify-resend{background:none;border:0;color:#a78bfa;font-size:12px;cursor:pointer;padding:2px 0;text-decoration:underline;text-align:left}',
-      '.jqrg-verify-resend:disabled{color:rgba(255,255,255,.4);cursor:default;text-decoration:none}',
-      '.jqrg-send-code-btn{',
-      '  padding:8px 0;border-radius:10px;border:1px solid rgba(136,65,214,.5);',
-      '  background:rgba(136,65,214,.1);color:#a78bfa;font-weight:600;font-size:13px;',
-      '  cursor:pointer;transition:background .15s;font-family:inherit;width:100%;',
+      /* ---- email verification step -----------------------------------------
+         The code field is the centre of attention here, so it gets a real
+         OTP treatment: monospace, large, tracked, with a focus ring. The
+         sender address is a monospace chip so it can be checked at a glance,
+         and resend is a proper button rather than a bare link. */
+      '.jqrg-verify-info{',
+      '  position:relative;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.8);',
+      '  padding:12px 14px;border-radius:12px;margin-bottom:10px;',
+      '  background:rgba(136,65,214,.12);border:1px solid rgba(136,65,214,.3);',
+      '  border-left:3px solid #8841d6;',
       '}',
-      '.jqrg-send-code-btn:hover{background:rgba(136,65,214,.2)}',
+      '.jqrg-verify-info strong{',
+      '  display:inline-block;font-weight:600;color:#fff;font-size:12px;',
+      '  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;',
+      '  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);',
+      '  border-radius:6px;padding:1px 6px;line-height:1.4;word-break:break-all;vertical-align:middle;',
+      '}',
+      '.jqrg-verify-info.ok{color:#b9ffd4;background:rgba(122,255,160,.09);border-color:rgba(122,255,160,.28);border-left-color:#34d399}',
+      '.jqrg-verify-info.ok strong{color:#eafff2;background:rgba(122,255,160,.14);border-color:rgba(122,255,160,.3)}',
+      '.jqrg-verify-row{display:flex;flex-direction:column;gap:10px}',
+      '.jqrg-verify-row label{',
+      '  display:flex;flex-direction:column;gap:7px;font-size:11px;font-weight:700;',
+      '  letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.62);',
+      '}',
+      /* `.jqrg-auth-form input` is (0,1,1) and would otherwise win the
+         conflicting properties here (background, border, size, family), so this
+         is scoped to match and outrank it. */
+      '.jqrg-verify-row input.jqrg-code-input{',
+      '  width:100%;padding:13px 10px;text-align:center;',
+      '  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;',
+      '  font-size:24px;font-weight:700;letter-spacing:.42em;text-indent:.42em;',
+      '  color:#fff;caret-color:#b84dff;background:rgba(8,3,18,.66);',
+      '  border:1.5px solid rgba(184,77,255,.46);border-radius:12px;',
+      '  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;',
+      '}',
+      '.jqrg-verify-row input.jqrg-code-input::placeholder{color:rgba(255,255,255,.26);letter-spacing:.42em}',
+      '.jqrg-verify-row input.jqrg-code-input:focus{',
+      '  outline:none;border-color:#b84dff;background:rgba(10,4,22,.72);',
+      '  box-shadow:0 0 0 3px rgba(184,77,255,.18);',
+      '}',
+      '.jqrg-verify-resend{',
+      '  align-self:flex-start;font-family:inherit;font-size:12px;font-weight:600;',
+      '  padding:7px 13px;border-radius:9px;cursor:pointer;text-decoration:none;',
+      '  color:#cbb4ff;background:rgba(255,255,255,.05);',
+      '  border:1px solid rgba(255,255,255,.14);',
+      '  transition:background .15s ease,border-color .15s ease,color .15s ease;',
+      '}',
+      '.jqrg-verify-resend:hover:not(:disabled){background:rgba(136,65,214,.24);border-color:rgba(184,77,255,.5);color:#fff}',
+      '.jqrg-verify-resend:disabled{color:rgba(255,255,255,.58);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14);cursor:default}',
+      '.jqrg-verify-hint{font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.5)}',
+      '.jqrg-send-code-btn{',
+      '  width:100%;padding:11px 0;border-radius:11px;font-family:inherit;',
+      '  font-size:13.5px;font-weight:600;cursor:pointer;color:#e9dcff;',
+      '  background:rgba(136,65,214,.14);border:1px solid rgba(184,77,255,.45);',
+      '  transition:background .15s ease,border-color .15s ease,color .15s ease,transform .12s ease;',
+      '}',
+      '.jqrg-send-code-btn:hover:not(:disabled){background:rgba(136,65,214,.28);border-color:rgba(184,77,255,.7);color:#fff}',
+      '.jqrg-send-code-btn:active:not(:disabled){transform:translateY(1px)}',
       '.jqrg-send-code-btn:disabled{opacity:.6;cursor:wait}',
       '.jqrg-profile-row{',
       '  display:flex;align-items:center;gap:12px;padding:12px;border:1px solid rgba(255,255,255,.1);',
@@ -1115,10 +1159,10 @@
       'Your organization blocks external emails, so we\u2019ve skipped email verification for you.');
     var serverSkipInfo = h('div', { class: 'jqrg-verify-info ok', style: 'display:none' },
       'Email verification was skipped for your email address \u2014 just finish the form below and your account will be created right away.');
-    var codeInput = h('input', { type: 'text', name: 'email_code', inputmode: 'numeric', pattern: '[0-9]{6}', maxlength: '6', autocomplete: 'one-time-code', placeholder: '000000', style: 'font-size:1.2rem;letter-spacing:.35em;text-align:center;font-weight:700' });
+    var codeInput = h('input', { type: 'text', name: 'email_code', inputmode: 'numeric', pattern: '[0-9]{6}', maxlength: '6', autocomplete: 'one-time-code', placeholder: '000000', class: 'jqrg-code-input' });
     var resendTimer = h('span', null, '60');
     var resendBtn = h('button', { type: 'button', class: 'jqrg-verify-resend', disabled: 'disabled' }, ['Resend code (', resendTimer, 's)']);
-    var emailHint = h('div', { style: 'display:none;font-size:12px;color:rgba(255,255,255,.5);line-height:1.45;margin-top:2px;margin-bottom:8px' }, 'Didn\u2019t receive it? Check your spam folder, or make sure you entered the correct email address.');
+    var emailHint = h('div', { class: 'jqrg-verify-hint', style: 'display:none' }, 'Didn\u2019t receive it? Check your spam folder, or make sure you entered the correct email address.');
     var verifyRow = h('div', { class: 'jqrg-verify-row', style: 'display:none' }, [
       verifyInfo,
       h('label', null, ['Verification code', codeInput]),
