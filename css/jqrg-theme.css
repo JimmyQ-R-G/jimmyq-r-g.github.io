@@ -1,113 +1,117 @@
 /* ============================================================================
- * JQRG theme layer
+ * JQRG theme layer — "study"
  * ----------------------------------------------------------------------------
- * Two themes, switched from Settings → Theme and stored in
- * localStorage["jqrgTheme"]:
+ * Themes are switched from Settings → Theme and stored in
+ * localStorage["jqrgTheme"]; the active one is <html data-theme="study">.
  *
- *   jimmyqrg  (default) — the site exactly as shipped: dark, neon, artwork.
- *   study               — a plain, light, text-first look for school: no
- *                         artwork, no glow, no gradients, name buttons instead
- *                         of game thumbnails, grey logo.
+ * The Study theme is NOT a recolour of the game UI. Feedback (2026-10-04):
+ *   "the texts are still white, causing the texts to become invisible, the home
+ *    page is flooding with purple glow, rolling game images, games icon for some
+ *    reason white… you also want to change the overall UI layout completely.
+ *    Currently this is still a game website UI layout and no matter how hard you
+ *    try to change the coloring, it is not going to work. Also, I have noticed
+ *    study websites don't use too modern designs and rarely uses corner radius."
  *
- * The active theme is the `data-theme` attribute on <html>. A tiny inline
- * snippet in each page's <head> sets it before first paint so there is no
- * flash of the wrong theme; js/jqrg-theme.js owns switching it at runtime.
- *
- * Most of the UI is driven by the :root custom properties below, so overriding
- * those re-themes the top bar, sidebar, cards, dropdowns and pills in one go.
- * Everything after that is the stuff the site paints with hard-coded colours
- * or decorative layers.
+ * So this stylesheet deliberately changes the *shape* of the site, not just its
+ * colours:
+ *   1. no corner radius anywhere (study sites are boxy),
+ *   2. no gradients, glows, shadows or motion,
+ *   3. one ink colour for all text, so nothing can land white-on-white,
+ *   4. monochrome UI icons instead of white ones,
+ *   5. the auto-scrolling game-art strips and artwork are removed,
+ *   6. the hero/cards become plain framed blocks.
  * ==========================================================================*/
 
 html[data-theme="study"]{
-  --bg-deep:#f5f6f8;
+  --study-ink:#111827;
+  --study-ink-dim:#4b5563;
+  --study-line:#b9bfc7;
+  --study-line-soft:#d8dce1;
+  --study-surface:#ffffff;
+  --study-page:#ffffff;
+  --study-band:#f4f5f6;
+  --study-link:#0b4f9e;
+
+  /* the site's own tokens, so anything driven by them follows along */
+  --bg-deep:#ffffff;
   --bg-card:#ffffff;
-  --border:#dadce0;
-  --border-light:#e8eaed;
-  --text:#202124;
-  --text-dim:#5f6368;
-  --pill-bg:#f1f3f4;
+  --border:#b9bfc7;
+  --border-light:#d8dce1;
+  --text:#111827;
+  --text-dim:#4b5563;
+  --pill-bg:#f4f5f6;
   --dropdown-bg:#ffffff;
   --search-pill-bg:#ffffff;
-  --accent-purple:#1a73e8;      /* the site's single accent → classroom blue */
+  --accent-purple:#0b4f9e;
 }
+
+/* --- 1/2. shape + motion: square, flat, still ----------------------------
+ * One rule each, applied to everything, so no component can smuggle a rounded
+ * corner, a neon glow, a gradient or a rolling animation back in. */
+html[data-theme="study"] *{
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  animation:none !important;
+  background-image:none !important;
+  transition:none !important;
+}
+html[data-theme="study"] .bg,
+html[data-theme="study"] .bg::after{display:none !important}
+html[data-theme="study"] #bg-scrim,
+html[data-theme="study"] #particle-canvas,
+html[data-theme="study"] .particles{display:none !important}
 
 html[data-theme="study"],
 html[data-theme="study"] body{
-  background:#f5f6f8 !important;
-  color:var(--text);
+  background:var(--study-page) !important;
+  color:var(--study-ink) !important;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif !important;
 }
 
-/* --- decorative layers: flatten the neon backdrop, drop the particles ----- */
-html[data-theme="study"] .bg{
-  background:#f5f6f8 !important;
-  filter:none !important;
+/* --- 3. one ink colour for all text -------------------------------------- */
+html[data-theme="study"] #app,
+html[data-theme="study"] #app div,
+html[data-theme="study"] #app span,
+html[data-theme="study"] #app p,
+html[data-theme="study"] #app li,
+html[data-theme="study"] #app label,
+html[data-theme="study"] #app h1,
+html[data-theme="study"] #app h2,
+html[data-theme="study"] #app h3,
+html[data-theme="study"] #app h4,
+html[data-theme="study"] #app strong,
+html[data-theme="study"] #app em,
+html[data-theme="study"] #app button,
+html[data-theme="study"] #app input,
+html[data-theme="study"] #app select,
+html[data-theme="study"] #app textarea,
+html[data-theme="study"] #app td,
+html[data-theme="study"] #app th{
+  color:var(--study-ink) !important;
   opacity:1 !important;
 }
-html[data-theme="study"] .bg::after{display:none !important}
-html[data-theme="study"] #particle-canvas,
-html[data-theme="study"] #jqrg-particles,
-html[data-theme="study"] .particles,
-html[data-theme="study"] canvas.decor{display:none !important}
+html[data-theme="study"] #app a,
+html[data-theme="study"] #app a *{color:var(--study-link) !important;text-decoration:underline}
 
-/* --- chrome: flat white surfaces with hairline rules ---------------------- */
-html[data-theme="study"] .top-bar,
-html[data-theme="study"] .sidebar{
-  background:#ffffff !important;
-  box-shadow:none !important;
+/* --- 4. UI icons: monochrome, never white -------------------------------- */
+html[data-theme="study"] #app svg,
+html[data-theme="study"] #app svg *{
+  fill:var(--study-ink-dim) !important;
+  stroke:var(--study-ink-dim) !important;
+  color:var(--study-ink-dim) !important;
 }
-html[data-theme="study"] .top-bar{border-bottom:1px solid var(--border) !important}
-html[data-theme="study"] .sidebar{border-right:1px solid var(--border) !important}
-html[data-theme="study"] .page{background:transparent !important}
+html[data-theme="study"] #app svg[fill="none"],
+html[data-theme="study"] #app svg[fill="none"] *{fill:none !important;stroke:var(--study-ink-dim) !important}
+html[data-theme="study"] .sidebar .logo svg,
+html[data-theme="study"] .sidebar .logo svg *{fill:#6b7280 !important;stroke:#6b7280 !important}
+html[data-theme="study"] .logo-shape{background:#6b7280 !important}
 
-/* --- logo: one colour ----------------------------------------------------- */
-html[data-theme="study"] .sidebar .logo{
-  filter:grayscale(1) opacity(.75) !important;
-  transform:none !important;
-}
-html[data-theme="study"] .sidebar .logo:hover{
-  transform:none !important;
-  filter:grayscale(1) opacity(.9) !important;
-}
-html[data-theme="study"] .logo-shape{
-  background:#5f6368 !important;   /* the conic rainbow → a single grey */
-}
-
-/* --- kill every glow / text-shadow / hover bounce ------------------------- */
-html[data-theme="study"] *{
-  text-shadow:none !important;
-}
-html[data-theme="study"] .t-g,
-html[data-theme="study"] .t-a,
-html[data-theme="study"] .learning-module,
-html[data-theme="study"] .interactive-module,
-html[data-theme="study"] .educational-card{
-  aspect-ratio:auto !important;
-  border-radius:8px !important;
-  overflow:visible !important;
-  background:#ffffff !important;
-  border:1px solid var(--border) !important;
-  box-shadow:none !important;
-  filter:none !important;
-  transform:none !important;
-  min-height:46px;
-  padding:12px 14px;
-  display:flex;align-items:center;justify-content:center;text-align:center;
-}
-html[data-theme="study"] .t-g:hover,
-html[data-theme="study"] .t-a:hover,
-html[data-theme="study"] .learning-module:hover,
-html[data-theme="study"] .interactive-module:hover,
-html[data-theme="study"] .educational-card:hover{
-  background:#f1f3f4 !important;
-  border-color:#c6c9cc !important;
-  transform:none !important;
-  box-shadow:none !important;
-  filter:none !important;
-}
-
-/* --- games/apps: artwork out, the name becomes the button ---------------- */
+/* --- 5. no game artwork, no auto-scrolling strips ------------------------ */
+html[data-theme="study"] .home-banner,
+html[data-theme="study"] .home-spotlight,
+html[data-theme="study"] .home-spotlight-play{display:none !important}
 html[data-theme="study"] .t-g img,
 html[data-theme="study"] .t-a img,
 html[data-theme="study"] .learning-module img,
@@ -116,176 +120,204 @@ html[data-theme="study"] .educational-card img,
 html[data-theme="study"] .t-g .skeleton,
 html[data-theme="study"] .t-a .skeleton,
 html[data-theme="study"] .t-g .tile-shadow,
-html[data-theme="study"] .t-a .tile-shadow{
-  display:none !important;
+html[data-theme="study"] .t-a .tile-shadow{display:none !important}
+
+/* --- 6. chrome: a plain document frame ---------------------------------- */
+html[data-theme="study"] .top-bar{
+  background:var(--study-surface) !important;
+  border-bottom:1px solid var(--study-line) !important;
 }
-html[data-theme="study"] .t-g .tile-label,
-html[data-theme="study"] .t-a .tile-label,
-html[data-theme="study"] .learning-module .tile-label,
-html[data-theme="study"] .interactive-module .tile-label,
-html[data-theme="study"] .educational-card .tile-label{
-  position:static !important;
-  inset:auto !important;
-  bottom:auto !important;
-  padding:0 !important;
-  font-size:13.5px !important;
-  font-weight:500 !important;
-  letter-spacing:0 !important;
-  line-height:1.35;
-  color:var(--text) !important;
-  white-space:normal !important;
-  overflow:visible !important;
-  text-overflow:clip !important;
-  transform:none !important;
-  opacity:1 !important;
+html[data-theme="study"] .sidebar{
+  background:var(--study-band) !important;
+  border-right:1px solid var(--study-line) !important;
+}
+html[data-theme="study"] .main{
+  background:var(--study-page) !important;
+  border:0 !important;
+}
+html[data-theme="study"] .page{background:transparent !important}
+html[data-theme="study"] .sidebar nav button,
+html[data-theme="study"] .tb-section .nav-btns button{background:transparent !important;border:0 !important}
+html[data-theme="study"] .sidebar nav button.active{
+  background:var(--study-band) !important;
+  border-left:3px solid var(--study-link) !important;
+}
+
+/* --- 7. the home page, reshaped ----------------------------------------- */
+html[data-theme="study"] .home-hero-greeting{
   background:none !important;
+  -webkit-text-fill-color:var(--study-ink) !important;
+  font-size:22px !important;
+  font-weight:600 !important;
+  letter-spacing:0 !important;
 }
-html[data-theme="study"] .tile-label .hl{color:#1a73e8 !important;font-weight:600 !important}
-/* The "artwork failed" fallback must not re-introduce a purple gradient. */
-html[data-theme="study"] .t-g.tile-noimg,
-html[data-theme="study"] .t-a.tile-noimg{background:#ffffff !important}
+html[data-theme="study"] .home-hero-subtitle{color:var(--study-ink-dim) !important;opacity:1 !important}
+html[data-theme="study"] .home-quick-card,
+html[data-theme="study"] .home-chat-banner,
+html[data-theme="study"] .partner-card{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  padding:12px 14px !important;
+}
+html[data-theme="study"] .home-quick-card:hover,
+html[data-theme="study"] .home-chat-banner:hover,
+html[data-theme="study"] .partner-card:hover{background:var(--study-band) !important;border-color:var(--study-line) !important}
+html[data-theme="study"] .home-quick-card::before{display:none !important}
+html[data-theme="study"] .home-quick-icon,
+html[data-theme="study"] .home-chat-banner-icon{
+  background:var(--study-band) !important;
+  border:1px solid var(--study-line-soft) !important;
+}
+html[data-theme="study"] .home-quick-icon svg,
+html[data-theme="study"] .home-chat-banner-icon svg{color:var(--study-ink-dim) !important}
+html[data-theme="study"] .home-chat-banner-live{
+  background:var(--study-band) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink-dim) !important;
+}
+html[data-theme="study"] .partner-name,
+html[data-theme="study"] .partner-desc,
+html[data-theme="study"] .home-quick-title,
+html[data-theme="study"] .home-quick-desc,
+html[data-theme="study"] .home-chat-banner-desc{color:var(--study-ink) !important;opacity:1 !important}
 
-/* --- modals / settings --------------------------------------------------- */
-html[data-theme="study"] .modal{
-  background:#ffffff !important;
-  border:1px solid var(--border) !important;
-  box-shadow:0 4px 16px rgba(60,64,67,.15) !important;
-  backdrop-filter:none !important;
-}
-html[data-theme="study"] .modal-overlay{background:rgba(32,33,36,.35) !important;backdrop-filter:none !important}
-html[data-theme="study"] .modal-header{border-bottom:1px solid var(--border-light) !important}
-html[data-theme="study"] .modal-close:hover{background:#f1f3f4 !important;transform:none !important}
-html[data-theme="study"] .settings-nav{background:#ffffff !important;border-right:1px solid var(--border-light) !important}
-html[data-theme="study"] .settings-nav-btn:hover{background:#f1f3f4 !important;padding-left:16px !important}
-html[data-theme="study"] .settings-nav-btn.active{
-  background:#e8f0fe !important;
-  border-right:2px solid #1a73e8 !important;
-}
-html[data-theme="study"] .setting-divider{border-color:var(--border-light) !important}
-
-/* --- controls: quiet, flat, classroom-like ------------------------------- */
-html[data-theme="study"] button,
-html[data-theme="study"] .setting-btn,
-html[data-theme="study"] .setting-cycle{
-  box-shadow:none !important;
-}
-html[data-theme="study"] .setting-btn{
-  background:#ffffff !important;
-  border:1px solid var(--border) !important;
-  color:var(--text) !important;
-  border-radius:6px !important;
-}
-html[data-theme="study"] .setting-btn:hover{background:#f1f3f4 !important}
-html[data-theme="study"] input,
-html[data-theme="study"] select,
-html[data-theme="study"] textarea{
-  background:#ffffff !important;
-  border:1px solid var(--border) !important;
-  color:var(--text) !important;
-  box-shadow:none !important;
-}
-html[data-theme="study"] ::-webkit-scrollbar-thumb{background:#c6c9cc !important}
-
-/* --- dropdowns / pills / search ------------------------------------------ */
-html[data-theme="study"] .dropdown,
-html[data-theme="study"] [class*="dropdown-"]{
-  background:#ffffff !important;
-  border:1px solid var(--border) !important;
-  box-shadow:0 2px 10px rgba(60,64,67,.15) !important;
-}
-
-/* --- entrance/emphasis animations: none, this is a study page ----------- */
+/* --- 8. tiles become plain name buttons --------------------------------- */
+html[data-theme="study"] .grid-1,
+html[data-theme="study"] .grid-2{gap:6px !important;grid-template-columns:repeat(auto-fill,minmax(200px,1fr)) !important}
 html[data-theme="study"] .t-g,
 html[data-theme="study"] .t-a,
-html[data-theme="study"] .modal,
-html[data-theme="study"] .sidebar .logo{animation:none !important;transition:none !important}
+html[data-theme="study"] .learning-module,
+html[data-theme="study"] .interactive-module,
+html[data-theme="study"] .educational-card{
+  aspect-ratio:auto !important;
+  overflow:visible !important;
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  min-height:40px;
+  padding:10px 12px;
+  display:flex;align-items:center;justify-content:flex-start;text-align:left;
+}
+html[data-theme="study"] .t-g:hover,
+html[data-theme="study"] .t-a:hover{background:var(--study-band) !important;border-color:var(--study-ink-dim) !important}
+html[data-theme="study"] .tile-label,
+html[data-theme="study"] .t-g .tile-label,
+html[data-theme="study"] .t-a .tile-label{
+  position:static !important;inset:auto !important;bottom:auto !important;padding:0 !important;
+  font-size:13.5px !important;font-weight:400 !important;letter-spacing:0 !important;line-height:1.35;
+  color:var(--study-ink) !important;white-space:normal !important;overflow:visible !important;
+  text-overflow:clip !important;transform:none !important;opacity:1 !important;background:none !important;
+}
+html[data-theme="study"] .tile-label .hl{color:var(--study-link) !important;font-weight:600 !important}
+html[data-theme="study"] .t-g.tile-noimg,
+html[data-theme="study"] .t-a.tile-noimg{background:var(--study-surface) !important}
 
-/* --- sign-in overlay + modal (js/jqrg-auth-ui.js) -------------------------
- * The auth wall is the first thing a signed-out student sees, and it paints its
- * own dark scrim (#1d1635 panel on rgba(2,0,8,.94)) far above the page content,
- * so it needs its own study treatment or the site still reads as a game site. */
-html[data-theme="study"] #bg-scrim{display:none !important}
-html[data-theme="study"] .jqrg-auth-overlay{
-  background:#f5f6f8 !important;
-  backdrop-filter:none !important;
+/* --- 9. controls: flat, square, bordered -------------------------------- */
+html[data-theme="study"] #app button,
+html[data-theme="study"] #app .setting-btn,
+html[data-theme="study"] #app input,
+html[data-theme="study"] #app select,
+html[data-theme="study"] #app textarea{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
 }
+html[data-theme="study"] #app button:hover,
+html[data-theme="study"] #app .setting-btn:hover{background:var(--study-band) !important}
+html[data-theme="study"] ::-webkit-scrollbar{width:12px;height:12px}
+html[data-theme="study"] ::-webkit-scrollbar-thumb{background:#c1c5cb !important;border:0 !important}
+html[data-theme="study"] ::-webkit-scrollbar-track{background:var(--study-band) !important}
+
+/* --- 10. overlays: modals, settings, sign-in, first-run chooser ---------- */
+html[data-theme="study"] .modal-overlay,
+html[data-theme="study"] .jqrg-auth-overlay{background:rgba(17,24,39,.35) !important}
+html[data-theme="study"] .modal,
 html[data-theme="study"] .jqrg-auth-modal{
-  background:#ffffff !important;
-  border:1px solid var(--border) !important;
-  border-radius:12px !important;
-  box-shadow:0 1px 3px rgba(60,64,67,.18) !important;
-  color:var(--text) !important;
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
 }
-html[data-theme="study"] .jqrg-auth-modal *{text-shadow:none !important}
-html[data-theme="study"] .jqrg-auth-title{color:var(--text) !important}
-html[data-theme="study"] .jqrg-auth-hint,
-html[data-theme="study"] .jqrg-auth-content{color:var(--text-dim) !important}
-html[data-theme="study"] .jqrg-auth-error{color:#c5221f !important}
-html[data-theme="study"] .jqrg-auth-modal input,
-html[data-theme="study"] .jqrg-auth-form input{
-  background:#ffffff !important;
-  border:1px solid var(--border) !important;
-  color:var(--text) !important;
+html[data-theme="study"] .modal-header{border-bottom:1px solid var(--study-line-soft) !important}
+html[data-theme="study"] .settings-nav{background:var(--study-band) !important;border-right:1px solid var(--study-line) !important}
+html[data-theme="study"] .settings-nav-btn:hover{background:var(--study-surface) !important;padding-left:16px !important}
+html[data-theme="study"] .settings-nav-btn.active{background:var(--study-surface) !important;border-right:3px solid var(--study-link) !important}
+html[data-theme="study"] .setting-divider{border-color:var(--study-line-soft) !important}
+html[data-theme="study"] .jqrg-gate-intro{
+  background:var(--study-band) !important;
+  border:1px solid var(--study-line-soft) !important;
+  color:var(--study-ink) !important;
 }
 html[data-theme="study"] .jqrg-auth-submit,
 html[data-theme="study"] .jqrg-auth-btn{
-  background:#1a73e8 !important;
+  background:var(--study-link) !important;
   color:#ffffff !important;
-  border:none !important;
-  border-radius:6px !important;
-  box-shadow:none !important;
+  border:1px solid var(--study-link) !important;
 }
-html[data-theme="study"] .jqrg-auth-tabs{background:#f1f3f4 !important;border-radius:8px !important}
-html[data-theme="study"] .jqrg-auth-tab{color:var(--text-dim) !important}
-html[data-theme="study"] .jqrg-auth-tab.active{background:#ffffff !important;color:var(--text) !important;box-shadow:none !important}
-
-/* --- auth notice panel + purple links/headings ---------------------------- */
-html[data-theme="study"] .jqrg-gate-intro{
-  background:#f1f3f4 !important;
-  border:1px solid var(--border) !important;
-  color:var(--text) !important;
-  border-radius:8px !important;
-}
-html[data-theme="study"] .jqrg-gate-intro strong{color:var(--text) !important}
-html[data-theme="study"] .jqrg-auth-modal a,
-html[data-theme="study"] .jqrg-auth-overlay a{color:#1a73e8 !important}
+html[data-theme="study"] .jqrg-auth-submit *,
+html[data-theme="study"] .jqrg-auth-btn *{color:#ffffff !important}
 html[data-theme="study"] .jqrg-verify-resend,
 html[data-theme="study"] .jqrg-send-code-btn{
-  color:#1a73e8 !important;
-  background:#ffffff !important;
-  border-color:var(--border) !important;
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-ink) !important;
 }
-html[data-theme="study"] .jqrg-auth-modal h2,
-html[data-theme="study"] .jqrg-auth-modal h3{color:var(--text) !important}
 
-/* --- first-run theme chooser ---------------------------------------------
- * Shown once per device, on a device that has never chosen a theme. It has to
- * sit above the sign-in wall (which uses z-index 2147483000 and is itself
- * required while signed out), so the choice is made before anything else.
- * Deliberately always painted in the light palette: it is visible before the
- * user has told us which theme they want, and Study is the default look. */
+/* First-run chooser: always the light palette (it is answered before the
+   theme is known) and boxy like everything else here. */
 #jqrg-theme-chooser{
   position:fixed;inset:0;z-index:2147483647;
   display:flex;align-items:center;justify-content:center;padding:24px;
-  background:#f5f6f8;
+  background:#ffffff;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 .jqrg-theme-choose-card{
-  background:#ffffff;border:1px solid #dadce0;border-radius:14px;
-  box-shadow:0 8px 28px rgba(60,64,67,.18);
-  padding:28px 26px;max-width:660px;width:100%;text-align:center;
+  background:#ffffff;border:1px solid #b9bfc7;
+  padding:24px;max-width:660px;width:100%;text-align:left;
+  border-radius:0;
 }
-.jqrg-theme-choose-card h2{margin:0 0 8px;font-size:22px;font-weight:600;color:#202124}
-.jqrg-theme-choose-card p{margin:0 0 22px;font-size:14px;line-height:1.5;color:#5f6368}
-.jqrg-theme-choose-row{display:flex;gap:14px;flex-wrap:wrap}
+.jqrg-theme-choose-card h2{margin:0 0 8px;font-size:20px;font-weight:600;color:#111827}
+.jqrg-theme-choose-card p{margin:0 0 20px;font-size:14px;line-height:1.5;color:#4b5563}
+.jqrg-theme-choose-row{display:flex;gap:10px;flex-wrap:wrap}
 .jqrg-theme-choose-btn{
   flex:1 1 240px;display:flex;flex-direction:column;gap:6px;text-align:left;
-  padding:18px;border:1px solid #dadce0;border-left:4px solid #dadce0;border-radius:10px;
-  background:#ffffff;cursor:pointer;font-family:inherit;
-  transition:background .12s ease,border-color .12s ease;
+  padding:14px;border:1px solid #b9bfc7;border-left:4px solid #b9bfc7;
+  background:#ffffff;cursor:pointer;font-family:inherit;border-radius:0;
 }
-.jqrg-theme-choose-btn:hover{background:#f1f3f4;border-color:#c6c9cc}
-.jqrg-theme-choose-btn[data-pick="study"]{border-left-color:#1a73e8}
-.jqrg-theme-choose-btn[data-pick="jimmyqrg"]{border-left-color:#8841d6}
-.jqrg-theme-choose-btn strong{font-size:15.5px;font-weight:600;color:#202124}
-.jqrg-theme-choose-btn span{font-size:13px;line-height:1.45;color:#5f6368}
+.jqrg-theme-choose-btn:hover{background:#f4f5f6}
+.jqrg-theme-choose-btn[data-pick="study"]{border-left-color:#0b4f9e}
+.jqrg-theme-choose-btn[data-pick="jimmyqrg"]{border-left-color:#6b7280}
+.jqrg-theme-choose-btn strong{font-size:15px;font-weight:600;color:#111827}
+.jqrg-theme-choose-btn span{font-size:13px;line-height:1.45;color:#4b5563}
+
+/* --- 11. chrome that lives OUTSIDE #app -----------------------------------
+ * The pre-app cover (#learn-cover) is a sibling of #app, so the ink rules above
+ * never reached it — that is exactly how "Unlimited Learning" stayed white on
+ * white. Cover it explicitly. */
+html[data-theme="study"] #learn-cover{background:var(--study-page) !important}
+html[data-theme="study"] #learn-cover,
+html[data-theme="study"] #learn-cover *{
+  color:var(--study-ink) !important;
+  background-image:none !important;
+  text-shadow:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  filter:none !important;
+}
+html[data-theme="study"] #learn-cover button,
+html[data-theme="study"] #learn-cover a{
+  background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important;
+  color:var(--study-link) !important;
+  text-decoration:none !important;
+}
+
+/* --- 12. pseudo-elements --------------------------------------------------
+ * A rule on `*` does not match ::before/::after, which is where the last
+ * shimmer animation (and a few decorative rings/shadows) lived. */
+html[data-theme="study"] *::before,
+html[data-theme="study"] *::after{
+  border-radius:0 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  filter:none !important;
+  animation:none !important;
+  background-image:none !important;
+}
