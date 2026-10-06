@@ -664,3 +664,242 @@ html[data-theme-variant="study-graphite"] .filter-check-row:hover { background:#
   html[data-theme-variant="study-notebook"] .sidebar nav { gap:0 !important; }
   html[data-theme-variant="study-notebook"] .sidebar nav button { width:58px !important; }
 }
+
+
+/* Theme coverage pass: catalogue pages, account panels, and cloud sync. */
+html[data-theme="study"] #page-unblocks .section-title,
+html[data-theme="study"] #page-contacts .section-title,
+html[data-theme="study"] #page-partners .section-title {
+  color:var(--study-ink-dim) !important; opacity:1 !important; border-bottom:1px solid var(--study-line-soft);
+}
+html[data-theme="study"] #page-unblocks .unblock-tile,
+html[data-theme="study"] #page-contacts .contact-tile,
+html[data-theme="study"] #page-partners .partner-card {
+  color:var(--study-ink) !important; background:var(--study-surface) !important;
+  border:1px solid var(--study-line) !important; box-shadow:0 2px 8px rgba(32,42,35,.06) !important;
+}
+html[data-theme="study"] #page-unblocks .unblock-tile:hover,
+html[data-theme="study"] #page-contacts .contact-tile:hover,
+html[data-theme="study"] #page-partners .partner-card:hover {
+  color:var(--study-ink) !important; background:var(--study-band) !important;
+  border-color:var(--study-primary) !important; box-shadow:0 5px 14px rgba(32,42,35,.1) !important;
+}
+html[data-theme="study"] #page-unblocks .unblock-tile span,
+html[data-theme="study"] #page-contacts .contact-tile span,
+html[data-theme="study"] #page-partners .partner-name,
+html[data-theme="study"] #page-partners .partner-desc { color:var(--study-ink) !important; }
+html[data-theme="study"] #page-partners .partner-url { color:var(--study-link) !important; opacity:1 !important; }
+html[data-theme="study"] #page-unblocks .unblock-info-box { color:var(--study-ink-dim) !important; background:var(--study-band) !important; border-color:var(--study-line) !important; }
+html[data-theme="study"] #page-unblocks .unblock-info-box svg,
+html[data-theme="study"] #page-contacts .form-icon { stroke:var(--study-primary) !important; }
+html[data-theme="study"] #page-unblocks .unblock-dev-badge { color:#fff !important; background:var(--study-primary) !important; border-color:var(--study-primary) !important; }
+html[data-theme="study"] .unblock-locked { color:var(--study-ink-dim) !important; filter:grayscale(1) !important; }
+
+/* The account modal and cloud-sync/merge steps are runtime-created by the
+   account module. Theme the injected form controls and status copy as well. */
+html[data-theme="study"] #settings-modal .modal,
+html[data-theme="study"] .jqrg-auth-modal,
+html[data-theme="study"] .jqrg-auth-modal .jqrg-auth-content { color:var(--study-ink) !important; }
+html[data-theme="study"] #settings-modal .modal-header,
+html[data-theme="study"] #settings-modal .setting-section-title,
+html[data-theme="study"] #settings-modal .setting-row { border-color:var(--study-line-soft) !important; }
+html[data-theme="study"] #settings-modal .setting-section-title { color:var(--study-primary) !important; }
+html[data-theme="study"] #settings-modal .setting-label,
+html[data-theme="study"] #settings-modal .setting-row > span { color:var(--study-ink) !important; }
+html[data-theme="study"] #settings-modal input,
+html[data-theme="study"] #settings-modal select,
+html[data-theme="study"] #settings-modal textarea,
+html[data-theme="study"] #settings-modal .setting-select,
+html[data-theme="study"] #settings-modal .setting-cycle,
+html[data-theme="study"] .jqrg-auth-form input,
+html[data-theme="study"] .jqrg-confirm-input {
+  color:var(--study-ink) !important; background:var(--study-surface) !important; border-color:var(--study-line) !important;
+}
+html[data-theme="study"] #settings-modal input::placeholder,
+html[data-theme="study"] #settings-modal textarea::placeholder,
+html[data-theme="study"] .jqrg-auth-form input::placeholder,
+html[data-theme="study"] .jqrg-confirm-input::placeholder { color:var(--study-ink-dim) !important; }
+html[data-theme="study"] #settings-modal .toggle-switch { background:var(--study-line) !important; }
+html[data-theme="study"] #settings-modal .toggle-switch.active { background:var(--study-primary) !important; }
+html[data-theme="study"] .jqrg-auth-title,
+html[data-theme="study"] .jqrg-auth-head,
+html[data-theme="study"] .jqrg-auth-form label,
+html[data-theme="study"] .jqrg-auth-hint,
+html[data-theme="study"] .jqrg-confirm-msg,
+html[data-theme="study"] .jqrg-confirm-note,
+html[data-theme="study"] .jqrg-sync-status { color:var(--study-ink) !important; }
+html[data-theme="study"] .jqrg-auth-close { color:var(--study-ink-dim) !important; }
+html[data-theme="study"] .jqrg-auth-tabs { background:var(--study-band) !important; border:1px solid var(--study-line-soft) !important; }
+html[data-theme="study"] .jqrg-auth-tab { color:var(--study-ink-dim) !important; background:transparent !important; }
+html[data-theme="study"] .jqrg-auth-tab.active { color:#fff !important; background:var(--study-primary) !important; box-shadow:none !important; }
+html[data-theme="study"] .jqrg-auth-submit { color:#fff !important; background:var(--study-primary) !important; border-color:var(--study-primary) !important; box-shadow:none !important; }
+html[data-theme="study"] .jqrg-auth-btn,
+html[data-theme="study"] .jqrg-confirm-actions .jqrg-btn-ghost { color:var(--study-ink) !important; background:var(--study-surface) !important; border:1px solid var(--study-line) !important; }
+html[data-theme="study"] .jqrg-confirm-danger { color:#9b3434 !important; }
+html[data-theme="study"] .jqrg-auth-error { color:#a12626 !important; }
+html[data-theme="study"] .jqrg-auth-success,
+html[data-theme="study"] .jqrg-sync-status.active { color:#17633b !important; }
+html[data-theme="study"] .jqrg-confirm-actions button { border-radius:6px !important; }
+
+/* Every non-home page uses the active palette instead of inherited purple or
+   blue literals from the original arcade stylesheet. */
+html[data-theme="jimmyqrg"] #page-unblocks .section-title,
+html[data-theme="jimmyqrg"] #page-contacts .section-title,
+html[data-theme="jimmyqrg"] #page-partners .section-title { color:var(--text-dim) !important; opacity:1 !important; border-bottom:1px solid var(--border); }
+html[data-theme="jimmyqrg"] #page-unblocks .unblock-tile,
+html[data-theme="jimmyqrg"] #page-contacts .contact-tile,
+html[data-theme="jimmyqrg"] #page-partners .partner-card {
+  color:var(--text) !important; background:var(--bg-card) !important; border:1px solid var(--border) !important;
+  box-shadow:0 8px 22px rgba(0,0,0,.22) !important;
+}
+html[data-theme="jimmyqrg"] #page-unblocks .unblock-tile span,
+html[data-theme="jimmyqrg"] #page-contacts .contact-tile span,
+html[data-theme="jimmyqrg"] #page-partners .partner-name,
+html[data-theme="jimmyqrg"] #page-partners .partner-desc { color:var(--text) !important; }
+html[data-theme="jimmyqrg"] #page-partners .partner-desc { opacity:.78; }
+html[data-theme="jimmyqrg"] #page-partners .partner-url { color:var(--accent-purple) !important; opacity:1 !important; }
+html[data-theme="jimmyqrg"] #page-unblocks .unblock-info-box { color:var(--text-dim) !important; background:var(--bg-card) !important; border-color:var(--border) !important; }
+html[data-theme="jimmyqrg"] #page-unblocks .unblock-info-box svg,
+html[data-theme="jimmyqrg"] #page-contacts .form-icon { stroke:var(--accent-purple) !important; }
+html[data-theme="jimmyqrg"] #page-unblocks .unblock-dev-badge { color:var(--text) !important; background:var(--bg-hover) !important; border-color:var(--border) !important; }
+html[data-theme="jimmyqrg"] #page-unblocks .unblock-tile:hover,
+html[data-theme="jimmyqrg"] #page-contacts .contact-tile:hover,
+html[data-theme="jimmyqrg"] #page-partners .partner-card:hover { border-color:var(--accent-purple) !important; box-shadow:0 12px 30px var(--info-accent-glow) !important; }
+
+/* Account, sign-in, and sync dialogs get palette-driven controls, buttons,
+   headings, states, and dividers across all JimmyQrg presets. */
+html[data-theme="jimmyqrg"] #settings-modal .setting-section-title,
+html[data-theme="jimmyqrg"] #settings-modal .setting-label,
+html[data-theme="jimmyqrg"] #settings-modal .setting-row > span,
+html[data-theme="jimmyqrg"] .jqrg-auth-title,
+html[data-theme="jimmyqrg"] .jqrg-auth-form label,
+html[data-theme="jimmyqrg"] .jqrg-confirm-msg,
+html[data-theme="jimmyqrg"] .jqrg-confirm-note { color:var(--text) !important; }
+html[data-theme="jimmyqrg"] #settings-modal .setting-row,
+html[data-theme="jimmyqrg"] #settings-modal .setting-section-title { border-color:var(--border) !important; }
+html[data-theme="jimmyqrg"] #settings-modal input,
+html[data-theme="jimmyqrg"] #settings-modal select,
+html[data-theme="jimmyqrg"] #settings-modal textarea,
+html[data-theme="jimmyqrg"] #settings-modal .setting-select,
+html[data-theme="jimmyqrg"] #settings-modal .setting-cycle,
+html[data-theme="jimmyqrg"] .jqrg-auth-form input,
+html[data-theme="jimmyqrg"] .jqrg-confirm-input { color:var(--text) !important; background:var(--dropdown-bg) !important; border-color:var(--border) !important; }
+html[data-theme="jimmyqrg"] #settings-modal input::placeholder,
+html[data-theme="jimmyqrg"] #settings-modal textarea::placeholder,
+html[data-theme="jimmyqrg"] .jqrg-auth-form input::placeholder,
+html[data-theme="jimmyqrg"] .jqrg-confirm-input::placeholder { color:var(--text-dim) !important; }
+html[data-theme="jimmyqrg"] #settings-modal .toggle-switch.active { background:var(--accent-purple) !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-hint,
+html[data-theme="jimmyqrg"] .jqrg-sync-status { color:var(--text-dim) !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-close { color:var(--text-dim) !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-tabs { background:var(--bg-deep) !important; border:1px solid var(--border) !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-tab { color:var(--text-dim) !important; background:transparent !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-tab.active { color:var(--text) !important; background:var(--bg-hover) !important; box-shadow:inset 0 -2px var(--accent-purple) !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-submit { color:#fff !important; background:var(--accent-purple) !important; border-color:var(--accent-purple) !important; box-shadow:0 4px 14px var(--info-accent-glow) !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-btn,
+html[data-theme="jimmyqrg"] .jqrg-confirm-actions .jqrg-btn-ghost { color:var(--text) !important; background:var(--bg-card) !important; border:1px solid var(--border) !important; }
+html[data-theme="jimmyqrg"] .jqrg-confirm-danger { color:var(--info-accent-pink) !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-error { color:#ff8d98 !important; }
+html[data-theme="jimmyqrg"] .jqrg-auth-success,
+html[data-theme="jimmyqrg"] .jqrg-sync-status.active { color:var(--accent-purple) !important; }
+
+/* Keep layouts distinct through the surfaces that sit outside the home page. */
+html[data-theme-variant="study-library"] #page-unblocks .unblock-tile,
+html[data-theme-variant="study-library"] #page-contacts .contact-tile,
+html[data-theme-variant="study-library"] #page-partners .partner-card { border-radius:2px !important; border-left:4px double #754451 !important; }
+html[data-theme-variant="study-library"] #page-partners .partner-name,
+html[data-theme-variant="study-library"] #page-unblocks .section-title,
+html[data-theme-variant="study-library"] #page-contacts .section-title { font-family:Georgia,"Palatino Linotype",serif !important; }
+html[data-theme-variant="study-campus"] #page-unblocks .unblock-tile,
+html[data-theme-variant="study-campus"] #page-contacts .contact-tile,
+html[data-theme-variant="study-campus"] #page-partners .partner-card { border-radius:18px 4px 18px 4px !important; border-left:3px solid #38664a !important; }
+html[data-theme-variant="study-lab"] #page-unblocks .unblock-tile,
+html[data-theme-variant="study-lab"] #page-contacts .contact-tile,
+html[data-theme-variant="study-lab"] #page-partners .partner-card,
+html[data-theme-variant="study-lab"] #settings-modal .modal,
+html[data-theme-variant="study-lab"] .jqrg-auth-modal { border-radius:2px !important; box-shadow:none !important; }
+html[data-theme-variant="study-lab"] #page-unblocks .section-title,
+html[data-theme-variant="study-lab"] #page-contacts .section-title,
+html[data-theme-variant="study-lab"] #page-partners .section-title { font-family:ui-monospace,SFMono-Regular,Menlo,monospace !important; letter-spacing:.1em !important; }
+html[data-theme-variant="study-notebook"] #page-unblocks .unblock-tile,
+html[data-theme-variant="study-notebook"] #page-contacts .contact-tile,
+html[data-theme-variant="study-notebook"] #page-partners .partner-card { border-radius:3px 12px 3px 12px !important; border-bottom:3px solid #4e6c9b !important; }
+html[data-theme-variant="study-graphite"] #page-unblocks .unblock-tile,
+html[data-theme-variant="study-graphite"] #page-contacts .contact-tile,
+html[data-theme-variant="study-graphite"] #page-partners .partner-card { border-radius:0 !important; box-shadow:none !important; border:0 !important; border-bottom:1px solid #c5c8c1 !important; }
+html[data-theme-variant="study-graphite"] #settings-modal .modal,
+html[data-theme-variant="study-graphite"] .jqrg-auth-modal { border-radius:0 !important; box-shadow:0 8px 26px rgba(48,54,51,.13) !important; }
+
+html[data-theme-variant="jimmyqrg"] #page-unblocks .unblock-tile,
+html[data-theme-variant="jimmyqrg"] #page-contacts .contact-tile,
+html[data-theme-variant="jimmyqrg"] #page-partners .partner-card { border-radius:7px !important; }
+html[data-theme-variant="jimmyqrg-solar"] #page-unblocks .unblock-tile,
+html[data-theme-variant="jimmyqrg-solar"] #page-contacts .contact-tile,
+html[data-theme-variant="jimmyqrg-solar"] #page-partners .partner-card,
+html[data-theme-variant="jimmyqrg-solar"] #settings-modal .modal,
+html[data-theme-variant="jimmyqrg-solar"] .jqrg-auth-modal { border-radius:3px !important; border-width:2px !important; box-shadow:5px 5px 0 rgba(0,0,0,.28) !important; }
+html[data-theme-variant="jimmyqrg-verdant"] #page-unblocks .unblock-tile,
+html[data-theme-variant="jimmyqrg-verdant"] #page-contacts .contact-tile,
+html[data-theme-variant="jimmyqrg-verdant"] #page-partners .partner-card,
+html[data-theme-variant="jimmyqrg-verdant"] #settings-modal .modal,
+html[data-theme-variant="jimmyqrg-verdant"] .jqrg-auth-modal { border-radius:20px 5px 20px 5px !important; }
+
+/* Recent games retain their actual cover art in each JimmyQrg home design.
+   Classic is a fixed shelf, Solar is a moving marquee, and Emerald is an
+   independently browsable vertical stack. Study keeps its resource treatment. */
+html[data-theme-variant^="jimmyqrg"] #recent-grid-g .home-banner-tile img {
+  display:block !important; position:absolute !important; inset:0 !important; width:100% !important; height:100% !important;
+  object-fit:cover !important; opacity:1 !important; filter:none !important;
+}
+html[data-theme-variant^="jimmyqrg"] #recent-grid-g .home-banner-tile-shadow { display:block !important; }
+html[data-theme-variant^="jimmyqrg"] #recent-grid-g .home-banner-tile-label { display:block !important; }
+
+/* Dock navigation must reserve layout height. No absolute bottom rail may sit
+   above the final cards or controls in a long, scrollable page. */
+html[data-theme-variant="jimmyqrg-solar"] .body-row {
+  display:flex !important; flex-direction:column-reverse !important; position:relative !important; min-height:0;
+}
+html[data-theme-variant="jimmyqrg-solar"] .sidebar {
+  position:relative !important; inset:auto !important; left:auto !important; right:auto !important; top:auto !important; bottom:auto !important;
+  z-index:auto !important; order:0; flex:0 0 calc(76px + env(safe-area-inset-bottom,0px)); width:100% !important; min-width:0 !important;
+  height:auto !important; min-height:76px; padding:4px 8px max(4px,env(safe-area-inset-bottom,0px)) !important;
+}
+html[data-theme-variant="jimmyqrg-solar"] .main { order:1; flex:1 1 0% !important; width:100%; min-width:0; min-height:0; height:auto; overflow:hidden; }
+html[data-theme-variant="jimmyqrg-solar"] .main .page { padding-bottom:32px !important; }
+html[data-theme-variant="study-notebook"] .body-row { display:flex !important; flex-direction:column-reverse !important; min-height:0; }
+html[data-theme-variant="study-notebook"] .sidebar {
+  position:relative !important; inset:auto !important; left:auto !important; right:auto !important; top:auto !important; bottom:auto !important;
+  z-index:auto !important; order:0; flex:0 0 calc(66px + env(safe-area-inset-bottom,0px)); width:100% !important; min-width:0 !important;
+  height:auto !important; min-height:66px; padding:4px 8px max(4px,env(safe-area-inset-bottom,0px)) !important;
+}
+html[data-theme-variant="study-notebook"] .main { order:1; flex:1 1 0% !important; width:100%; min-width:0; min-height:0; height:auto; overflow:hidden; }
+html[data-theme-variant="study-notebook"] .main .page { padding-bottom:28px !important; }
+
+/* Keep every page and its overlays on the same token system. */
+html[data-theme="study"] .modal-overlay,
+html[data-theme="study"] .jqrg-auth-overlay { color:var(--study-ink) !important; }
+html[data-theme="study"] #announcement-modal .modal,
+html[data-theme="study"] #anniversary-modal .modal,
+html[data-theme="study"] #settings-modal .modal { color:var(--study-ink) !important; background:var(--study-surface) !important; border-color:var(--study-line) !important; }
+html[data-theme="study"] #announcement-modal .modal-body a { color:var(--study-link) !important; }
+html[data-theme="study"] #anniversary-modal .anniv-title,
+html[data-theme="study"] #anniversary-modal .anniv-sub,
+html[data-theme="study"] #anniversary-modal .anniv-body { color:var(--study-ink) !important; text-shadow:none !important; }
+html[data-theme="study"] #anniversary-modal .anniv-title { font-family:Georgia,"Times New Roman",serif !important; }
+html[data-theme="study"] #anniversary-modal .modal-close { color:var(--study-ink-dim) !important; }
+html[data-theme="jimmyqrg"] #announcement-modal .modal,
+html[data-theme="jimmyqrg"] #anniversary-modal .modal,
+html[data-theme="jimmyqrg"] #settings-modal .modal { color:var(--text) !important; background:var(--bg-card) !important; border-color:var(--border) !important; }
+html[data-theme="jimmyqrg"] #announcement-modal .modal-body a { color:var(--accent-purple) !important; }
+html[data-theme="jimmyqrg"] #anniversary-modal .anniv-title,
+html[data-theme="jimmyqrg"] #anniversary-modal .anniv-sub { color:var(--text) !important; }
+html[data-theme="jimmyqrg-solar"] #anniversary-modal .modal { background:#201407 !important; border-color:#bd7b20 !important; }
+html[data-theme="jimmyqrg-solar"] #anniversary-modal .anniv-title { color:#ffcc67 !important; text-shadow:0 0 16px rgba(255,189,67,.3) !important; }
+html[data-theme="jimmyqrg-verdant"] #anniversary-modal .modal { background:#0d1e15 !important; border-color:#315941 !important; }
+html[data-theme="jimmyqrg-verdant"] #anniversary-modal .anniv-title { color:#8cebb6 !important; text-shadow:0 0 16px rgba(89,217,155,.28) !important; }
+
+@media(max-width:760px) {
+  html[data-theme-variant="jimmyqrg-solar"] .sidebar { flex-basis:calc(72px + env(safe-area-inset-bottom,0px)); min-height:72px; }
+  html[data-theme-variant="jimmyqrg-solar"] .sidebar nav { justify-content:space-around; gap:2px; }
+  html[data-theme-variant="study-notebook"] .sidebar { flex-basis:calc(66px + env(safe-area-inset-bottom,0px)); }
+}

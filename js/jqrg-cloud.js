@@ -85,6 +85,7 @@
   // key was last touched on this device.
   var KEY_TIMES_KEY = '__jqrg_cloud_key_times_v1';
   var DEBOUNCE_MS = 800;
+  var RETRY_MS = 5000;
   var FETCH_INTERVAL_MS = 45 * 1000;
   var MAX_VALUE_BYTES = 512 * 1024;
   var SYNC_SKIP_PREFIXES = [
@@ -257,6 +258,7 @@
   var pendingQueue = Object.create(null);
   var debounceTimer = null;
   var flushInFlight = false;
+  var activeFlushPromise = null;
   // In-memory mirror of KEY_TIMES_KEY, persisted lazily so we don't pay a
   // synchronous JSON.stringify on every game-tick localStorage write.
   var keyTimes = Object.create(null);
@@ -301,20 +303,22 @@
     if (debounceTimer) return;
     debounceTimer = setTimeout(function () {
       debounceTimer = null;
-      flushPending();
+      flushPending().catch(function () {});
     }, DEBOUNCE_MS);
   }
 
   function flushPending() {
-    if (flushInFlight) { scheduleFlush(); return; }
-    if (!authState) return; // nothing to send; stay queued for after login
+    if (flushInFlight) return activeFlushPromise || Promise.resolve(false);
+    if (!authState) return Promise.resolve(false); // nothing to send; stay queued for after login
     var entries = Object.keys(pendingQueue);
-    if (!entries.length) return;
+    if (!entries.length) return Promise.resolve(true);
     flushInFlight = true;
+    var batch = Object.create(null);
     var items = [];
     for (var i = 0; i < entries.length; i++) {
       var k = entries[i];
       var op = pendingQueue[k];
+      batch[k] = op;
       if (op.deleted) {
         items.push({ key: k, value: '', updated_at: op.time, _delete: true });
       } else {
@@ -332,6 +336,8 @@
         return request('/api/saves/bulk', {
           method: 'POST',
           body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: upserts }),
+        }).then(function (res) {
+          if (res && Number(res.rejected) > 0) throw new Error('The server rejected one or more game saves.');
         });
       });
     }
@@ -343,15 +349,28 @@
         });
       })(deletes[d]);
     }
-    chain.then(function () {
-      pendingQueue = {};
+    activeFlushPromise = chain.then(function () {
+      // Keep writes made while this request was in flight. Replacing the
+      // whole queue here silently dropped newer game saves.
+      Object.keys(batch).forEach(function (key) {
+        if (pendingQueue[key] === batch[key]) delete pendingQueue[key];
+      });
       lastSyncAt = Date.now();
-    }).catch(function (err) {
-      // On failure leave pending in place; we'll retry next tick.
-      if (err && err.status === 401) { /* not logged in */ }
-    }).then(function () {
+      return true;
+    }).then(function (result) {
       flushInFlight = false;
+      activeFlushPromise = null;
+      if (Object.keys(pendingQueue).length) scheduleFlush();
+      return result;
+    }, function (err) {
+      // Preserve pending values and retry automatically after a transient
+      // network/server error. A failed upload must never look like a sync.
+      flushInFlight = false;
+      activeFlushPromise = null;
+      if (authState) setTimeout(function () { flushPending().catch(function () {}); }, RETRY_MS);
+      throw err;
     });
+    return activeFlushPromise;
   }
 
   /** Patch localStorage so every write and removal is observed. We replace setItem / removeItem /
@@ -437,27 +456,12 @@
   }
 
   /** Async: true if the current signed-in user hasn't pushed their local data on this device yet AND
-   *  local data exists. Safe to call before or after UI interactions. Engine virtual-FS DBs
-   *  (e.g. `/idbfs`, `/userfs`) only count when they have been explicitly registered through
-   *  `registerGameSave()` — otherwise their presence on first run would falsely trigger the
-   *  "you have unsynced data" prompt for visitors who only opened a game page once and never
-   *  played, since the engine creates an empty IDBFS even before the user does anything. */
+   *  there are writes the cloud client can upload. Database existence alone is not
+   *  evidence of a save: games create empty/cache databases, and isolated game frames
+   *  are deliberately excluded from cross-origin account storage access. */
   function hasUnsyncedLocalData() {
     if (!authState) return Promise.resolve(false);
-    var rec = readJSON(MIGRATION_KEY, null);
-    var currentUserId = authState.user && authState.user.id;
-    if (rec && rec.user === currentUserId) return Promise.resolve(false);
-    // Check localStorage first (cheap) and then ask the browser about IDB databases.
-    if (listLocalSyncableKeys().length > 0) return Promise.resolve(true);
-    return listIdbDatabases().then(function (names) {
-      var meaningful = (names || []).filter(function (n) {
-        if (!n) return false;
-        if (isEngineCacheName(n)) return false; // Emscripten asset cache, not save data
-        if (!isVirtualFsName(n)) return true;   // ordinary IDB game = always counts
-        return isRegisteredGameSave(n);         // virtual FS only counts when opted in
-      });
-      return meaningful.length > 0;
-    }).catch(function () { return false; });
+    return Promise.resolve(Object.keys(pendingQueue).length > 0);
   }
 
   /** Async: true if the signed-in user's server account has zero saves across every kind we sync. */
@@ -625,10 +629,11 @@
     if (periodicTimer) return;
     periodicTimer = setInterval(function () {
       if (!authState) return;
-      var since = lastSyncAt ? lastSyncAt - 1000 : 0;
       // Flush first so our changes go up before we pull theirs.
-      flushPending();
-      pullFromServer(since).catch(function () {});
+      flushPending().then(function () {
+        var since = lastSyncAt ? lastSyncAt - 1000 : 0;
+        return pullFromServer(since);
+      }).catch(function () {});
     }, FETCH_INTERVAL_MS);
   }
   function stopPeriodicSync() {
@@ -685,7 +690,12 @@
         throw new Error('YOU ARE BANNED FROM JIMMYQRG.');
       }
       setAuth(data.user, data.token);
-      return pullFromServer(0).then(function () { startPeriodicSync(); return data.user; });
+      return pullFromServer(0).then(function () {
+        startPeriodicSync();
+        return flushPending().catch(function (err) {
+          try { console.warn('[jqrg-cloud] pending game saves will retry:', err); } catch (_) {}
+        });
+      }).then(function () { return data.user; });
     });
   }
 
@@ -783,25 +793,37 @@
       if (!data.user || !data.token) throw new Error('Invalid register response');
       setAuth(data.user, data.token);
       var accountKey = data.account_key || null;
-      return pullFromServer(0).then(function () { startPeriodicSync(); return { user: data.user, accountKey: accountKey }; });
+      return pullFromServer(0).then(function () {
+        startPeriodicSync();
+        return flushPending().catch(function (err) {
+          try { console.warn('[jqrg-cloud] pending game saves will retry:', err); } catch (_) {}
+        });
+      }).then(function () { return { user: data.user, accountKey: accountKey }; });
     });
   }
 
   function logout() {
     var had = !!authState;
-    var req = request('/api/auth/logout', { method: 'POST' }).catch(function () {});
-    stopPeriodicSync();
-    clearAuth();
-    pendingQueue = Object.create(null);
-    writeJSON(PENDING_KEY, pendingQueue);
-    return req.then(function () { return had; });
+    if (!had) return Promise.resolve(false);
+    // Do not discard volatile game saves when the user signs out. If the
+    // upload fails, keep the session active so the pending writes can retry.
+    return flushPending().then(function () {
+      return request('/api/auth/logout', { method: 'POST' }).catch(function () {});
+    }).then(function () {
+      stopPeriodicSync();
+      clearAuth();
+      pendingQueue = Object.create(null);
+      writeJSON(PENDING_KEY, pendingQueue);
+      return true;
+    });
   }
 
   function forceSync() {
     if (!authState) return Promise.resolve(null);
-    var since = lastSyncAt ? lastSyncAt - 1000 : 0;
-    flushPending();
-    return pullFromServer(since);
+    return flushPending().then(function () {
+      var since = lastSyncAt ? lastSyncAt - 1000 : 0;
+      return pullFromServer(since);
+    });
   }
 
   function pushSave(key, value, kind) {
@@ -823,8 +845,10 @@
     var kinds = ['localStorage', 'blob', IDB_KIND_PREFIX + 'default'];
     return Promise.all(kinds.map(function (kind) {
       return request('/api/saves?origin=' + encodeURIComponent(STORAGE_NAMESPACE) + '&kind=' + encodeURIComponent(kind))
-        .then(function (data) { return { kind: kind, items: (data && data.items) || [] }; })
-        .catch(function () { return { kind: kind, items: [] }; });
+        .then(function (data) {
+          if (!data || !Array.isArray(data.items)) throw new Error('The save service returned an invalid export response.');
+          return { kind: kind, items: data.items };
+        });
     })).then(function (buckets) {
       var items = [];
       for (var b = 0; b < buckets.length; b++) {
@@ -859,13 +883,13 @@
     if (Array.isArray(data.items)) {
       for (var i = 0; i < data.items.length; i++) {
         var it = data.items[i];
-        if (!it || typeof it.key !== 'string') continue;
+        if (!it || typeof it.key !== 'string' || !it.key) continue;
         items.push({ key: it.key, value: it.value == null ? '' : String(it.value), updated_at: Number(it.updated_at) || Date.now(), kind: it.kind || 'localStorage' });
       }
     } else if (Array.isArray(data)) {
       for (var j = 0; j < data.length; j++) {
         var row = data[j];
-        if (!row || typeof row.key !== 'string') continue;
+        if (!row || typeof row.key !== 'string' || !row.key) continue;
         items.push({ key: row.key, value: row.value == null ? '' : String(row.value), updated_at: Number(row.updated_at) || Date.now(), kind: row.kind || 'localStorage' });
       }
     } else if (typeof data === 'object') {
@@ -877,8 +901,19 @@
     }
     if (!items.length) return Promise.reject(new Error('No valid save entries found'));
 
+    // Never import account/session or per-device preference keys into the
+    // save service. These keys are intentionally excluded from game sync.
+    var beforeFilter = items.length;
+    items = items.filter(function (it) {
+      var allowedKind = typeof it.kind === 'string' &&
+        (it.kind === 'localStorage' || it.kind === 'blob' || it.kind.indexOf(IDB_KIND_PREFIX) === 0);
+      return allowedKind && (it.kind !== 'localStorage' || shouldSyncKey(it.key));
+    });
+    var filtered = beforeFilter - items.length;
+    if (!items.length) return Promise.reject(new Error('The import contains no supported game save entries.'));
+
     // Server's /bulk route reads kind from each item, so we just chunk items directly.
-    var accepted = 0, rejected = 0, total = items.length;
+    var accepted = 0, rejected = filtered, total = beforeFilter;
     var chain = Promise.resolve();
     for (var idx = 0; idx < items.length; idx += 500) {
       (function (slice) {
@@ -910,8 +945,7 @@
     var chain = Promise.resolve();
     kinds.forEach(function (kind) {
       chain = chain.then(function () {
-        return request('/api/saves?origin=' + encodeURIComponent(STORAGE_NAMESPACE) + '&kind=' + encodeURIComponent(kind) + '&all=1', { method: 'DELETE' })
-          .catch(function () { /* ignore individual kind failures */ });
+        return request('/api/saves?origin=' + encodeURIComponent(STORAGE_NAMESPACE) + '&kind=' + encodeURIComponent(kind) + '&all=1', { method: 'DELETE' });
       });
     });
     return chain.then(function () {
@@ -1774,14 +1808,13 @@
   try { installInterceptor(); } catch (e) { console.warn('[jqrg-cloud] interceptor failed', e); }
   try { installStorageListener(); } catch (e) { console.warn('[jqrg-cloud] storage listener failed', e); }
   try { autoWireCommonEngines(); } catch (e) { console.warn('[jqrg-cloud] engine auto-wire failed', e); }
-  // Remove legacy saves and chat records already present in local storage / IDB.
-  // The localStorage purge also runs synchronously above; IDB deletion is async.
-  try { wipeLocalSyncable(); } catch (_) {}
+  // Legacy private localStorage values are purged synchronously above. Never
+  // delete every IndexedDB database during normal startup: games also use IDB
+  // for runtime assets, and cleanup here erased data while a game was opening.
   // Rehydrate from the server session cookie on each page load. A bearer token
   // is issued into memory only after the cookie session has been verified.
   bootstrapToken().then(function (user) {
     if (!user) return;
-    flushPending();
     forceSync().catch(function () {});
     startPeriodicSync();
   }).catch(function () {});
@@ -1795,7 +1828,10 @@
         .then(function (data) {
           if (data && data.user) {
             setAuth(data.user, sso);
-            pullFromServer(0).then(function () { startPeriodicSync(); }).catch(function () {});
+            pullFromServer(0).then(function () {
+              startPeriodicSync();
+              return flushPending();
+            }).catch(function () {});
           }
         })
         .catch(function () {})

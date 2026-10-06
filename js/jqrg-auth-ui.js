@@ -577,9 +577,7 @@
     }});
     form.appendChild(h('div', { class: 'jqrg-gate-intro' }, [
       h('strong', null, 'This is a normal sign-in.'),
-      ' Your game saves and progress are stored on your account, so if I ever move the site to a new link your data ',
-      h('strong', null, 'comes with you and won\u2019t be lost'),
-      '. Anything already saved in this browser stays on this device too \u2014 it gets uploaded to your account automatically the first time you sign in.'
+      ' Supported game saves sync to your account while you are signed in. Saves that cannot be synced may be lost when you leave or reload the game.'
     ]));
     form.appendChild(h('label', null, [
       'Username or email',
@@ -602,7 +600,7 @@
       showJqrgRecoveryModal();
     });
     form.appendChild(h('div', { style: 'text-align:center;display:flex;justify-content:center;gap:18px;margin-top:8px' }, [forgotLink, recoverLink]));
-    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'Your JimmyQrg Chat account works here too. Nothing already saved in your browser will be deleted - it will be merged into your account automatically.'));
+    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'Your JimmyQrg Chat account works here too. Supported game saves sync automatically while you are signed in.'));
     return form;
   }
 
@@ -1376,7 +1374,7 @@
     ]));
     form.appendChild(err);
     form.appendChild(h('button', { type: 'submit', class: 'jqrg-auth-submit' }, 'Create account'));
-    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'One account signs you in here and on JimmyQrg Chat. Your existing local saves stay on this device and are uploaded to your new account on first sign-in.'));
+    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'One account signs you in here and on JimmyQrg Chat. Supported game saves sync automatically while you are signed in.'));
     return form;
   }
 
@@ -1924,24 +1922,16 @@
     var done = function () { if (afterFn) try { afterFn(); } catch (_) {} };
     if (!Cloud.isLoggedIn()) { done(); return; }
     if (syncPromptInFlight) { done(); return; }
-    Cloud.hasUnsyncedLocalData().then(function (has) {
-      if (!has) { done(); return; }
-      var openedHere = false;
-      if (!modalEl) {
-        openModal({ skipSyncCheck: true });
-        openedHere = true;
-      }
-      // Defer to the next tick so the modal DOM is present.
-      setTimeout(function () {
-        showSyncPrompt(function () {
-          // After the user is done with the prompt, show the profile view. If we opened
-          // the modal ourselves purely for the prompt, leave it open so the user can
-          // see the result of their action — they can dismiss with the close button.
-          setTab('profile');
-          done();
-        });
-      }, openedHere ? 50 : 0);
-    }).catch(function () { done(); });
+    // Save writes are already queued by jqrg-cloud and uploaded automatically.
+    // Finish a real flush/pull before showing the profile; do not prompt based on
+    // unrelated or empty game databases that the sync client cannot upload.
+    syncPromptInFlight = true;
+    Cloud.forceSync().catch(function (err) {
+      try { console.warn('[jqrg-auth-ui] game save sync will retry:', err); } catch (_) {}
+    }).then(function () {
+      syncPromptInFlight = false;
+      done();
+    });
   }
 
   function openModal(opts) {
