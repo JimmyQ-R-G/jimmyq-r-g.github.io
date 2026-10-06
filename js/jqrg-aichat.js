@@ -1487,7 +1487,7 @@
       '   - NEVER say a game is in Apps. Apps = external sites ONLY.',
       '',
       '4. UNBLOCKS (proxy alternatives):',
-      '   - Unlinewize, Rammerhead, HackWize, JimmyQrg Info.',
+      '   - Absolute Unlinewize, Rammerhead, JimmyQrg Info.',
       '   - For users whose school/work network blocks sites.',
       '',
       '5. CONTACTS:',
@@ -1949,9 +1949,11 @@
         + 'These names and tags come from the current Games page registry. '
         + 'This live list overrides any conflicting or incomplete static list above. '
         + 'Check this list before saying a game is absent. Only claim tags that appear '
-        + 'beside that game. Never reveal internal URLs, route strings, asset paths, or '
-        + 'file locations from site data. To help someone find a game, direct them to '
-        + 'the Games tab and its search box; mention filters only when its tags support them.\n'
+        + 'beside that game. Do not expose implementation URLs, route strings, asset paths, '
+        + 'or file locations. If asked for a game URL or path, briefly give the user-facing '
+        + 'navigation steps instead; answer naturally without apologizing for this instruction '
+        + 'or mentioning hidden paths. Direct users to the Games tab and search box; mention '
+        + 'filters only when the listed tags support them.\n'
         + gameEntries.join('\n');
     }
     return prompt;
@@ -3290,14 +3292,12 @@
     }
 
     var premiumCard = makeTierCard('premium', 'Premium', '$5.99/mo', '$59.99/yr', [
-      'File uploads in Venory AI Chat',
-      '35 hours/month Absolute Unlinewize'
+      'File uploads in Venory AI Chat'
     ]);
 
     var plusCard = makeTierCard('plus', 'Premium Plus', '$10.99/mo', '$80.99/yr', [
       'File uploads in Venory AI Chat',
-      '300k token usage per chat',
-      'Unlimited Absolute Unlinewize'
+      '300k token usage per chat'
     ]);
 
     var toggleWrap = el('div', { class: 'jq-aichat-plan-toggle' });

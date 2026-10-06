@@ -50,7 +50,10 @@
   var AUTH_KEY = '__jqrg_auth_v1';
   var PENDING_KEY = '__jqrg_cloud_pending_v1';
   var LAST_SYNC_KEY = '__jqrg_cloud_last_sync_v1';
-  var MIGRATION_KEY = '__jqrg_cloud_migration_v1';
+  // This small per-account device marker is the only cloud-related state
+  // intentionally kept in localStorage. Without it, completed migrations
+  // re-prompt while the original local game saves remain on the device.
+  var MIGRATION_KEY = 'jqrgLocalMigrationV1';
 
   var BANNED_EMAILS = ['weeee@outlook.com'];
   function _isBannedEmail(email) {
@@ -98,6 +101,7 @@
   var SYNC_SKIP_KEYS = new Set([
     'jqrg_redirect_after_login',
     'jqrg_redirect_after_signup',
+    'jqrgLocalMigrationV1', // per-device record that this account's local data was handled
     // Site cloak (home page tab + favicon disguise)
     'mainPageCloak', 'mainCloakTitle', 'mainCloakIcon',
     // Per-game cloak inside iframes
@@ -178,7 +182,10 @@
     } catch (_) { return fallback; }
   }
   function writeJSON(key, value) {
-    // Cloud queues and cursors are intentionally volatile too.
+    // Keep all sync metadata and game data volatile; only the migration
+    // completion marker must survive reloads to prevent repeat prompts.
+    if (!LS || key !== MIGRATION_KEY || !_origSetItem) return;
+    try { _origSetItem.call(LS, key, JSON.stringify(value)); } catch (_) {}
   }
   function removeKey(key) {
     if (!LS || !_origRemoveItem) return;

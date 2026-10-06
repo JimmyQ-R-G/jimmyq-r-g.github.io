@@ -31,6 +31,8 @@ html[data-theme="study"]{
   --study-page:#ffffff;
   --study-band:#f4f5f6;
   --study-link:#0b4f9e;
+  --study-primary:#153a63;
+  --study-primary-ink:#dbe3ec;
   --study-ok:#15803d;
 
   /* the site's own tokens, so anything driven by them follows along */
@@ -693,3 +695,127 @@ html[data-theme="study"] .jqrg-send-code-btn:disabled{
   background:var(--study-band) !important;
   border-color:var(--study-line-soft) !important;
 }
+
+/* --- 18. no purple, and one main colour -----------------------------------
+ * The purple that survived section 1 was never in a gradient or a glow — the
+ * flatten rules already kill those. It was hiding in BORDERS, OUTLINES, FOCUS
+ * RINGS and ACTIVE states, which the flatten pass does not touch:
+ *   - button.nav-discover::before/::after drew a 2px rgba(176,122,255,.6) ring
+ *     around the Partners button (this is what the rendered-page scan caught);
+ *   - .rnd-1-toast ("Playing: <game>") carried a rgba(176,122,255,.30) border;
+ *   - .home-section-clear:focus-visible outlined in #b07aff, and the settings
+ *     inputs/selects plus the auto-clicker fields glowed rgba(136,65,214,.15)
+ *     on :focus, so any keyboard use still surfaced purple;
+ *   - the active sidebar button was tinted rgba(136,65,214,.12) with a purple
+ *     drop-shadow on its icon.
+ * Those are covered below. The focus rings are recoloured rather than removed —
+ * a Study page still needs a visible focus indicator.
+ */
+html[data-theme="study"] button.nav-discover::before,
+html[data-theme="study"] button.nav-discover::after{border-color:var(--study-primary) !important}
+html[data-theme="study"] button.nav-discover{box-shadow:none !important}
+
+html[data-theme="study"] .rnd-1-toast,
+html[data-theme="study"] .rnd-1-toast:hover{border-color:var(--study-line) !important;box-shadow:none !important}
+html[data-theme="study"] .rnd-1-toast .rgt-icon{
+  background:var(--study-primary) !important;background-image:none !important;box-shadow:none !important;
+}
+
+html[data-theme="study"] .home-section-clear:focus-visible{outline:2px solid var(--study-primary) !important}
+html[data-theme="study"] .setting-input:focus,
+html[data-theme="study"] .setting-select:focus,
+html[data-theme="study"] #ac-modal input[type="number"]:focus,
+html[data-theme="study"] #ac-modal select:focus{
+  box-shadow:none !important;outline:2px solid var(--study-primary) !important;outline-offset:1px !important;
+}
+html[data-theme="study"] input[type="checkbox"]:checked::after,
+html[data-theme="study"] input[type="range"]:hover::-webkit-slider-thumb,
+html[data-theme="study"] .toggle-switch.active,
+html[data-theme="study"] .toggle-switch.active:hover,
+html[data-theme="study"] .filter-toggle.active:hover,
+html[data-theme="study"] .cloak-icon-opt.active{box-shadow:none !important}
+
+html[data-theme="study"] .sidebar nav button.active svg,
+html[data-theme="study"] .sidebar nav button.active svg *{filter:none !important}
+html[data-theme="study"] .top-bar .brand-wrap,
+html[data-theme="study"] .top-bar .brand-wrap:hover,
+html[data-theme="study"] .sidebar .logo:hover{filter:none !important}
+html[data-theme="study"] .url-bar:focus-within,
+html[data-theme="study"] .search-bar:focus-within{box-shadow:none !important;border-color:var(--study-primary) !important}
+
+/* --- one main colour ------------------------------------------------------
+ * A plain white page reads as a missing stylesheet, not as a study site. The
+ * rail (the primary navigation) carries --study-primary, and the same colour
+ * repeats on section rules, primary buttons, highlights and focus rings, so the
+ * page has a recognisable dominant hue instead of white-on-white. */
+html[data-theme="study"] .sidebar{
+  background:var(--study-primary) !important;
+  border-right:1px solid var(--study-primary) !important;
+}
+html[data-theme="study"] #app .sidebar svg,
+html[data-theme="study"] #app .sidebar svg *{
+  fill:var(--study-primary-ink) !important;
+  stroke:var(--study-primary-ink) !important;
+  color:var(--study-primary-ink) !important;
+}
+html[data-theme="study"] #app .sidebar .logo svg,
+html[data-theme="study"] #app .sidebar .logo svg *{fill:#ffffff !important;stroke:#ffffff !important}
+html[data-theme="study"] .logo-shape{background:#ffffff !important}
+/* The rail's buttons must stay ON the rail. `html[data-theme="study"] #app button`
+   (1,1,2) outranks a plain `.sidebar nav button` (0,2,2) and was painting each nav
+   button as a white surface chip on the navy rail; it also beat the active-tint and
+   left the active icon light-on-white, i.e. invisible (measured). Scoping with #app
+   puts the rail back and lets the active tint win. */
+html[data-theme="study"] #app .sidebar nav button,
+html[data-theme="study"] #app .sidebar .tb-section .nav-btns button,
+html[data-theme="study"] #app .sidebar nav button *{
+  background:transparent !important;
+  border:0 !important;
+  color:var(--study-primary-ink) !important;
+}
+html[data-theme="study"] #app .sidebar nav button:hover{background:#24507f !important}
+html[data-theme="study"] #app .sidebar nav button.active{
+  background:#24507f !important;
+  border-left:3px solid #ffffff !important;
+}
+html[data-theme="study"] #app .sidebar nav button.active svg,
+html[data-theme="study"] #app .sidebar nav button.active svg *{fill:#ffffff !important;stroke:#ffffff !important}
+
+/* the same colour on the rest of the chrome */
+html[data-theme="study"] .home-section-title::before{
+  background:var(--study-primary) !important;
+  background-image:none !important;
+  box-shadow:none !important;
+}
+html[data-theme="study"] .tile-label .hl{color:var(--study-primary) !important;text-shadow:none !important}
+html[data-theme="study"] .home-section-link{color:var(--study-primary) !important}
+
+/* the same colour carries into the grid: every game/app tile gets a main-colour
+   edge, so the catalogue reads as part of the study site rather than as a wall
+   of white boxes. Tiles stay plain name buttons otherwise. */
+html[data-theme="study"] .t-g,
+html[data-theme="study"] .t-a,
+html[data-theme="study"] .learning-module,
+html[data-theme="study"] .interactive-module,
+html[data-theme="study"] .educational-card{border-left:3px solid var(--study-primary) !important}
+
+html[data-theme="study"] .filter-confirm-btn,
+html[data-theme="study"] #ac-modal .ac-btn-save,
+html[data-theme="study"] .home-empty .home-empty-cta,
+html[data-theme="study"] .home-banner-empty .home-empty-cta,
+html[data-theme="study"] .empty-1-cta-ghost,
+html[data-theme="study"] .rnd-1-btn,
+html[data-theme="study"] .jqrg-auth-submit,
+html[data-theme="study"] .jqrg-auth-btn,
+html[data-theme="study"] .jqrg-send-code-btn{
+  background:var(--study-primary) !important;
+  background-image:none !important;
+  border:1px solid var(--study-primary) !important;
+  color:#ffffff !important;
+  box-shadow:none !important;
+}
+html[data-theme="study"] .filter-confirm-btn *,
+html[data-theme="study"] .home-empty .home-empty-cta *,
+html[data-theme="study"] .rnd-1-btn *,
+html[data-theme="study"] .jqrg-auth-submit *,
+html[data-theme="study"] .jqrg-send-code-btn *{color:#ffffff !important;-webkit-text-fill-color:#ffffff !important}

@@ -465,6 +465,17 @@
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     document.addEventListener('mouseleave', onMouseLeave);
     document.addEventListener('visibilitychange', onVisibilityChange);
+    /* Restoring a page from the back/forward cache can preserve DOM classes
+     * and canvas visibility from an earlier state. Re-read the saved values
+     * and reapply them whenever the page becomes visible again. */
+    window.addEventListener('pageshow', function (event) {
+      if (event && event.persisted) applySettings(true);
+    });
+    window.addEventListener('storage', function (event) {
+      if (event.key === STYLE_KEY || event.key === QUALITY_KEY || event.key === null) {
+        applySettings(true);
+      }
+    });
 
     onResize();
     applySettings();
@@ -510,10 +521,10 @@
     return QUALITIES.indexOf(q) >= 0 ? q : DEFAULT_QUALITY;
   }
 
-  function applySettings() {
+  function applySettings(force) {
     var newStyle   = getStyle();
     var newQuality = getQuality();
-    if (newStyle === currentStyle && newQuality === currentQuality) return;
+    if (!force && newStyle === currentStyle && newQuality === currentQuality) return;
     currentStyle   = newStyle;
     currentQuality = newQuality;
 
@@ -3915,7 +3926,7 @@
       try { localStorage.setItem(QUALITY_KEY, q); } catch (_) {}
       applySettings();
     },
-    refresh:    applySettings,
+    refresh:    function () { applySettings(true); },
     getStyle:   getStyle,
     getQuality: getQuality,
     /* Surface for index.html's game-overlay open/close handlers to pause

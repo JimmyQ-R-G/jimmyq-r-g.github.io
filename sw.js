@@ -244,7 +244,6 @@ const urlsToCache = [
   '/game-images/apps/youtube-music.png',
 
   // ============ MEDIA-D ============
-  '/game-images/unblocks/hackwize.png',
   '/game-images/unblocks/jinfo.png',
   '/game-images/unblocks/rammerhead.png',
   '/game-images/unblocks/unlinewize.png',
