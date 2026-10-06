@@ -1612,13 +1612,13 @@ border-radius:8px;
    canvas paints with mix-blend-mode:screen so multiple bright particles
    add up without harshly clipping the underlying gradient. */
 #bg-particles{
-  position:fixed;inset:0;z-index:0;
+  position:fixed;inset:0;z-index:1;
   pointer-events:none;display:block;
   width:100%;height:100%;
   mix-blend-mode:screen;
 }
 #bg-scrim{
-  position:fixed;inset:0;z-index:0;
+  position:fixed;inset:0;z-index:1;
   pointer-events:none;
 }
 /* When the user picks "No Particles" the scrim should disappear too,
@@ -2967,7 +2967,7 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
 <!-- Set the saved theme and any chat handoff before styles render. -->
 <script src="/js/jqrg-theme-prepaint.js?v=1"></script>
 <link rel="stylesheet" href="/css/jqrg-theme.css?v=3">
-<link rel="stylesheet" href="/css/jqrg-theme-presets.css?v=5">
+<link rel="stylesheet" href="/css/jqrg-theme-presets.css?v=6">
 <script src="/js/jqrg-theme.js?v=5" defer></script>
 </head>
   <body>
@@ -3565,7 +3565,7 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
   </div>
 </div>
 
-<script src="/js/jqrg-particles.js?v=74" defer></script>
+<script src="/js/jqrg-particles.js?v=75" defer></script>
 <script src="/js/openGame.js?v=72"></script>
 <script src="/js/jqrg-anniversary.js?v=9"></script>
           <script>

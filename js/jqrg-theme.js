@@ -80,7 +80,7 @@
     if (document.querySelector('link[href*="/css/jqrg-theme-presets.css"]')) return;
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '/css/jqrg-theme-presets.css?v=5';
+    link.href = '/css/jqrg-theme-presets.css?v=6';
     (document.head || document.documentElement).appendChild(link);
   }
 

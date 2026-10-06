@@ -425,7 +425,7 @@
      * regardless of what the page-content layer is doing. */
     canvas.style.cssText =
       'position:fixed;inset:0;width:100%;height:100%;' +
-      'pointer-events:none;display:block;z-index:0;' +
+      'pointer-events:none;display:block;z-index:1;' +
       'mix-blend-mode:screen;' +
       'will-change:transform;transform:translateZ(0);' +
       'backface-visibility:hidden;-webkit-backface-visibility:hidden;';
@@ -447,7 +447,7 @@
      * the same z-index plane and would otherwise share the canvas's
      * compositing fate during scroll. Independent layers stay smooth. */
     scrim.style.cssText =
-      'position:fixed;inset:0;pointer-events:none;z-index:0;' +
+      'position:fixed;inset:0;pointer-events:none;z-index:1;' +
       'background:' +
         'radial-gradient(ellipse at 50% 35%,transparent 0%,rgba(8,3,16,.18) 55%,rgba(0,0,0,.55) 100%),' +
         'linear-gradient(180deg,rgba(0,0,0,.18) 0%,transparent 35%,transparent 65%,rgba(0,0,0,.28) 100%);' +
