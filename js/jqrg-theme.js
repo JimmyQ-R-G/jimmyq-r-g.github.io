@@ -123,17 +123,21 @@
     var s = document.createElement('style');
     s.id = STYLE_ID;
     s.textContent =
-      '.jqrg-theme-groups{display:grid;gap:16px;margin-top:8px}' +
-      '.jqrg-theme-group-title{font-size:13px;font-weight:700;margin:0 0 7px}' +
-      '.jqrg-theme-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}' +
-      '.jqrg-theme-pick .setting-btn{min-height:54px;text-align:left;white-space:normal}' +
-      '.jqrg-theme-pick .setting-btn[aria-pressed="true"]{outline:2px solid var(--accent-purple);outline-offset:1px;font-weight:700}' +
-      '.jqrg-theme-swatch{display:block;height:8px;border-radius:5px;margin-bottom:5px;background:var(--swatch,#315f52)}' +
+      '.jqrg-theme-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;margin-top:8px}' +
+      '.jqrg-theme-family-btn,.jqrg-theme-choose-btn{display:flex;flex-direction:column;gap:7px;min-height:86px;padding:14px;text-align:left;white-space:normal;border:1px solid var(--border-color,rgba(255,255,255,.16));border-radius:12px;background:var(--surface-2,rgba(255,255,255,.06));color:var(--text-primary,inherit);cursor:pointer}' +
+      '.jqrg-theme-family-btn:hover,.jqrg-theme-choose-btn:hover{border-color:var(--accent-purple,#9b6bff);transform:translateY(-1px)}' +
+      '.jqrg-theme-family-btn strong,.jqrg-theme-choose-btn strong{font-size:15px}' +
+      '.jqrg-theme-family-btn span,.jqrg-theme-choose-btn span{font-size:12px;line-height:1.4;opacity:.75}' +
+      '.jqrg-theme-swatch{display:block;width:100%;height:8px;border-radius:5px;background:var(--swatch,#315f52)}' +
       '.jqrg-theme-description{display:block;font-size:11px;opacity:.75;line-height:1.3;margin-top:3px}' +
-      '#jqrg-theme-chooser{overflow:auto}#jqrg-theme-chooser .jqrg-theme-choose-card{max-height:calc(100vh - 32px);overflow:auto;width:min(920px,94vw)}' +
-      '.jqrg-theme-choose-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}' +
-      '.jqrg-theme-choose-btn{text-align:left;min-height:86px}' +
-      '@media(max-width:520px){.jqrg-theme-choose-row{grid-template-columns:1fr}.jqrg-theme-pick{grid-template-columns:repeat(2,minmax(0,1fr))}}';
+      '#jqrg-theme-chooser{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto;background:rgba(7,8,12,.68);backdrop-filter:blur(8px)}' +
+      '#jqrg-theme-chooser .jqrg-theme-choose-card{max-height:calc(100vh - 36px);overflow:auto;width:min(700px,94vw);padding:24px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:var(--bg-deep,#17141f);color:var(--text-primary,#fff);box-shadow:0 24px 90px rgba(0,0,0,.38)}' +
+      '.jqrg-theme-choose-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}' +
+      '.jqrg-theme-choose-btn{min-height:104px}' +
+      '.jqrg-theme-choose-head{display:flex;align-items:center;gap:10px;margin:0 0 16px}' +
+      '.jqrg-theme-choose-head h2{flex:1;margin:0;font-size:20px}' +
+      '.jqrg-theme-modal-action{border:1px solid rgba(255,255,255,.16);border-radius:9px;padding:8px 11px;background:transparent;color:inherit;cursor:pointer}' +
+      '@media(max-width:520px){.jqrg-theme-groups,.jqrg-theme-choose-row{grid-template-columns:1fr}.jqrg-theme-choose-card{padding:18px!important}}';
     (document.head || document.documentElement).appendChild(s);
   }
 
@@ -150,30 +154,22 @@
     var groups = document.createElement('div');
     groups.className = 'jqrg-theme-groups';
     GROUPS.forEach(function (group) {
-      var section = document.createElement('section');
-      var heading = document.createElement('div');
-      heading.className = 'jqrg-theme-group-title';
-      heading.textContent = group.label;
-      section.appendChild(heading);
-      var pick = document.createElement('div');
-      pick.className = 'jqrg-theme-pick';
-      group.themes.forEach(function (t) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'setting-btn';
-        b.style.setProperty('--swatch', themeSwatch(t.value));
-        b.setAttribute('data-jqrg-theme-pick', t.value);
-        b.setAttribute('aria-pressed', read() === t.value ? 'true' : 'false');
-        b.appendChild(document.createTextNode(t.label));
-        var desc = document.createElement('small');
-        desc.className = 'jqrg-theme-description';
-        desc.textContent = t.desc;
-        b.appendChild(desc);
-        b.onclick = function () { set(t.value); };
-        pick.appendChild(b);
-      });
-      section.appendChild(pick);
-      groups.appendChild(section);
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'jqrg-theme-family-btn';
+      b.setAttribute('data-jqrg-theme-family', group.label);
+      b.setAttribute('aria-label', 'Choose a ' + group.label + ' style');
+      b.style.setProperty('--swatch', themeSwatch(group.themes[0].value));
+      var swatch = document.createElement('i');
+      swatch.className = 'jqrg-theme-swatch';
+      swatch.setAttribute('aria-hidden', 'true');
+      var name = document.createElement('strong');
+      name.textContent = group.label;
+      var desc = document.createElement('span');
+      desc.textContent = group.label === 'Study' ? 'Calm, focused study layouts and colors.' : 'The original game-site look and its variations.';
+      b.appendChild(swatch); b.appendChild(name); b.appendChild(desc);
+      b.onclick = function () { showStylePicker(group, false); };
+      groups.appendChild(b);
     });
     row.appendChild(groups);
 
@@ -328,9 +324,9 @@
       if (!body.children.length) return;
       if (body.querySelector('[data-jqrg-theme-row]')) { paint(); return; }
       ensureStyle();
-      var head = body.firstElementChild;
-      // Put Appearance at the top of the panel, above the existing first section.
-      body.insertBefore(buildRow(), head ? head.nextSibling : null);
+      var appearance = body.querySelector('#ss-appearance');
+      // Theme belongs with visual preferences, never under Account.
+      body.insertBefore(buildRow(), appearance ? appearance.nextSibling : body.firstChild);
       paint();
     };
     ensure();
@@ -355,57 +351,79 @@
     removeChooser();
   }
 
+  function showStylePicker(group, firstRun) {
+    var ov = document.getElementById(CHOOSER_ID);
+    if (!ov) {
+      ov = document.createElement('div');
+      ov.id = CHOOSER_ID;
+      ov.setAttribute('role', 'dialog');
+      ov.setAttribute('aria-modal', 'true');
+      document.body.appendChild(ov);
+    }
+    ov.setAttribute('aria-label', 'Choose a ' + group.label + ' style');
+    ov.innerHTML = '';
+    var card = document.createElement('div');
+    card.className = 'jqrg-theme-choose-card';
+    var head = document.createElement('div');
+    head.className = 'jqrg-theme-choose-head';
+    var title = document.createElement('h2');
+    title.textContent = group.label + ' styles';
+    head.appendChild(title);
+    var back = document.createElement('button');
+    back.type = 'button'; back.className = 'jqrg-theme-modal-action';
+    back.textContent = firstRun ? 'Back' : 'Close';
+    back.setAttribute('aria-label', firstRun ? 'Back to theme categories' : 'Close theme styles');
+    back.onclick = function () {
+      if (firstRun) { removeChooser(); showChooser(); }
+      else removeChooser();
+    };
+    head.appendChild(back);
+    card.appendChild(head);
+    var sub = document.createElement('p');
+    sub.textContent = 'Choose the style you want to use on this device.';
+    card.appendChild(sub);
+    var row = document.createElement('div'); row.className = 'jqrg-theme-choose-row';
+    group.themes.forEach(function (theme) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'jqrg-theme-choose-btn';
+      b.setAttribute('data-pick', theme.value);
+      b.style.setProperty('--swatch', themeSwatch(theme.value));
+      var swatch = document.createElement('i'); swatch.className = 'jqrg-theme-swatch'; swatch.setAttribute('aria-hidden', 'true');
+      var strong = document.createElement('strong'); strong.textContent = theme.label;
+      var desc = document.createElement('span'); desc.textContent = theme.desc;
+      b.appendChild(swatch); b.appendChild(strong); b.appendChild(desc);
+      b.onclick = function () { choose(theme.value); };
+      row.appendChild(b);
+    });
+    card.appendChild(row); ov.appendChild(card);
+  }
+
   function showChooser() {
     if (!document.body) { document.addEventListener('DOMContentLoaded', showChooser); return; }
     if (document.getElementById(CHOOSER_ID)) return;
     if (isChosen()) return;
+    ensureStyle();
 
     var ov = document.createElement('div');
     ov.id = CHOOSER_ID;
     ov.setAttribute('role', 'dialog');
     ov.setAttribute('aria-modal', 'true');
     ov.setAttribute('aria-label', 'Choose your theme');
-
-    var card = document.createElement('div');
-    card.className = 'jqrg-theme-choose-card';
-
-    var title = document.createElement('h2');
-    title.textContent = 'Choose your look';
-    card.appendChild(title);
-
-    var sub = document.createElement('p');
-    sub.textContent = 'Pick how the site looks. You can change this any time in Settings \u2192 Theme.';
-    card.appendChild(sub);
-
+    var card = document.createElement('div'); card.className = 'jqrg-theme-choose-card';
+    var title = document.createElement('h2'); title.textContent = 'Choose your look'; card.appendChild(title);
+    var sub = document.createElement('p'); sub.textContent = 'First choose a theme category, then pick its style.'; card.appendChild(sub);
+    var row = document.createElement('div'); row.className = 'jqrg-theme-groups';
     GROUPS.forEach(function (group) {
-      var section = document.createElement('section');
-      section.className = 'jqrg-theme-choose-group';
-      var heading = document.createElement('h3');
-      heading.textContent = group.label;
-      section.appendChild(heading);
-      var row = document.createElement('div');
-      row.className = 'jqrg-theme-choose-row';
-      group.themes.forEach(function (theme) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'jqrg-theme-choose-btn';
-        b.setAttribute('data-pick', theme.value);
-        b.style.setProperty('--swatch', themeSwatch(theme.value));
-        var swatch = document.createElement('i');
-        swatch.className = 'jqrg-theme-swatch';
-        swatch.setAttribute('aria-hidden', 'true');
-        var strong = document.createElement('strong');
-        strong.textContent = theme.label;
-        var span = document.createElement('span');
-        span.textContent = theme.desc;
-        b.appendChild(swatch); b.appendChild(strong); b.appendChild(span);
-        b.onclick = function () { choose(theme.value); };
-        row.appendChild(b);
-      });
-      section.appendChild(row);
-      card.appendChild(section);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'jqrg-theme-family-btn';
+      b.style.setProperty('--swatch', themeSwatch(group.themes[0].value));
+      var swatch = document.createElement('i'); swatch.className = 'jqrg-theme-swatch'; swatch.setAttribute('aria-hidden', 'true');
+      var strong = document.createElement('strong'); strong.textContent = group.label;
+      var desc = document.createElement('span'); desc.textContent = group.label === 'Study' ? 'Calm, focused study layouts and colors.' : 'The original game-site look and its variations.';
+      b.appendChild(swatch); b.appendChild(strong); b.appendChild(desc);
+      b.onclick = function () { showStylePicker(group, true); };
+      row.appendChild(b);
     });
-    ov.appendChild(card);
+    card.appendChild(row); ov.appendChild(card);
 
     /* Required: the only way out is a deliberate choice. Clicks are NOT
        swallowed on the overlay — a capture-phase stopPropagation there would
