@@ -690,11 +690,13 @@
         throw new Error('YOU ARE BANNED FROM JIMMYQRG.');
       }
       setAuth(data.user, data.token);
+      startPeriodicSync();
       return pullFromServer(0).then(function () {
-        startPeriodicSync();
-        return flushPending().catch(function (err) {
-          try { console.warn('[jqrg-cloud] pending game saves will retry:', err); } catch (_) {}
-        });
+        return flushPending();
+      }).catch(function (err) {
+        // Authentication succeeded. Keep the session and retry sync instead
+        // of misleadingly reporting that sign-in itself failed.
+        try { console.warn('[jqrg-cloud] account sync will retry:', err); } catch (_) {}
       }).then(function () { return data.user; });
     });
   }
@@ -793,11 +795,11 @@
       if (!data.user || !data.token) throw new Error('Invalid register response');
       setAuth(data.user, data.token);
       var accountKey = data.account_key || null;
+      startPeriodicSync();
       return pullFromServer(0).then(function () {
-        startPeriodicSync();
-        return flushPending().catch(function (err) {
-          try { console.warn('[jqrg-cloud] pending game saves will retry:', err); } catch (_) {}
-        });
+        return flushPending();
+      }).catch(function (err) {
+        try { console.warn('[jqrg-cloud] account sync will retry:', err); } catch (_) {}
       }).then(function () { return { user: data.user, accountKey: accountKey }; });
     });
   }
