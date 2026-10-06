@@ -1,30 +1,11 @@
-# J-I-M-M-Y Q-R-G
+# netflix cookie checker
 
-## Website
+bulk checks netflix cookies, moves working ones to a folder. standard netflix hit format.
 
-A web application with various features and tools.
+## usage
 
-[OPEN](https://perfectnip.github.io)
+1. get the exe from releases
+2. put cookies txt files in input folder
+3. run, working ones end up in hits/
 
-### NOTE
-The `LICENSE` clearly indicates that this repo is not allowing any copy or forking, so please do not fork this repo.
-
-### If you are a new joined developer
-
-See [DEVELOPERS.md](https://github.com/indiamonda/perfectnip.github.io/blob/main/DEVELOPERS.md)
-
-### Test site
-
-Please use the main site, it is not recommended at all the use the test site as your data will not be saved at all and might even get erased in some cases. I am not responsible to anything caused to you in the experimental version.
-
-[link](https://jimmyq-r-g.github.io/)
-
-
-
-## Current Developers
-
-- JimmyQrg
-- Glaeesas
-
-
-currymuncher67 is mistaken by github
+checks every profile on the account. reports plan type too
