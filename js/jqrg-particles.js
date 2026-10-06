@@ -27,9 +27,9 @@
   var STYLE_KEY   = 'bgParticleStyle';
   var QUALITY_KEY = 'bgParticleQuality';
   var DEFAULT_STYLE   = 'constellation';
-  // High is the default tier so first-time visitors land on the polished
-  // "real" look (full glow, trails, liquid glass). Users on weaker hardware
-  // can still drop to Regular/Potato in Settings → Appearance. The matching
+  // High is the default tier. Every tier is capped for frame rate, pixel
+  // density, and particle count so the animated backdrop stays responsive.
+  // The matching
   // bootstrap fallback in index.html must agree with this constant — the
   // body-class seed there fires before this script loads, so they share the
   // same defaults to avoid a flicker between "no glass" and "glass" right
@@ -55,15 +55,15 @@
   };
 
   // Quality recipe. `count` is a multiplier applied to a per-style base
-  // population. `glow` controls shadowBlur passes. `trails` toggles a
+  // population. `glow` controls sprite brightness/size. `trails` toggles a
   // semi-transparent clear so motion leaves fading streaks. `fpsCap`
   // throttles the animation loop. `dpr` clamps device-pixel-ratio so
   // weaker GPUs aren't asked to fill 2x pixels.
   var QUALITY = {
-    potato:  { count: 0.30, glow: 'none',   trails: false, fpsCap: 30, dpr: 1.0, layers: 1 },
-    regular: { count: 0.65, glow: 'soft',   trails: false, fpsCap: 60, dpr: 1.5, layers: 2 },
-    high:    { count: 1.00, glow: 'strong', trails: true,  fpsCap: 60, dpr: 2.0, layers: 3 },
-    extreme: { count: 1.50, glow: 'multi',  trails: true,  fpsCap: 60, dpr: 2.0, layers: 4 }
+    potato:  { count: 0.18, glow: 'none',   trails: false, fpsCap: 24, dpr: 1.0,  layers: 1 },
+    regular: { count: 0.38, glow: 'soft',   trails: false, fpsCap: 36, dpr: 1.1,  layers: 2 },
+    high:    { count: 0.58, glow: 'strong', trails: true,  fpsCap: 45, dpr: 1.35, layers: 3 },
+    extreme: { count: 0.82, glow: 'multi',  trails: true,  fpsCap: 50, dpr: 1.5,  layers: 4 }
   };
 
   /* Single source of truth for "how bright should glow be at this tier?". The
@@ -335,7 +335,7 @@
   var W              = 0;
   var H              = 0;
   var dpr            = 1;
-  var rafId          = 0;
+  var rafId          = null;
   var lastFrameTime  = 0;
   var frameStartTime = 0;
   var currentStyle   = null;
@@ -479,7 +479,6 @@
 
     onResize();
     applySettings();
-    start();
   }
 
   function onResize() {
@@ -506,8 +505,8 @@
   function onMouseLeave() { mouse.active = false; mouse.x = -9999; mouse.y = -9999; }
 
   function onVisibilityChange() {
-    if (document.hidden) cancelAnimationFrame(rafId);
-    else { lastFrameTime = 0; start(); }
+    if (document.hidden) stop();
+    else start();
   }
 
   function getStyle() {
@@ -576,40 +575,47 @@
     if (none) {
       renderer = null;
       if (ctx) ctx.clearRect(0, 0, W, H);
+      stop();
       return;
     }
     var Maker = RENDERERS[newStyle];
-    if (!Maker) { renderer = null; return; }
+    if (!Maker) { renderer = null; stop(); return; }
     renderer = new Maker({
       ctx: ctx, width: W, height: H,
       quality: QUALITY[newQuality],
       qualityName: newQuality
     });
+    start();
+  }
+
+  function stop() {
+    if (rafId === null) return;
+    cancelAnimationFrame(rafId);
+    rafId = null;
   }
 
   function start() {
-    cancelAnimationFrame(rafId);
+    stop();
     lastFrameTime = 0;
+    frameStartTime = 0;
+    if (document.hidden || _paused || !renderer || currentStyle === 'none') return;
     rafId = requestAnimationFrame(loop);
   }
 
   function loop(t) {
-    rafId = requestAnimationFrame(loop);
-    if (!renderer) return;
-    /* Skip the entire update+draw pass while a game iframe is open. We do
-     * NOT cancel the rAF chain — keeping the loop ticking means the user's
-     * "close game" click resumes painting on the very next frame, with no
-     * visible relayout. The cost while paused is one branch per frame. */
-    if (_paused) { lastFrameTime = 0; return; }
+    rafId = null;
+    if (!renderer || document.hidden || _paused) return;
 
-    // FPS cap: Potato runs at 30fps to save battery. Other tiers run
-    // uncapped (rAF gives us ~60fps where supported).
+    // Cap every tier; frames beyond the animation's useful rate waste GPU
+    // time, especially on 90/120Hz displays.
     var cap = QUALITY[currentQuality].fpsCap;
-    if (cap < 60) {
-      var minInterval = 1000 / cap;
-      if (frameStartTime && (t - frameStartTime) < minInterval) return;
-      frameStartTime = t;
+    if (prefersReduced) cap = Math.min(cap, 24);
+    var minInterval = 1000 / cap;
+    if (frameStartTime && (t - frameStartTime) < minInterval) {
+      rafId = requestAnimationFrame(loop);
+      return;
     }
+    frameStartTime = t;
 
     var dt = lastFrameTime ? (t - lastFrameTime) / 1000 : 0.016;
     if (dt > 0.1) dt = 0.016; // avoid huge jumps after tab return
@@ -634,6 +640,7 @@
         if (typeof console !== 'undefined' && console.warn) console.warn('[particles] frame skipped:', err);
       }
     }
+    if (renderer && !document.hidden && !_paused) rafId = requestAnimationFrame(loop);
   }
 
   /* Toggle whether a game iframe is occluding the background. Called from
@@ -662,6 +669,7 @@
     paused = !!paused;
     if (paused === _paused) return;
     _paused = paused;
+    if (paused) stop();
     if (canvas) canvas.style.display = paused ? 'none' : (currentStyle === 'none' ? 'none' : 'block');
     if (scrim)  scrim.style.opacity  = paused ? '0' : (currentStyle === 'none' ? '0' : '1');
     applyEffectiveClasses();
@@ -669,6 +677,7 @@
       // Reset the dt baseline so the first resumed frame doesn't jolt the
       // animation forward by however many seconds the game was open.
       lastFrameTime = 0;
+      start();
     }
   }
 
@@ -705,12 +714,12 @@
     var W = opts.width, H = opts.height;
     var q = opts.quality;
     var GC = glowConfig(q.glow);
-    /* All quality tiers use the same particle population (the Regular
-     * tier's count). Glow, trails, DPR and FPS cap still vary per tier,
-     * but density stays constant so the field looks the same everywhere. */
-    var POP = QUALITY.regular.count;       // 0.65
+    /* Scale graph density with the selected tier. This matters most here:
+     * edge detection checks pairs of nodes, so fewer nodes sharply reduce
+     * the renderer's per-frame work on lower settings. */
+    var POP = q.count;
     var BASE = 260;
-    var COUNT = Math.max(20, Math.round(BASE * POP));
+    var COUNT = Math.max(8, Math.round(BASE * POP));
     var MAX_DIST = 130;
     var nodes = [];
     var pulses = [];
@@ -723,13 +732,13 @@
      *     no mouse repulsion)
      *   - twinkle on their own short cycle, decoupled from nodes
      *   - are tiny enough that the GPU blits them in negligible time
-     *   - scale with q.count so Potato gets ~50, Extreme ~300
+     *   - scale with q.count so lower settings do less per-frame work
      * They render in the same `lighter` composite block as the nodes so
      * everything stacks additively, but BEFORE nodes so the foreground
      * stars sit on top of the dust. */
     var motes = [];
     var MOTE_BASE = 200;
-    var MOTE_COUNT = Math.max(20, Math.round(MOTE_BASE * POP));
+    var MOTE_COUNT = Math.max(8, Math.round(MOTE_BASE * POP));
     for (var im = 0; im < MOTE_COUNT; im++) motes.push(makeMote());
 
     /* MICRO LAYER — sub-mote sparks. Even tinier and dimmer than motes;
@@ -741,7 +750,7 @@
      * therefore: clouds → sparks → motes → nodes → pulses → meteors. */
     var sparks = [];
     var SPARK_BASE = 360;
-    var SPARK_COUNT = Math.max(40, Math.round(SPARK_BASE * POP));
+    var SPARK_COUNT = Math.max(16, Math.round(SPARK_BASE * POP));
 
     /* NEBULA CLOUD LAYER — sparse, very large soft chromatic patches.
      * They sit DEEPEST in the layer stack (drawn before edges) and
@@ -1605,7 +1614,7 @@
      * reads the accumulation of many overlapping transparent sprites as
      * volumetric gas, not as discrete glowing circles. */
     var BASE = 70;
-    var COUNT = Math.max(12, Math.round(BASE * q.count));
+    var COUNT = Math.max(8, Math.round(BASE * q.count));
     var orbs = [];
 
     var sparkles = [];
@@ -1615,7 +1624,7 @@
      * always show a rich starfield peeking through the gas. */
     var stars = [];
     var STAR_BASE = 280;
-    var STAR_COUNT = Math.max(60, Math.round(STAR_BASE * q.count));
+    var STAR_COUNT = Math.max(30, Math.round(STAR_BASE * q.count));
     for (var is = 0; is < STAR_COUNT; is++) {
       stars.push({
         x:    Math.random() * W,
@@ -1632,7 +1641,7 @@
     /* Dust — small particles that give the nebula a sense of volume. */
     var dust = [];
     var DUST_BASE = 220;
-    var DUST_COUNT = Math.max(50, Math.round(DUST_BASE * q.count));
+    var DUST_COUNT = Math.max(25, Math.round(DUST_BASE * q.count));
     for (var iD = 0; iD < DUST_COUNT; iD++) {
       dust.push({
         x:    Math.random() * W,
@@ -1652,7 +1661,7 @@
     /* WISP LAYER — faint tiny streaks of gas drifting slowly. */
     var nebWisps = [];
     var NEB_WISP_BASE = 40;
-    var NEB_WISP_COUNT = Math.max(10, Math.round(NEB_WISP_BASE * q.count));
+    var NEB_WISP_COUNT = Math.max(5, Math.round(NEB_WISP_BASE * q.count));
     for (var inw = 0; inw < NEB_WISP_COUNT; inw++) {
       var nwAng = Math.random() * Math.PI * 2;
       nebWisps.push({
@@ -1671,7 +1680,7 @@
     /* EMBER LAYER — warm specks drifting upward. */
     var nebEmbers = [];
     var NEB_EMBER_BASE = 50;
-    var NEB_EMBER_COUNT = Math.max(12, Math.round(NEB_EMBER_BASE * q.count));
+    var NEB_EMBER_COUNT = Math.max(6, Math.round(NEB_EMBER_BASE * q.count));
     for (var ine = 0; ine < NEB_EMBER_COUNT; ine++) {
       nebEmbers.push({
         x:    Math.random() * W,
@@ -1689,7 +1698,7 @@
     /* GLIMMER LAYER — brief bright pinpoint flashes. */
     var nebGlimmers = [];
     var NEB_GLIM_BASE = 30;
-    var NEB_GLIM_COUNT = Math.max(8, Math.round(NEB_GLIM_BASE * q.count));
+    var NEB_GLIM_COUNT = Math.max(4, Math.round(NEB_GLIM_BASE * q.count));
     for (var ing = 0; ing < NEB_GLIM_COUNT; ing++) {
       nebGlimmers.push({
         x:    Math.random() * W,
@@ -2126,7 +2135,7 @@
      * the ribbons paint on top. */
     var haze = [];
     var HAZE_BASE = 70;
-    var HAZE_COUNT = Math.max(15, Math.round(HAZE_BASE * q.count));
+    var HAZE_COUNT = Math.max(8, Math.round(HAZE_BASE * q.count));
     for (var ih = 0; ih < HAZE_COUNT; ih++) {
       haze.push({
         x:    Math.random() * W,
@@ -2149,7 +2158,7 @@
      * They sit behind everything except sky veils. */
     var shimmerDust = [];
     var SDUST_BASE = 80;
-    var SDUST_COUNT = Math.max(15, Math.round(SDUST_BASE * q.count));
+    var SDUST_COUNT = Math.max(8, Math.round(SDUST_BASE * q.count));
     function makeShimmerDust() {
       return {
         x:    Math.random() * W,
@@ -2190,7 +2199,7 @@
      * cycle through a short life, then respawn elsewhere. */
     var starPoints = [];
     var SPOINT_BASE = 25;
-    var SPOINT_COUNT = Math.max(8, Math.round(SPOINT_BASE * q.count));
+    var SPOINT_COUNT = Math.max(4, Math.round(SPOINT_BASE * q.count));
     function makeStarPoint() {
       return {
         x:    Math.random() * W,
@@ -2469,6 +2478,8 @@
     var W = opts.width, H = opts.height;
     var q = opts.quality;
     var GC = glowConfig(q.glow);
+    // Quantum Field's motion is intentionally four times its former pace.
+    var MOTION_SPEED = 4;
     /* PRIMARY LAYER — the dense field of small particles tracing the
      * curl-noise streamlines. The user specifically liked the cursor-swirl
      * interaction and the way streamlines form curves; the previous count
@@ -2476,7 +2487,7 @@
      * raise the base to 480. Off-screen culling in the draw pass means
      * the per-frame cost only scales with VISIBLE particles, not total. */
     var BASE = 480;
-    var COUNT = Math.max(80, Math.round(BASE * q.count));
+    var COUNT = Math.max(36, Math.round(BASE * q.count));
     var particles = [];
     for (var i = 0; i < COUNT; i++) particles.push(make());
     function make() {
@@ -2536,7 +2547,7 @@
      * but with low alpha. */
     var wisps = [];
     var WISP_BASE = 80;
-    var WISP_COUNT = Math.max(20, Math.round(WISP_BASE * q.count));
+    var WISP_COUNT = Math.max(8, Math.round(WISP_BASE * q.count));
     for (var iw = 0; iw < WISP_COUNT; iw++) wisps.push(makeWisp());
     function makeWisp() {
       return {
@@ -2556,7 +2567,7 @@
      * interact with the cursor or other layers; pure ambient decoration. */
     var fieldLines = [];
     var FL_BASE = 30;
-    var FL_COUNT = Math.max(8, Math.round(FL_BASE * q.count));
+    var FL_COUNT = Math.max(4, Math.round(FL_BASE * q.count));
     function makeFieldLine() {
       var angle = Math.random() * Math.PI * 2;
       var speed = 2 + Math.random() * 4;
@@ -2579,7 +2590,7 @@
      * visual weight. No movement — they blink at a random spot and die. */
     var qSparks = [];
     var QS_BASE = 35;
-    var QS_COUNT = Math.max(10, Math.round(QS_BASE * q.count));
+    var QS_COUNT = Math.max(5, Math.round(QS_BASE * q.count));
     function makeQSpark() {
       return {
         x:     Math.random() * W,
@@ -2599,7 +2610,7 @@
      * primary/wisp layers. */
     var phaseMotes = [];
     var PM_BASE = 50;
-    var PM_COUNT = Math.max(15, Math.round(PM_BASE * q.count));
+    var PM_COUNT = Math.max(8, Math.round(PM_BASE * q.count));
     function makePhaseMote() {
       var angle = Math.random() * Math.PI * 2;
       var speed = 1 + Math.random() * 3;
@@ -2670,8 +2681,8 @@
         if (p.mouseImmunity > 0) p.mouseImmunity -= dt;
         if (p.groupImmunity > 0) p.groupImmunity -= dt;
 
-          var n1 = noise2(p.x * scale,        p.y * scale + t * 0.18);
-          var n2 = noise2(p.x * scale + 17.3, p.y * scale + 31.7 - t * 0.15);
+          var n1 = noise2(p.x * scale,        p.y * scale + t * 0.18 * MOTION_SPEED);
+          var n2 = noise2(p.x * scale + 17.3, p.y * scale + 31.7 - t * 0.15 * MOTION_SPEED);
           var ang = (n1 + n2 * 0.5) * Math.PI * 2;
           p.vx += Math.cos(ang) * force * dt;
           p.vy += Math.sin(ang) * force * dt;
@@ -2695,8 +2706,8 @@
 
           p.vx *= 0.88;
           p.vy *= 0.88;
-          p.x += p.vx * dt;
-          p.y += p.vy * dt;
+          p.x += p.vx * dt * MOTION_SPEED;
+          p.y += p.vy * dt * MOTION_SPEED;
         p.life -= dt;
 
         if (p.x < -20 || p.x > W + 20 || p.y < -20 || p.y > H + 20 || p.life <= 0) {
@@ -2830,15 +2841,15 @@
       var anchorDamp  = 0.93;
       for (var ai = 0; ai < anchors.length; ai++) {
         var an = anchors[ai];
-        var an1 = noise2(an.x * scale,           an.y * scale + t * 0.10);
-        var an2 = noise2(an.x * scale + 17.3,    an.y * scale + 31.7 - t * 0.09);
+        var an1 = noise2(an.x * scale,           an.y * scale + t * 0.10 * MOTION_SPEED);
+        var an2 = noise2(an.x * scale + 17.3,    an.y * scale + 31.7 - t * 0.09 * MOTION_SPEED);
         var ang2 = (an1 + an2 * 0.5) * Math.PI * 2;
         an.vx += Math.cos(ang2) * anchorForce * dt;
         an.vy += Math.sin(ang2) * anchorForce * dt;
         an.vx *= anchorDamp;
         an.vy *= anchorDamp;
-        an.x += an.vx * dt;
-        an.y += an.vy * dt;
+        an.x += an.vx * dt * MOTION_SPEED;
+        an.y += an.vy * dt * MOTION_SPEED;
         an.life -= dt;
         if (an.x < -30 || an.x > W + 30 || an.y < -30 || an.y > H + 30 || an.life <= 0) {
           /* Interior respawn — same reasoning as the primary particle
@@ -2871,9 +2882,9 @@
       // Field lines — drift + rotate, wrap at edges.
       for (var fli = 0; fli < fieldLines.length; fli++) {
         var fl = fieldLines[fli];
-        fl.x += fl.vx * dt;
-        fl.y += fl.vy * dt;
-        fl.rot += fl.rotV * dt;
+        fl.x += fl.vx * dt * MOTION_SPEED;
+        fl.y += fl.vy * dt * MOTION_SPEED;
+        fl.rot += fl.rotV * dt * MOTION_SPEED;
         if (fl.x < -30) fl.x += W + 60;
         else if (fl.x > W + 30) fl.x -= W + 60;
         if (fl.y < -30) fl.y += H + 60;
@@ -2898,9 +2909,9 @@
       // Phase motes — very slow drift + twinkle phase advance, wrap edges.
       for (var pmi = 0; pmi < phaseMotes.length; pmi++) {
         var pm = phaseMotes[pmi];
-        pm.x += pm.vx * dt;
-        pm.y += pm.vy * dt;
-        pm.phase += pm.twSpd * dt;
+        pm.x += pm.vx * dt * MOTION_SPEED;
+        pm.y += pm.vy * dt * MOTION_SPEED;
+        pm.phase += pm.twSpd * dt * MOTION_SPEED;
         if (pm.x < -20) pm.x += W + 40;
         else if (pm.x > W + 20) pm.x -= W + 40;
         if (pm.y < -20) pm.y += H + 40;
@@ -3141,7 +3152,7 @@
      * "more background particles" direction. */
     var shards = [];
     var SHARD_BASE = 130;
-    var SHARD_COUNT = Math.max(20, Math.round(SHARD_BASE * q.count));
+    var SHARD_COUNT = Math.max(10, Math.round(SHARD_BASE * q.count));
     for (var im = 0; im < SHARD_COUNT; im++) {
       shards.push({
         x:    Math.random() * W,
@@ -3170,7 +3181,7 @@
      * gradients (now gone), not from sprite blits. */
     var dust = [];
     var DUST_BASE = 360;
-    var DUST_COUNT = Math.max(60, Math.round(DUST_BASE * q.count));
+    var DUST_COUNT = Math.max(25, Math.round(DUST_BASE * q.count));
     for (var idu = 0; idu < DUST_COUNT; idu++) {
       dust.push({
         x:    Math.random() * W,
@@ -3194,7 +3205,7 @@
      * shards. */
     var miniOrbs = [];
     var MINI_BASE = 50;
-    var MINI_COUNT = Math.max(10, Math.round(MINI_BASE * q.count));
+    var MINI_COUNT = Math.max(5, Math.round(MINI_BASE * q.count));
     for (var imo = 0; imo < MINI_COUNT; imo++) {
       miniOrbs.push({
         x:    Math.random() * W,
@@ -3212,7 +3223,7 @@
     /* Facet Glints — very brief flashes suggesting light catching facets. */
     var facetGlints = [];
     var GLINT_BASE = 25;
-    var GLINT_COUNT = Math.max(6, Math.round(GLINT_BASE * q.count));
+    var GLINT_COUNT = Math.max(3, Math.round(GLINT_BASE * q.count));
     for (var fgi = 0; fgi < GLINT_COUNT; fgi++) {
       facetGlints.push({
         x:    Math.random() * W,

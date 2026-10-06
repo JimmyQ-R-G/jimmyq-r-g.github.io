@@ -1,25 +1,9 @@
 /* ============================================================================
- * JQRG theme layer — "study"
- * ----------------------------------------------------------------------------
- * Themes are switched from Settings → Theme and stored in
- * localStorage["jqrgTheme"]; the active one is <html data-theme="study">.
- *
- * The Study theme is NOT a recolour of the game UI. Feedback (2026-10-04):
- *   "the texts are still white, causing the texts to become invisible, the home
- *    page is flooding with purple glow, rolling game images, games icon for some
- *    reason white… you also want to change the overall UI layout completely.
- *    Currently this is still a game website UI layout and no matter how hard you
- *    try to change the coloring, it is not going to work. Also, I have noticed
- *    study websites don't use too modern designs and rarely uses corner radius."
- *
- * So this stylesheet deliberately changes the *shape* of the site, not just its
- * colours:
- *   1. no corner radius anywhere (study sites are boxy),
- *   2. no gradients, glows, shadows or motion,
- *   3. one ink colour for all text, so nothing can land white-on-white,
- *   4. monochrome UI icons instead of white ones,
- *   5. the auto-scrolling game-art strips and artwork are removed,
- *   6. the hero/cards become plain framed blocks.
+ * JQRG Study theme foundation.
+ * Theme IDs and palette variations live in jqrg-theme.js and
+ * jqrg-theme-presets.css. This file applies the Study family to the whole
+ * first-party shell: readable ink, calm surfaces, clear controls, and a
+ * resource-library layout. Presets add the selected palette and details.
  * ==========================================================================*/
 
 html[data-theme="study"]{
@@ -48,24 +32,16 @@ html[data-theme="study"]{
   --accent-purple:#0b4f9e;
 }
 
-/* --- 1/2. shape + motion: square, flat, still ----------------------------
- * One rule each, applied to everything, so no component can smuggle a rounded
- * corner, a neon glow, a gradient or a rolling animation back in. */
+/* --- 1/2. calm surfaces without flattening the whole interface ------------ */
 html[data-theme="study"] *{
-  border-radius:0 !important;
-  box-shadow:none !important;
+  border-radius:8px !important;
   text-shadow:none !important;
   filter:none !important;
-  background-image:none !important;
-  /* Fast-forward instead of deleting. Several components start at opacity:0 and
-     rely on a `forwards` entrance animation to become visible (e.g. the tools
-     page .item uses `opacity:0` + `animation: itemSlide ... forwards`), so
-     `animation:none` left them permanently invisible. Completing the animation
-     instantly gives the same "no motion" result with the correct end state. */
+  /* Keep short transitions and entry effects; only remove exaggerated motion. */
   animation-delay:0s !important;
-  animation-duration:0.001s !important;
+  animation-duration:0.18s !important;
   animation-iteration-count:1 !important;
-  transition-duration:0.001s !important;
+  transition-duration:0.18s !important;
   transition-delay:0s !important;
 }
 html[data-theme="study"] .bg,
@@ -124,7 +100,7 @@ html[data-theme="study"] .sidebar .logo svg,
 html[data-theme="study"] .sidebar .logo svg *{fill:#6b7280 !important;stroke:#6b7280 !important}
 html[data-theme="study"] .logo-shape{background:#6b7280 !important}
 
-/* --- 5. no game artwork, no auto-scrolling strips ------------------------ */
+/* --- 5. home-only promotion art and motion ------------------------------- */
 html[data-theme="study"] .home-banner,
 html[data-theme="study"] .home-spotlight,
 html[data-theme="study"] .home-spotlight-play{display:none !important}
@@ -193,7 +169,7 @@ html[data-theme="study"] .home-quick-title,
 html[data-theme="study"] .home-quick-desc,
 html[data-theme="study"] .home-chat-banner-desc{color:var(--study-ink) !important;opacity:1 !important}
 
-/* --- 8. tiles become plain name buttons --------------------------------- */
+/* --- 8. catalogue tiles use compact resource rows ------------------------ */
 html[data-theme="study"] .grid-1,
 html[data-theme="study"] .grid-2{gap:6px !important;grid-template-columns:repeat(auto-fill,minmax(200px,1fr)) !important}
 html[data-theme="study"] .t-g,

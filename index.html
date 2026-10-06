@@ -1597,11 +1597,7 @@ border-radius:8px;
 .t-g .tile-label,.t-a .tile-label,.collection-tile .tile-label{z-index:3}
 
 /* ══ PARTICLE CANVAS ══ */
-/* Legacy 60-blue-particle canvas + mouse-tracking blob layer. Both
-   pre-date the new jqrg-particles.js system and used a blue palette
-   that doesn't match the current purple theme — hide them so the new
-   five-style background owns the backdrop. The animation loops still
-   run (cheap, ~60 small particles) but they draw to a hidden canvas. */
+/* Hide old background layers if a stale cached fragment injects them. */
 #particle-canvas,
 .bg-effects{
   display:none !important;
@@ -1901,31 +1897,7 @@ body.particles-on .settings-main button{text-shadow:none}
   }
 }
 
-/* ══ BACKGROUND EFFECTS (mouse-tracking blobs) ══ */
-.bg-effects{
-  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
-}
-.bg-effect{
-  position:absolute;width:200px;height:200px;border-radius:50%;
-  opacity:.15;filter:blur(35px);
-  transition:transform 1s cubic-bezier(.23,1,.32,1);pointer-events:none;
-}
-.bg-effect-1{background:radial-gradient(circle,#0077FF 0%,rgba(0,119,255,0) 70%)}
-.bg-effect-2{background:radial-gradient(circle,#3D88FF 0%,rgba(61,136,255,0) 70%)}
-.bg-effect-3{background:radial-gradient(circle,#6A99FF 0%,rgba(106,153,255,0) 70%)}
-.bg-effect-4{background:radial-gradient(circle,#88AAFF 0%,rgba(136,170,255,0) 70%)}
-.bg-effect-5{background:radial-gradient(circle,#AA00FF 0%,rgba(170,0,255,0) 70%)}
-.bg-effect-diamond{
-  position:absolute;width:150px;height:150px;transform:rotate(45deg);
-  opacity:.12;filter:blur(25px);
-  transition:transform 1.2s cubic-bezier(.23,1,.32,1);pointer-events:none;
-  border-radius:20%;
-}
-.bg-effect-diamond-1{background:linear-gradient(135deg,#0077FF,rgba(0,119,255,.3))}
-.bg-effect-diamond-2{background:linear-gradient(135deg,#4D88FF,rgba(77,136,255,.3))}
-.bg-effect-diamond-3{background:linear-gradient(135deg,#7D99FF,rgba(125,153,255,.3))}
-.bg-effect-diamond-4{background:linear-gradient(135deg,#AA00FF,rgba(170,0,255,.3))}
-
+/* The retired mouse-following background layer has no styles or runtime. */
 /* ══ KEYFRAME ANIMATIONS ══ */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeInPage{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -2988,11 +2960,11 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
 
 </style>
 <script src="/js/gg-detect.js"></script>
-<!-- JQRG theme (Settings → Theme). The attribute is set before first paint
-     so a Study-theme user never sees a flash of the dark theme. -->
-<script>try{if(localStorage.getItem('jqrgTheme')!=='jimmyqrg')document.documentElement.setAttribute('data-theme','study')}catch(e){}</script>
-<link rel="stylesheet" href="/css/jqrg-theme.css">
-<script src="/js/jqrg-theme.js" defer></script>
+<!-- Set the saved theme and any chat handoff before styles render. -->
+<script src="/js/jqrg-theme-prepaint.js?v=1"></script>
+<link rel="stylesheet" href="/css/jqrg-theme.css?v=2">
+<link rel="stylesheet" href="/css/jqrg-theme-presets.css?v=2">
+<script src="/js/jqrg-theme.js?v=2" defer></script>
 </head>
   <body>
 <div id="learn-cover">
@@ -3073,7 +3045,6 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
 })();
 </script>
 <script>if(localStorage.getItem('enableCursor')!=='false')document.body.classList.add('custom-cursor-enabled');</script>
-<canvas id="particle-canvas"></canvas>
 
 <!-- ══ LIQUID GLASS DISTORTION FILTER ══════════════════════════════════════
      Inline SVG <defs> block for the body.lg-extreme tier. The filter is
@@ -3126,7 +3097,6 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
 </svg>
 
 <div class="bg"></div>
-    <div class="bg-effects"></div>
 
 <div id="app" data-page="home">
 
@@ -3207,8 +3177,9 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
     <button data-nav="home" class="active" onclick="navigate('home')">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </button>
-    <template data-auth-required="nav-games"><button data-nav="games" onclick="navigate('games')">
-      <svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 4H20V20H4V4ZM8.5 7.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM15.5 7.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM12 10.7a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM8.5 14.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM15.5 14.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6Z"/></svg>
+    <template data-auth-required="nav-games"><button data-nav="games" onclick="navigate('games')" aria-label="Games">
+      <svg class="games-icon-study" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 4H20V20H4V4ZM8.5 7.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM15.5 7.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM12 10.7a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM8.5 14.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6ZM15.5 14.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 1 0 0-2.6Z"/></svg>
+      <svg class="games-icon-jimmyqrg" aria-hidden="true" viewBox="12 140 22 18"><path d="M27.3227 141C28.9864 141 30.4423 142.205 30.8711 143.937L32.874 152.025C33.4958 154.536 31.7378 157 29.3248 157H29.1407C27.6893 157 26.3739 156.079 25.7844 154.651L25.4226 153.774C25.2261 153.298 24.7872 152.991 24.3036 152.991H21.6965C21.2128 152.991 20.774 153.298 20.5774 153.774L20.2156 154.651C19.6261 156.079 18.3106 157 16.8593 157H16.6752C14.2621 157 12.5042 154.536 13.126 152.025L15.1289 143.937C15.5578 142.205 17.0136 141 18.6773 141H27.3227ZM18.6773 142.319C17.5683 142.319 16.5978 143.122 16.3117 144.276L14.3088 152.365C13.9072 153.986 14.9944 155.578 16.5253 155.676L16.6752 155.681H16.8593L17.0394 155.674C17.8747 155.608 18.6222 155.085 19.0176 154.29L19.0973 154.115L19.4584 153.238C19.8268 152.346 20.6208 151.751 21.5155 151.68L21.6965 151.673H24.3036C25.271 151.673 26.1486 152.286 26.5416 153.238L26.9027 154.115C27.2711 155.008 28.0654 155.603 28.9606 155.674L29.1407 155.681H29.3248L29.4747 155.676C30.956 155.581 32.0221 154.088 31.7255 152.522L31.6912 152.365L29.6883 144.276C29.4202 143.194 28.5499 142.42 27.5283 142.328L27.3227 142.319H18.6773ZM25.8944 148.109C26.3512 148.109 26.7217 148.508 26.7217 149C26.7216 149.492 26.3512 149.891 25.8944 149.891C25.4378 149.89 25.068 149.492 25.0679 149C25.0679 148.509 25.4377 148.11 25.8944 148.109ZM20.1048 144.778C20.4427 144.778 20.7169 145.073 20.7169 145.437V146.56H21.7586C22.0967 146.56 22.3708 146.855 22.3708 147.219C22.3704 147.583 22.0965 147.878 21.7586 147.878H20.7169V149C20.7167 149.364 20.4426 149.659 20.1048 149.66C19.767 149.66 19.4929 149.364 19.4927 149V147.878H18.4502C18.1124 147.878 17.8384 147.583 17.838 147.219C17.838 146.855 18.1122 146.56 18.4502 146.56H19.4927V145.437C19.4927 145.073 19.7668 144.778 20.1048 144.778ZM24.2406 146.327C24.6973 146.327 25.0678 146.726 25.0679 147.218C25.0679 147.71 24.6973 148.109 24.2406 148.109C23.7838 148.109 23.4133 147.71 23.4133 147.218C23.4133 146.726 23.7838 146.327 24.2406 146.327ZM27.5491 146.327C28.0058 146.327 28.3763 146.726 28.3764 147.218C28.3764 147.71 28.0059 148.109 27.5491 148.109C27.0922 148.109 26.7217 147.71 26.7217 147.218C26.7218 146.726 27.0923 146.327 27.5491 146.327ZM25.8944 144.546C26.3512 144.546 26.7217 144.945 26.7217 145.437C26.7216 145.929 26.3511 146.327 25.8944 146.327C25.4378 146.327 25.0681 145.929 25.0679 145.437C25.0679 144.945 25.4377 144.546 25.8944 144.546Z" fill="white"/></svg>
         </button></template>
     <button data-nav="apps" onclick="navigate('apps')">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -3577,7 +3548,7 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
   </div>
 </div>
 
-<script src="/js/jqrg-particles.js?v=72" defer></script>
+<script src="/js/jqrg-particles.js?v=73" defer></script>
 <script src="/js/openGame.js?v=72"></script>
 <script src="/js/jqrg-anniversary.js?v=9"></script>
           <script>
@@ -5623,6 +5594,13 @@ function renderRecentGames(){
      the trash icon in that state so the empty-state CTA owns the row. */
   var section=c.closest&&c.closest('.recent-1-section');
   if(section) section.classList.toggle('recent-empty-1',games.length===0);
+  var study=window.JqrgTheme&&typeof window.JqrgTheme.isStudy==='function'&&window.JqrgTheme.isStudy();
+  c.classList.toggle('study-recent-list',!!study);
+  if(study){
+    if(games.length){c.innerHTML='<div class="study-recent-items">'+games.slice(0,10).map(_bH).join('')+'</div>';}
+    else renderHomeBanner(c,games,{empty:'Your recently opened activities will appear here.',cta:{label:'Browse the learning library →',onclick:"navigate('games')"}});
+    return;
+  }
   renderHomeBanner(c,games,{
     empty:'Pick up where you left off — the games you launch will show up here.',
     cta:{label:'Browse the library →',onclick:"navigate('games')"}
@@ -6103,138 +6081,8 @@ document.addEventListener('keydown',function(e){
   }
 })();
 
-// Glowing particles
-(function(){
-  var canvas=document.getElementById('particle-canvas');
-  var ctx=canvas.getContext('2d');
-  var mx=window.innerWidth/2,my=window.innerHeight/2;
-  var particles=[];
-  var PARTICLE_COUNT=60;
-  var glowColors=[
-    {r:168,g:85,b:247},
-    {r:99,g:102,b:241},
-    {r:236,g:72,b:153},
-    {r:59,g:130,b:246},
-    {r:170,g:0,b:255},
-    {r:0,g:119,b:255}
-  ];
+// The old hidden-canvas particles and mouse-following blobs were retired.
 
-  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
-  resize();
-  window.addEventListener('resize',resize);
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
-
-  function Particle(){this.reset()}
-  Particle.prototype.reset=function(){
-    this.x=Math.random()*canvas.width;
-    this.y=Math.random()*canvas.height;
-    this.size=Math.random()*2.5+0.5;
-    this.speedX=(Math.random()-0.5)*0.3;
-    this.speedY=(Math.random()-0.5)*0.3;
-    var c=glowColors[Math.floor(Math.random()*glowColors.length)];
-    this.r=c.r;this.g=c.g;this.b=c.b;
-    this.alpha=Math.random()*0.5+0.15;
-    this.life=Math.random()*300+200;
-    this.maxLife=this.life;
-    this.glowSize=this.size*(3+Math.random()*4);
-  };
-  Particle.prototype.update=function(){
-    var dx=mx-this.x,dy=my-this.y;
-    var dist=Math.sqrt(dx*dx+dy*dy);
-    if(dist<200){this.x+=dx*0.003;this.y+=dy*0.003}
-    this.x+=this.speedX;this.y+=this.speedY;this.life--;
-    if(this.life<=0||this.x<-10||this.x>canvas.width+10||this.y<-10||this.y>canvas.height+10)this.reset();
-  };
-  Particle.prototype.draw=function(){
-    var f=this.life<50?this.life/50:1;
-    var a=this.alpha*f;
-    ctx.save();
-    ctx.shadowColor='rgba('+this.r+','+this.g+','+this.b+','+a+')';
-    ctx.shadowBlur=this.glowSize;
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fillStyle='rgba('+this.r+','+this.g+','+this.b+','+a+')';
-    ctx.fill();
-    ctx.fill();
-    ctx.restore();
-  };
-
-  for(var i=0;i<PARTICLE_COUNT;i++)particles.push(new Particle());
-  function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(var i=0;i<particles.length;i++){particles[i].update();particles[i].draw()}
-    requestAnimationFrame(animate);
-  }
-  animate();
-})();
-
-// Mouse-tracking background blobs (from gh-pages)
-(function(){
-  var container=document.querySelector('.bg-effects');
-  if(!container)return;
-  var effects=[];
-  var numCircles=5,numDiamonds=4;
-  var baseRadius=Math.min(window.innerWidth,window.innerHeight)*0.4;
-  var currentBaseRadius=baseRadius;
-  var mouseX=window.innerWidth/2,mouseY=window.innerHeight/2;
-
-  for(var i=0;i<numCircles;i++){
-    var el=document.createElement('div');
-    el.className='bg-effect bg-effect-'+(i+1);
-    container.appendChild(el);
-    var off=i%2===0?50:-50;
-    effects.push({el:el,angle:(i/numCircles)*Math.PI*2,baseOffset:off,isDiamond:false,towardMouse:i%2===0});
-  }
-  for(var i=0;i<numDiamonds;i++){
-    var el=document.createElement('div');
-    el.className='bg-effect-diamond bg-effect-diamond-'+(i+1);
-    container.appendChild(el);
-    var off=i%2===0?30:-30;
-    effects.push({el:el,angle:(i/numDiamonds)*Math.PI*2+Math.PI/4,baseOffset:off,isDiamond:true,towardMouse:i%2!==0});
-  }
-
-  function updateEffects(){
-    var cx=window.innerWidth/2,cy=window.innerHeight/2;
-    var dx=mouseX-cx,dy=mouseY-cy;
-    var dist=Math.sqrt(dx*dx+dy*dy);
-    var maxDist=Math.sqrt(cx*cx+cy*cy);
-    var norm=dist/maxDist;
-    var targetR=baseRadius*(1+(norm-0.5)*0.7);
-    currentBaseRadius+=(targetR-currentBaseRadius)*0.08;
-    var mouseAngle=Math.atan2(dy,dx);
-
-    for(var i=0;i<effects.length;i++){
-      var e=effects[i];
-      var angle=e.angle;
-      if(e.towardMouse){
-        var d=mouseAngle-angle;
-        while(d>Math.PI)d-=Math.PI*2;
-        while(d<-Math.PI)d+=Math.PI*2;
-        angle+=d*0.15;
-      }else{
-        var d=(mouseAngle+Math.PI)-angle;
-        while(d>Math.PI)d-=Math.PI*2;
-        while(d<-Math.PI)d+=Math.PI*2;
-        angle+=d*0.12;
-      }
-      e.angle=angle;
-      var r=e.isDiamond?currentBaseRadius*0.7+e.baseOffset:currentBaseRadius+e.baseOffset;
-      var x=cx+Math.cos(angle)*r;
-      var y=cy+Math.sin(angle)*r;
-      var sz=e.isDiamond?75:100;
-      e.el.style.left=(x-sz)+'px';
-      e.el.style.top=(y-sz)+'px';
-    }
-  }
-
-  document.addEventListener('mousemove',function(ev){mouseX=ev.clientX;mouseY=ev.clientY});
-  window.addEventListener('resize',function(){
-    baseRadius=Math.min(window.innerWidth,window.innerHeight)*0.4;
-    currentBaseRadius=baseRadius;
-  });
-
-  (function loop(){updateEffects();requestAnimationFrame(loop)})();
-})();
 
     </script>
 

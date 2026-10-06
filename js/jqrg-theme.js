@@ -1,14 +1,12 @@
 /* ============================================================================
  * JQRG theme switching
  * ----------------------------------------------------------------------------
- * Themes: "jimmyqrg" (default look) and "study". Stored in
- * localStorage["jqrgTheme"] and applied as <html data-theme="study"> —
- * css/jqrg-theme.css does the actual restyling.
+ * Theme choices are stored on this device and mirrored to jchat with an
+ * anonymous device key. They are never attached to an account.
  *
- * The page's <head> carries a 1-line snippet that sets the attribute before
- * first paint. It treats *any* value other than "jimmyqrg" as study, so a
- * device that has never chosen is Study until it answers the first-run
- * chooser below — nobody sees a flash of the dark theme on the way in.
+ * The page's <head> bootstrap maps a saved theme ID to its family and variant
+ * before first paint. A device that has never chosen starts in Study until it
+ * answers the first-run chooser below, so no dark-theme flash appears.
  *
  * A first-run chooser is required: a new device cannot dismiss it, it sits
  * above the sign-in modal (z-index above the auth overlay), and the site stays
@@ -16,40 +14,74 @@
  * theme choice, so it only ever appears once per device.
  *
  * The Settings row is injected at runtime rather than edited into the settings
- * markup, so this stays a self-contained feature: one stylesheet + one script.
+ * markup. Shared presets are loaded on every first-party page by this script.
  * ==========================================================================*/
 (function () {
   if (window.JqrgTheme) return;
 
   var KEY = 'jqrgTheme';
-  var THEMES = [
-    { value: 'jimmyqrg', label: 'JimmyQrg' },
-    { value: 'study',    label: 'Study' }
+  var DEVICE_KEY = 'jqrgThemeDeviceV1';
+  var PAIRED_KEY = 'jqrgThemeDevicePairedV1';
+  var UPDATED_KEY = 'jqrgThemeUpdatedV1';
+  var SYNC_URL = 'https://discord.jimmyqrg.com/api/theme-sync';
+  var GROUPS = [
+    { label: 'Study', themes: [
+      { value: 'study', label: 'Classroom', desc: 'Warm paper, calm green accents, and a clear school-desk layout.' },
+      { value: 'study-library', label: 'Reading Room', desc: 'Parchment, bookish headings, and quiet burgundy details.' },
+      { value: 'study-campus', label: 'Field Notes', desc: 'Sage and evergreen with an open, editorial feel.' },
+      { value: 'study-lab', label: 'Lab Bench', desc: 'Cool blue-grey, precise lines, and a technical reference feel.' },
+      { value: 'study-notebook', label: 'Notebook', desc: 'Cream paper, ruled accents, and friendly index-card rows.' },
+      { value: 'study-graphite', label: 'Graphite', desc: 'Soft stone, charcoal ink, and restrained copper highlights.' }
+    ]},
+    { label: 'JimmyQrg', themes: [
+      { value: 'jimmyqrg', label: 'Violet Arcade', desc: 'The original dark, purple-lit game lounge.' },
+      { value: 'jimmyqrg-solar', label: 'Solar Cabinet', desc: 'Amber and ink, styled like a warm retro arcade cabinet.' },
+      { value: 'jimmyqrg-verdant', label: 'Emerald Circuit', desc: 'Deep green and bright jade with a crisp game-library layout.' }
+    ]}
   ];
-  var VALID = { jimmyqrg: 1, study: 1 };
+  var THEMES = GROUPS.reduce(function (all, group) { return all.concat(group.themes); }, []);
+  var VALID = THEMES.reduce(function (map, theme) { map[theme.value] = theme; return map; }, {});
   var CHOOSER_ID = 'jqrg-theme-chooser';
   var escapeGuard = null;
+  var initialHandoff = consumeHandoff();
+
+  function normalize(value) {
+    if (VALID[value]) return value;
+    if (value === 'simple') return 'study-lab';
+    if (value === 'comic') return 'jimmyqrg-solar';
+    return null;
+  }
 
   function stored() {
-    try { return localStorage.getItem(KEY); } catch (_) { return null; }
+    try { return normalize(localStorage.getItem(KEY)); } catch (_) { return null; }
   }
 
   function read() {
     var v = stored();
-    return VALID[v] ? v : 'study';   // unchosen devices behave as Study
+    return normalize(v) || 'study';
   }
 
+  function isStudy(value) { return (normalize(value) || read()).indexOf('study') === 0; }
+
   function isChosen() {
-    return !!VALID[stored()];
+    try { return !!normalize(localStorage.getItem(KEY)); } catch (_) { return false; }
   }
 
   function apply(name) {
-    var v = VALID[name] ? name : 'study';
+    var v = normalize(name) || 'study';
     try {
-      if (v === 'study') document.documentElement.setAttribute('data-theme', 'study');
-      else document.documentElement.removeAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', isStudy(v) ? 'study' : 'jimmyqrg');
+      document.documentElement.setAttribute('data-theme-variant', v);
     } catch (_) {}
     return v;
+  }
+
+  function ensurePresetStylesheet() {
+    if (document.querySelector('link[href*="/css/jqrg-theme-presets.css"]')) return;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/css/jqrg-theme-presets.css?v=1';
+    (document.head || document.documentElement).appendChild(link);
   }
 
   function set(name) {
@@ -58,9 +90,11 @@
     try {
       v = apply(name);
       try { localStorage.setItem(KEY, v); } catch (_) {}
+      stampLocal();
       paint();
-      try { window.dispatchEvent(new CustomEvent('jqrg:themechange', { detail: { theme: v } })); } catch (_) {}
+      try { window.dispatchEvent(new CustomEvent('jqrg:themechange', { detail: { theme: v, family: isStudy(v) ? 'study' : 'jimmyqrg' } })); } catch (_) {}
       applyCopy();
+      publishTheme(v);
     } catch (_) {
       /* Nothing in the swap may stop the reload below: a half-swapped DOM is
          exactly the "some UIs stay broken until I refresh" state. */
@@ -79,7 +113,7 @@
     return v;
   }
 
-  function toggle() { return set(read() === 'study' ? 'jimmyqrg' : 'study'); }
+  function toggle() { return set(isStudy(read()) ? 'jimmyqrg' : 'study'); }
 
   /* ---------------------------------------------------------------- picker */
 
@@ -89,10 +123,17 @@
     var s = document.createElement('style');
     s.id = STYLE_ID;
     s.textContent =
-      '.jqrg-theme-pick{display:inline-flex;gap:6px}' +
-      '.jqrg-theme-pick .setting-btn{min-width:86px;text-align:center}' +
-      '.jqrg-theme-pick .setting-btn[aria-pressed="true"]{border-color:#1a73e8;background:#e8f0fe;color:#1a73e8;font-weight:600}' +
-      'html[data-theme="study"] .jqrg-theme-pick .setting-btn[aria-pressed="true"]{background:#e8f0fe;border-color:#1a73e8;color:#1a73e8}';
+      '.jqrg-theme-groups{display:grid;gap:16px;margin-top:8px}' +
+      '.jqrg-theme-group-title{font-size:13px;font-weight:700;margin:0 0 7px}' +
+      '.jqrg-theme-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}' +
+      '.jqrg-theme-pick .setting-btn{min-height:54px;text-align:left;white-space:normal}' +
+      '.jqrg-theme-pick .setting-btn[aria-pressed="true"]{outline:2px solid var(--accent-purple);outline-offset:1px;font-weight:700}' +
+      '.jqrg-theme-swatch{display:block;height:8px;border-radius:5px;margin-bottom:5px;background:var(--swatch,#315f52)}' +
+      '.jqrg-theme-description{display:block;font-size:11px;opacity:.75;line-height:1.3;margin-top:3px}' +
+      '#jqrg-theme-chooser{overflow:auto}#jqrg-theme-chooser .jqrg-theme-choose-card{max-height:calc(100vh - 32px);overflow:auto;width:min(920px,94vw)}' +
+      '.jqrg-theme-choose-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}' +
+      '.jqrg-theme-choose-btn{text-align:left;min-height:86px}' +
+      '@media(max-width:520px){.jqrg-theme-choose-row{grid-template-columns:1fr}.jqrg-theme-pick{grid-template-columns:repeat(2,minmax(0,1fr))}}';
     (document.head || document.documentElement).appendChild(s);
   }
 
@@ -106,22 +147,39 @@
     label.textContent = 'Theme';
     row.appendChild(label);
 
-    var pick = document.createElement('span');
-    pick.className = 'jqrg-theme-pick';
-    THEMES.forEach(function (t) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'setting-btn';
-      b.setAttribute('data-jqrg-theme-pick', t.value);
-      b.textContent = t.label;
-      b.onclick = function () { set(t.value); };
-      pick.appendChild(b);
+    var groups = document.createElement('div');
+    groups.className = 'jqrg-theme-groups';
+    GROUPS.forEach(function (group) {
+      var section = document.createElement('section');
+      var heading = document.createElement('div');
+      heading.className = 'jqrg-theme-group-title';
+      heading.textContent = group.label;
+      section.appendChild(heading);
+      var pick = document.createElement('div');
+      pick.className = 'jqrg-theme-pick';
+      group.themes.forEach(function (t) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'setting-btn';
+        b.style.setProperty('--swatch', themeSwatch(t.value));
+        b.setAttribute('data-jqrg-theme-pick', t.value);
+        b.setAttribute('aria-pressed', read() === t.value ? 'true' : 'false');
+        b.appendChild(document.createTextNode(t.label));
+        var desc = document.createElement('small');
+        desc.className = 'jqrg-theme-description';
+        desc.textContent = t.desc;
+        b.appendChild(desc);
+        b.onclick = function () { set(t.value); };
+        pick.appendChild(b);
+      });
+      section.appendChild(pick);
+      groups.appendChild(section);
     });
-    row.appendChild(pick);
+    row.appendChild(groups);
 
     var hint = document.createElement('div');
     hint.className = 'setting-hint';
-    hint.textContent = 'Study hides game artwork and turns tiles into plain name buttons.';
+    hint.textContent = 'Your choice is saved on this device. Theme changes sync with JimmyQrg Chat after you open one site from the other.';
     hint.style.cssText = 'font-size:12.5px;color:var(--text-dim);margin-top:6px';
     row.appendChild(hint);
 
@@ -134,6 +192,131 @@
     for (var i = 0; i < btns.length; i++) {
       btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-jqrg-theme-pick') === current ? 'true' : 'false');
     }
+  }
+
+  function themeSwatch(id) {
+    var swatches = {
+      study: 'linear-gradient(90deg,#f4f2e9,#416b5d)',
+      'study-library': 'linear-gradient(90deg,#f2e8d4,#713d43)',
+      'study-campus': 'linear-gradient(90deg,#eff4e9,#467052)',
+      'study-lab': 'linear-gradient(90deg,#edf4f8,#386786)',
+      'study-notebook': 'linear-gradient(90deg,#fffaf0,#5974a3)',
+      'study-graphite': 'linear-gradient(90deg,#ecebe7,#986744)',
+      jimmyqrg: 'linear-gradient(90deg,#120c1a,#a78bfa)',
+      'jimmyqrg-solar': 'linear-gradient(90deg,#1b130b,#f4a62a)',
+      'jimmyqrg-verdant': 'linear-gradient(90deg,#0a1712,#3cda9b)'
+    };
+    return swatches[id] || swatches.study;
+  }
+
+  function validDeviceId(value) { return /^[A-Za-z0-9_-]{32,64}$/.test(String(value || '')); }
+  function consumeHandoff() {
+    try {
+      var params = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+      var device = params.get('jqrg-theme-device');
+      var theme = normalize(params.get('jqrg-theme'));
+      if (validDeviceId(device)) { localStorage.setItem(DEVICE_KEY, device); localStorage.setItem(PAIRED_KEY, '1'); }
+      if (validDeviceId(device) && theme) {
+        localStorage.setItem(KEY, theme);
+        localStorage.setItem(UPDATED_KEY, String(Date.now()));
+      }
+      if (params.has('jqrg-theme-device') || params.has('jqrg-theme')) {
+        params.delete('jqrg-theme-device'); params.delete('jqrg-theme');
+        history.replaceState(null, '', location.pathname + location.search + (params.toString() ? '#' + params.toString() : ''));
+      }
+      return validDeviceId(device) ? device : '';
+    } catch (_) { return ''; }
+  }
+
+  function deviceId() {
+    try {
+      var value = localStorage.getItem(DEVICE_KEY);
+      if (validDeviceId(value)) return value;
+      var bytes = new Uint8Array(24);
+      if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(bytes);
+      else for (var i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+      value = Array.prototype.map.call(bytes, function (n) { return n.toString(16).padStart(2, '0'); }).join('');
+      localStorage.setItem(DEVICE_KEY, value);
+      return value;
+    } catch (_) { return ''; }
+  }
+
+  function stampLocal(value) {
+    try { localStorage.setItem(UPDATED_KEY, String(value || Date.now())); } catch (_) {}
+  }
+
+  function syncRequest(action, theme) {
+    var id = deviceId();
+    if (!id) return Promise.resolve(null);
+    return fetch(SYNC_URL + '/' + action, {
+      method: 'POST', mode: 'cors', credentials: 'omit', keepalive: action === 'write',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ device_id: id, theme: theme || '' })
+    }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  }
+
+  function publishTheme(theme) {
+    try { if (localStorage.getItem(PAIRED_KEY) !== '1') return Promise.resolve(null); } catch (_) { return Promise.resolve(null); }
+    return syncRequest('write', normalize(theme) || read()).then(function (remote) {
+      if (remote && Number(remote.updated_at || 0)) stampLocal(Number(remote.updated_at));
+      return remote;
+    });
+  }
+
+  function installDeviceSync() {
+    deviceId();
+    function decorateChatLinks() {
+      var id = deviceId();
+      document.querySelectorAll('a[href*="discord.jimmyqrg.com"]').forEach(function (link) {
+        try {
+          var url = new URL(link.href, location.href);
+          if (url.hostname !== 'discord.jimmyqrg.com') return;
+          url.hash = new URLSearchParams({ 'jqrg-theme-device': id, 'jqrg-theme': read() }).toString();
+          link.href = url.href;
+        } catch (_) {}
+      });
+    }
+    document.addEventListener('click', function (event) {
+      var link = event.target && event.target.closest ? event.target.closest('a[href*="discord.jimmyqrg.com"]') : null;
+      if (link) {
+        try { localStorage.setItem(PAIRED_KEY, '1'); } catch (_) {}
+        decorateChatLinks();
+      }
+    }, true);
+    decorateChatLinks();
+    try { new MutationObserver(decorateChatLinks).observe(document.body, { childList: true, subtree: true }); } catch (_) {}
+    function readShared() {
+      try { if (localStorage.getItem(PAIRED_KEY) !== '1') return; } catch (_) { return; }
+      if (document.visibilityState === 'hidden' || !isChosen()) return;
+      var localUpdated = 0;
+      try { localUpdated = Number(localStorage.getItem(UPDATED_KEY) || 0); } catch (_) {}
+      syncRequest('read').then(function (remote) {
+        if (!remote || !normalize(remote.theme)) {
+          if (stored()) publishTheme(read());
+          return;
+        }
+        if (Number(remote.updated_at || 0) > localUpdated) {
+          var next = normalize(remote.theme);
+          stampLocal(Number(remote.updated_at));
+          if (stored() !== next) {
+            localStorage.setItem(KEY, next);
+            apply(next);
+            location.reload();
+          }
+        } else if (stored() && localUpdated > Number(remote.updated_at || 0)) publishTheme(read());
+      });
+    }
+    if (initialHandoff && stored()) publishTheme(read());
+    readShared();
+    window.setInterval(readShared, 4000);
+    window.addEventListener('focus', readShared);
+    document.addEventListener('visibilitychange', readShared);
+    window.addEventListener('storage', function (event) {
+      if (event.key === KEY && normalize(event.newValue)) {
+        apply(normalize(event.newValue));
+        location.reload();
+      }
+    });
   }
 
   /* The settings body is re-rendered every time the panel opens, so watch it
@@ -194,27 +377,34 @@
     sub.textContent = 'Pick how the site looks. You can change this any time in Settings \u2192 Theme.';
     card.appendChild(sub);
 
-    var row = document.createElement('div');
-    row.className = 'jqrg-theme-choose-row';
-
-    [{ v: 'study',    t: 'Study',    d: 'Plain and light, like a normal school page. No game artwork.' },
-     { v: 'jimmyqrg', t: 'JimmyQrg', d: 'The original look: dark, colourful, full game artwork.' }]
-    .forEach(function (o) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'jqrg-theme-choose-btn';
-      b.setAttribute('data-pick', o.v);
-      var strong = document.createElement('strong');
-      strong.textContent = o.t;
-      var span = document.createElement('span');
-      span.textContent = o.d;
-      b.appendChild(strong);
-      b.appendChild(span);
-      b.onclick = function () { choose(o.v); };
-      row.appendChild(b);
+    GROUPS.forEach(function (group) {
+      var section = document.createElement('section');
+      section.className = 'jqrg-theme-choose-group';
+      var heading = document.createElement('h3');
+      heading.textContent = group.label;
+      section.appendChild(heading);
+      var row = document.createElement('div');
+      row.className = 'jqrg-theme-choose-row';
+      group.themes.forEach(function (theme) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'jqrg-theme-choose-btn';
+        b.setAttribute('data-pick', theme.value);
+        b.style.setProperty('--swatch', themeSwatch(theme.value));
+        var swatch = document.createElement('i');
+        swatch.className = 'jqrg-theme-swatch';
+        swatch.setAttribute('aria-hidden', 'true');
+        var strong = document.createElement('strong');
+        strong.textContent = theme.label;
+        var span = document.createElement('span');
+        span.textContent = theme.desc;
+        b.appendChild(swatch); b.appendChild(strong); b.appendChild(span);
+        b.onclick = function () { choose(theme.value); };
+        row.appendChild(b);
+      });
+      section.appendChild(row);
+      card.appendChild(section);
     });
-
-    card.appendChild(row);
     ov.appendChild(card);
 
     /* Required: the only way out is a deliberate choice. Clicks are NOT
@@ -340,7 +530,7 @@
   }
 
   function applyWording() {
-    if (read() !== 'study' || !document.body) return;
+    if (!isStudy(read()) || !document.body) return;
     try {
       var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
       var n;
@@ -393,14 +583,14 @@
    * announcement list link, the auto-open on sign-in, or any other caller
    * cannot bring up the modal or the full-screen experience. */
   function blockAnniversary() {
-    if (read() !== 'study') return;
+    if (!isStudy(read())) return;
     try {
       var modal = document.getElementById('anniversary-modal');
       if (modal) modal.classList.remove('open');
       if (typeof window.openAnniversary === 'function' && !window.openAnniversary.__jqrgStudyBlocked) {
         var origOpen = window.openAnniversary;
         window.openAnniversary = function () {
-          if (read() === 'study') return;
+          if (isStudy(read())) return;
           return origOpen.apply(this, arguments);
         };
         window.openAnniversary.__jqrgStudyBlocked = true;
@@ -409,7 +599,7 @@
       if (ann && typeof ann.launch === 'function' && !ann.launch.__jqrgStudyBlocked) {
         var origLaunch = ann.launch;
         ann.launch = function () {
-          if (read() === 'study') return;
+          if (isStudy(read())) return;
           return origLaunch.apply(this, arguments);
         };
         ann.launch.__jqrgStudyBlocked = true;
@@ -418,7 +608,7 @@
   }
 
   function applyCopy() {
-    var study = read() === 'study';
+    var study = isStudy(read());
     for (var i = 0; i < STUDY_COPY.length; i++) {
       var el = document.querySelector(STUDY_COPY[i].sel);
       if (!el) continue;
@@ -440,7 +630,7 @@
     origGreeting = window.renderHomeGreeting;
     window.renderHomeGreeting = function () {
       var r = origGreeting.apply(this, arguments);
-      if (read() === 'study') applyStudyGreeting();
+      if (isStudy(read())) applyStudyGreeting();
       return r;
     };
     window.renderHomeGreeting.__jqrgStudy = true;
@@ -465,8 +655,10 @@
     toggle: toggle,
     apply: apply,
     isChosen: isChosen,
+    isStudy: function () { return isStudy(read()); },
     showChooser: showChooser,
     themes: THEMES.slice(),
+    groups: GROUPS.slice(),
     _ensureRow: watchSettings
   };
 
@@ -475,6 +667,8 @@
   apply(read());
 
   function boot() {
+    ensurePresetStylesheet();
+    installDeviceSync();
     watchSettings();
     hookGreeting();
     hookNavigate();
@@ -492,7 +686,7 @@
     try {
       var pending = null;
       new MutationObserver(function () {
-        if (read() !== 'study') return;
+        if (!isStudy(read())) return;
         if (pending) clearTimeout(pending);
         pending = setTimeout(function () { applyWording(); blockAnniversary(); }, 300);
       }).observe(document.body, { childList: true, subtree: true, characterData: true });
