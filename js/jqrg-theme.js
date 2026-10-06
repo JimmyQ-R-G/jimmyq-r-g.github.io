@@ -34,7 +34,7 @@
       { value: 'study-graphite', label: 'Graphite', desc: 'Soft stone, charcoal ink, and restrained copper highlights.' }
     ]},
     { label: 'JimmyQrg', themes: [
-      { value: 'jimmyqrg', label: 'Violet Arcade', desc: 'The original dark, purple-lit game lounge.' },
+      { value: 'jimmyqrg', label: 'Classic', desc: 'The original dark JimmyQrg layout, tuned for the game library.' },
       { value: 'jimmyqrg-solar', label: 'Solar Cabinet', desc: 'Amber and ink, styled like a warm retro arcade cabinet.' },
       { value: 'jimmyqrg-verdant', label: 'Emerald Circuit', desc: 'Deep green and bright jade with a crisp game-library layout.' }
     ]}
@@ -80,7 +80,7 @@
     if (document.querySelector('link[href*="/css/jqrg-theme-presets.css"]')) return;
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '/css/jqrg-theme-presets.css?v=1';
+    link.href = '/css/jqrg-theme-presets.css?v=3';
     (document.head || document.documentElement).appendChild(link);
   }
 

@@ -2963,8 +2963,8 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
 <!-- Set the saved theme and any chat handoff before styles render. -->
 <script src="/js/jqrg-theme-prepaint.js?v=1"></script>
 <link rel="stylesheet" href="/css/jqrg-theme.css?v=2">
-<link rel="stylesheet" href="/css/jqrg-theme-presets.css?v=2">
-<script src="/js/jqrg-theme.js?v=3" defer></script>
+<link rel="stylesheet" href="/css/jqrg-theme-presets.css?v=3">
+<script src="/js/jqrg-theme.js?v=4" defer></script>
 </head>
   <body>
 <div id="learn-cover">
@@ -5533,12 +5533,12 @@ function renderHomeSpotlight(force){
    The whole tile is clickable; the Play button is purely visual decoration
    layered on top (pointer-events:none on the wrapper) so clicks always
    resolve to the tile's onclick handler. */
-function _bH(g){
+function _bH(g,duplicate){
   var src=_('L2dhbWUtaW1hZ2VzL2dhbWVzLw==')+g.img+'.png';
   var escaped=String(g.url||'').replace(/'/g,"\\'");
   var onclick="_openCatalogGame('"+escaped+"',"+(g.wo?'true':'false')+")";
   var label=_t(g.n);
-  return '<div class="home-banner-tile" onclick="'+onclick+'" tabindex="0" role="button" aria-label="Play '+label.replace(/"/g,'&quot;')+'">'+
+  return '<div class="home-banner-tile'+(duplicate?' home-banner-duplicate':'')+'" onclick="'+onclick+'" tabindex="'+(duplicate?'-1':'0')+'" role="button" aria-label="Play '+label.replace(/"/g,'&quot;')+'"'+(duplicate?' aria-hidden="true"':'')+'>'+
     '<div class="skeleton skeleton-tile"></div>'+
     '<img src="'+src+'" alt="" decoding="async"'+
       ' onload="var s=this.previousElementSibling;if(s)s.style.display=\'none\'"'+
@@ -5569,14 +5569,17 @@ function renderHomeBanner(container,games,opts){
   }
   var pool=games.slice();
   while(pool.length<6) pool=pool.concat(games);
-  var tilesHTML='';
-  for(var i=0;i<pool.length;i++) tilesHTML+=_bH(pool[i]);
+  var tilesHTML='',duplicateHTML='';
+  for(var i=0;i<pool.length;i++){
+    tilesHTML+=_bH(pool[i]);
+    duplicateHTML+=_bH(pool[i],true);
+  }
   var TILE_W=280,GAP=18; // matches .home-banner-tile width + .home-banner-track gap
   var copyWidth=pool.length*(TILE_W+GAP);
   var dur=Math.max(28,Math.min(110,Math.round(copyWidth/55))); // ~55 px/sec
   container.style.setProperty('--hb-duration',dur+'s');
   container.setAttribute('data-direction',direction);
-  container.innerHTML='<div class="home-banner-track" aria-hidden="false">'+tilesHTML+tilesHTML+'</div>';
+  container.innerHTML='<div class="home-banner-track" aria-hidden="false">'+tilesHTML+duplicateHTML+'</div>';
 }
 
 function renderRecentGames(){
