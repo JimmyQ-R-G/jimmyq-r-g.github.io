@@ -80,36 +80,23 @@
     if (document.querySelector('link[href*="/css/jqrg-theme-presets.css"]')) return;
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '/css/jqrg-theme-presets.css?v=4';
+    link.href = '/css/jqrg-theme-presets.css?v=5';
     (document.head || document.documentElement).appendChild(link);
   }
 
   function set(name) {
     var before = stored();
-    var v = null;
-    try {
-      v = apply(name);
-      try { localStorage.setItem(KEY, v); } catch (_) {}
-      stampLocal();
-      paint();
-      try { window.dispatchEvent(new CustomEvent('jqrg:themechange', { detail: { theme: v, family: isStudy(v) ? 'study' : 'jimmyqrg' } })); } catch (_) {}
-      applyCopy();
-      publishTheme(v);
-    } catch (_) {
-      /* Nothing in the swap may stop the reload below: a half-swapped DOM is
-         exactly the "some UIs stay broken until I refresh" state. */
-    }
-    /* A live swap cannot be made reliable. The wording pass rewrites text nodes
-       in place, but the shell caches and re-renders that same DOM, so switching
-       back to JimmyQrg left Study wording behind on pages rebuilt afterwards
-       (measured: home still read "All Items" / "Open now" with theme cleared).
-       The theme is applied before first paint anyway, so persist and reload —
-       the page then renders exactly once, with the right theme from the start.
-       The reload runs whenever the value actually changed, even if a step
-       above threw; skipping it leaves the broken page on screen. */
-    if (before !== v) {
-      try { location.reload(); } catch (_) { try { location.href = location.href; } catch (e) {} }
-    }
+    var v = normalize(name);
+    if (!v) return before || read();
+    if (before === v) { apply(v); paint(); return v; }
+    /* Theme switching changes both layout and copy. Persist first, then let
+       the early head bootstrap render the whole page once with one coherent
+       theme. Avoid repainting only part of the live UI before navigation. */
+    try { localStorage.setItem(KEY, v); }
+    catch (_) { return before || read(); }
+    stampLocal();
+    publishTheme(v);
+    try { location.reload(); } catch (_) { try { location.href = location.href; } catch (e) {} }
     return v;
   }
 

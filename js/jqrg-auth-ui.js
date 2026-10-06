@@ -561,22 +561,22 @@
       var submit = form.querySelector('.jqrg-auth-submit');
       submit.disabled = true; submit.textContent = 'Signing in…';
       // Keep the login form visible until the initial account sync completes.
-      syncPromptInFlight = true;
+      syncAfterAuthInFlight = true;
       Cloud.login(id, pw).then(function () {
         onSignedIn();
-        maybeOfferLocalSync(function () {
-          syncPromptInFlight = false;
+        syncAfterAuth(function () {
+          syncAfterAuthInFlight = false;
           setTab('profile');
         });
       }).catch(function (e) {
-        syncPromptInFlight = false;
+        syncAfterAuthInFlight = false;
         err.textContent = (e && e.message) || 'Login failed.';
         submit.disabled = false; submit.textContent = 'Sign in';
       });
     }});
     form.appendChild(h('div', { class: 'jqrg-gate-intro' }, [
       h('strong', null, 'This is a normal sign-in.'),
-      ' Supported game saves sync to your account while you are signed in. Saves that cannot be synced may be lost when you leave or reload the game.'
+      ' Saves the launcher can access sync to your account while you are signed in. Saves inside isolated game storage are not available to the launcher yet.'
     ]));
     form.appendChild(h('label', null, [
       'Username or email',
@@ -599,7 +599,7 @@
       showJqrgRecoveryModal();
     });
     form.appendChild(h('div', { style: 'text-align:center;display:flex;justify-content:center;gap:18px;margin-top:8px' }, [forgotLink, recoverLink]));
-    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'Your JimmyQrg Chat account works here too. Supported game saves sync automatically while you are signed in.'));
+    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'Your JimmyQrg Chat account works here too. Saves the launcher can access sync automatically while you are signed in.'));
     return form;
   }
 
@@ -1275,20 +1275,20 @@
       if (pw !== pw2) { err.textContent = 'Passwords do not match.'; return; }
       var submit = form.querySelector('.jqrg-auth-submit');
       submit.disabled = true; submit.textContent = 'Creating account\u2026';
-      syncPromptInFlight = true;
+      syncAfterAuthInFlight = true;
       var regFields = { username: username, email: email, password: pw, display_name: displayName || username };
       if (!emailSkipped) regFields.email_code = code;
       Cloud.register(regFields).then(function (result) {
         var ack = (result && result.accountKey) ? showJqrgAccountKeyModal(result.accountKey) : Promise.resolve();
         return ack.then(function () {
           onSignedIn();
-          maybeOfferLocalSync(function () {
-            syncPromptInFlight = false;
+          syncAfterAuth(function () {
+            syncAfterAuthInFlight = false;
             setTab('profile');
           });
         });
       }).catch(function (e) {
-        syncPromptInFlight = false;
+        syncAfterAuthInFlight = false;
         var msg = (e && e.message) || 'Sign-up failed.';
         if (msg.indexOf('Verification code is required') !== -1) {
           // Server still requires a code for this address (skip lists drifted).
@@ -1373,7 +1373,7 @@
     ]));
     form.appendChild(err);
     form.appendChild(h('button', { type: 'submit', class: 'jqrg-auth-submit' }, 'Create account'));
-    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'One account signs you in here and on JimmyQrg Chat. Supported game saves sync automatically while you are signed in.'));
+    form.appendChild(h('div', { class: 'jqrg-auth-hint' }, 'One account signs you in here and on JimmyQrg Chat. Saves the launcher can access sync automatically while you are signed in.'));
     return form;
   }
 
@@ -1487,10 +1487,10 @@
     var syncStatus = h('div', { class: 'jqrg-sync-status' }, 'Checking cloud sync…');
     wrap.appendChild(syncStatus);
     Cloud.forceSync().then(function () {
-      syncStatus.textContent = 'Cloud sync is current for supported game saves';
+      syncStatus.textContent = 'Cloud responded; this page’s pending saves are synced';
       syncStatus.classList.add('active');
-    }).catch(function () {
-      syncStatus.textContent = 'Cloud sync is unavailable; pending saves will retry';
+    }).catch(function (err) {
+      syncStatus.textContent = 'Cloud sync failed: ' + ((err && err.message) || 'unknown error');
       syncStatus.classList.remove('active');
     });
 
@@ -1550,7 +1550,7 @@
       if (statusEl) {
         statusEl.textContent = 'Exported ' + (snapshot.items ? snapshot.items.length : 0) + ' saves';
         statusEl.classList.add('active');
-        setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Cloud sync is current for supported game saves'; }, 2500);
+        setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Cloud responded; this page’s pending saves are synced'; }, 2500);
       }
     }).catch(function (err) {
       if (statusEl) statusEl.textContent = 'Export failed: ' + ((err && err.message) || 'unknown');
@@ -1569,7 +1569,7 @@
           if (statusEl) {
             statusEl.textContent = 'Imported ' + (result.accepted || 0) + ' saves' + (result.rejected ? ' (' + result.rejected + ' rejected)' : '');
             statusEl.classList.add('active');
-            setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Cloud sync is current for supported game saves'; }, 3000);
+            setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Cloud responded; this page’s pending saves are synced'; }, 3000);
           }
           return Cloud.forceSync().catch(function () {});
         });
@@ -1657,288 +1657,22 @@
     };
   }
 
-  // Track sync-prompt state for this session so we don't re-prompt mid-flow or nest prompts.
-  var syncPromptInFlight = false;
+  // Keep the profile transition in flight until the initial account sync settles.
+  var syncAfterAuthInFlight = false;
 
-  /** Show the "you have local data not synced" prompt inside the open modal's content area.
-   *  `onDone(result)` runs after the user has resolved the prompt. Possible results:
-   *    - 'pushed' / 'overwritten' — sync completed, summary contains push details
-   *    - 'erased'                — user wiped local data, summary contains counts
-   *    - 'skipped'               — user picked "Not now"; migration key is left
-   *      untouched so the next openModal() will re-prompt. This is intentional
-   *      per UX spec — "Not Now" must keep nagging the user every time they
-   *      click on the account icon until they pick a real answer.
-   *    - 'cancelled'             — user backed out of the overwrite warning.
-   *  Must be called with the modal already open. */
-  function showSyncPrompt(onDone) {
-    if (!modalEl) { if (onDone) onDone('no-modal'); return; }
-    var tabsEl = modalEl.querySelector('.jqrg-auth-tabs');
-    var content = modalEl.querySelector('.jqrg-auth-content');
-    var titleEl = modalEl.querySelector('.jqrg-auth-title');
-    if (!content) { if (onDone) onDone('no-content'); return; }
-    if (tabsEl) tabsEl.style.display = 'none';
-    if (titleEl) titleEl.textContent = 'Sync local data?';
-    content.innerHTML = '';
-
-    syncPromptInFlight = true;
-
-    var wrap = h('div', { class: 'jqrg-auth-form' });
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-msg' }, [
-      'We found ',
-      h('span', { class: 'jqrg-confirm-danger' }, 'game save data on this device'),
-      ' that hasn\'t been uploaded to your account yet.',
-    ]));
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-note' }, 'Choose what to do with the local data on this device.'));
-    var errBox = h('div', { class: 'jqrg-auth-error' });
-    wrap.appendChild(errBox);
-    // Layout convention: destructive on the left (Erase), neutral in the middle
-    // (Not Now), primary action on the right (Sync). Keeping the dangerous
-    // option in the leftmost slot reduces fat-finger taps on Sync that overshoot
-    // into Erase, which is the worst possible misclick here.
-    var erase = h('button', { type: 'button', class: 'jqrg-btn-danger' }, 'Erase');
-    var notNow = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Not Now');
-    var merge = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Merge');
-    var sync = h('button', { type: 'button', class: 'jqrg-auth-submit' }, 'Sync');
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-actions' }, [erase, notNow, merge, sync]));
-    content.appendChild(wrap);
-
-    var finish = function (result, summary) {
-      syncPromptInFlight = false;
-      if (onDone) onDone(result, summary);
-    };
-
-    notNow.onclick = function () {
-      // Intentionally NOT calling Cloud.skipLocalMigration() — leaving the
-      // migration record absent means hasUnsyncedLocalData() stays truthy, so
-      // the next openModal() (i.e. the user clicking on their account icon
-      // again) will re-trigger maybeOfferLocalSync() and show this prompt
-      // again. The previous behaviour permanently dismissed the prompt for
-      // this device, which buried unsynced saves where the user could never
-      // see them.
-      finish('skipped');
-    };
-
-    erase.onclick = function () { showEraseConfirm(finish); };
-
-    sync.onclick = function () {
-      erase.disabled = true; notNow.disabled = true; sync.disabled = true;
-      sync.textContent = 'Checking your account…';
-      errBox.textContent = '';
-      Cloud.isAccountEmpty().then(function (empty) {
-        if (empty) {
-          sync.textContent = 'Uploading…';
-          return Cloud.pushAllLocal().then(function (summary) { finish('pushed', summary); });
-        }
-        showOverwriteWarning(finish);
-      }).catch(function (err) {
-        errBox.textContent = (err && err.message) || 'Sync failed.';
-        erase.disabled = false; notNow.disabled = false; sync.disabled = false;
-        sync.textContent = 'Sync';
-      });
-    };
-
-    merge.onclick = function () {
-      erase.disabled = true; notNow.disabled = true; merge.disabled = true; sync.disabled = true;
-      merge.textContent = 'Merging…';
-      errBox.textContent = '';
-      Cloud.isAccountEmpty().then(function (empty) {
-        if (empty) {
-          merge.textContent = 'Merging…';
-          return Cloud.mergeLocalToAccount().then(function (summary) { finish('merged', summary); });
-        }
-        showMergeWarning(finish);
-      }).catch(function (err) {
-        errBox.textContent = (err && err.message) || 'Merge failed.';
-        erase.disabled = false; notNow.disabled = false; merge.disabled = false; sync.disabled = false;
-        merge.textContent = 'Merge';
-      });
-    };
-  }
-
-  function showMergeWarning(onDone) {
-    if (!modalEl) { if (onDone) onDone('no-modal'); return; }
-    var content = modalEl.querySelector('.jqrg-auth-content');
-    var titleEl = modalEl.querySelector('.jqrg-auth-title');
-    if (!content) { if (onDone) onDone('no-content'); return; }
-    if (titleEl) titleEl.textContent = 'Merge data?';
-    content.innerHTML = '';
-
-    var wrap = h('div', { class: 'jqrg-auth-form' });
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-msg' }, [
-      'Your account already has saved data. The merge will ',
-      h('span', { class: 'jqrg-confirm-danger' }, 'only upload data for games that have local data'),
-      '. Games with only account data will be preserved.',
-    ]));
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-note' }, 'Games without local data will not be affected.'));
-    var errBox = h('div', { class: 'jqrg-auth-error' });
-    wrap.appendChild(errBox);
-    var cancel = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Cancel');
-    var proceed = h('button', { type: 'button', class: 'jqrg-btn-danger' }, 'Merge');
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-actions' }, [cancel, proceed]));
-    content.appendChild(wrap);
-
-    cancel.onclick = function () { if (onDone) onDone('cancelled'); };
-
-    proceed.onclick = function () {
-      cancel.disabled = true; proceed.disabled = true;
-      proceed.textContent = 'Merging…';
-      errBox.textContent = '';
-      Cloud.mergeLocalToAccount().then(function (summary) {
-        if (onDone) onDone('merged', summary);
-      }).catch(function (err) {
-        errBox.textContent = (err && err.message) || 'Merge failed.';
-        cancel.disabled = false; proceed.disabled = false;
-        proceed.textContent = 'Merge';
-      });
-    };
-  }
-
-  /** Confirmation pane shown when the user clicks "Erase" on the sync prompt.
-   *  Replaces the prompt content with a single yes/no confirmation. Cancel
-   *  re-opens the original prompt; Erase wipes local syncable data via the
-   *  cloud module and resolves the outer prompt with result === 'erased'.
-   *
-   *  We deliberately keep this confirmation lightweight (a single dialog,
-   *  no DELETE-typing dance like deleteAll uses) because the action only
-   *  affects the current device — the server-side account is untouched, so
-   *  the worst-case is the user having to re-download their saves the next
-   *  time they open a game, which the cloud module handles automatically. */
-  function showEraseConfirm(finish) {
-    if (!modalEl) { finish('no-modal'); return; }
-    var content = modalEl.querySelector('.jqrg-auth-content');
-    var titleEl = modalEl.querySelector('.jqrg-auth-title');
-    if (!content) { finish('no-content'); return; }
-    if (titleEl) titleEl.textContent = 'Erase local data?';
-    content.innerHTML = '';
-
-    var wrap = h('div', { class: 'jqrg-auth-form' });
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-msg' }, [
-      'This will permanently remove ',
-      h('span', { class: 'jqrg-confirm-danger' }, 'every game save stored on this device'),
-      '. Your account on the server is not touched.',
-    ]));
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-note' }, 'When you launch a game next, your account\'s saved progress will be downloaded fresh.'));
-    var errBox = h('div', { class: 'jqrg-auth-error' });
-    wrap.appendChild(errBox);
-
-    var cancel = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Cancel');
-    var proceed = h('button', { type: 'button', class: 'jqrg-btn-danger' }, 'Erase local data');
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-actions' }, [cancel, proceed]));
-    content.appendChild(wrap);
-
-    cancel.onclick = function () {
-      showSyncPrompt(function (result, summary) { finish(result, summary); });
-    };
-
-    proceed.onclick = function () {
-      cancel.disabled = true; proceed.disabled = true;
-      proceed.textContent = 'Erasing…';
-      errBox.textContent = '';
-      Promise.resolve(Cloud.wipeLocalSyncable()).then(function (summary) {
-        finish('erased', summary);
-      }).catch(function (err) {
-        errBox.textContent = (err && err.message) || 'Erase failed.';
-        cancel.disabled = false; proceed.disabled = false;
-        proceed.textContent = 'Erase local data';
-      });
-    };
-  }
-
-  /** Second-step confirmation shown when the server already has saved data. Replaces the
-   *  content pane of the same modal. `onDone('overwritten'|'cancelled')` fires when the user
-   *  completes or cancels. */
-  function showOverwriteWarning(onDone) {
-    if (!modalEl) { if (onDone) onDone('no-modal'); return; }
-    var content = modalEl.querySelector('.jqrg-auth-content');
-    var titleEl = modalEl.querySelector('.jqrg-auth-title');
-    if (!content) { if (onDone) onDone('no-content'); return; }
-    if (titleEl) titleEl.textContent = 'Overwrite account data?';
-    content.innerHTML = '';
-
-    var wrap = h('div', { class: 'jqrg-auth-form' });
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-msg' }, [
-      'Your account already has saved data. Continuing will ',
-      h('span', { class: 'jqrg-confirm-danger' }, 'overwrite everything currently stored on the account'),
-      ' with the data from this device.',
-    ]));
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-note' }, 'This cannot be undone. Export your account data first from the account page if you want to keep it.'));
-    var errBox = h('div', { class: 'jqrg-auth-error' });
-    wrap.appendChild(errBox);
-    var cancel = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Cancel');
-    var proceed = h('button', { type: 'button', class: 'jqrg-btn-danger' }, 'Rewrite');
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-actions' }, [cancel, proceed]));
-    content.appendChild(wrap);
-
-    cancel.onclick = function () { if (onDone) onDone('cancelled'); };
-
-    proceed.onclick = function () {
-      cancel.disabled = true; proceed.disabled = true;
-      proceed.textContent = 'Uploading…';
-      errBox.textContent = '';
-      Cloud.pushAllLocal().then(function (summary) {
-        if (onDone) onDone('overwritten', summary);
-      }).catch(function (err) {
-        errBox.textContent = (err && err.message) || 'Upload failed.';
-        cancel.disabled = false; proceed.disabled = false;
-        proceed.textContent = 'Rewrite';
-      });
-    };
-  }
-
-  function showMergeWarning(onDone) {
-    if (!modalEl) { if (onDone) onDone('no-modal'); return; }
-    var content = modalEl.querySelector('.jqrg-auth-content');
-    var titleEl = modalEl.querySelector('.jqrg-auth-title');
-    if (!content) { if (onDone) onDone('no-content'); return; }
-    if (titleEl) titleEl.textContent = 'Merge data?';
-    content.innerHTML = '';
-
-    var wrap = h('div', { class: 'jqrg-auth-form' });
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-msg' }, [
-      'Your account already has saved data. The merge will ',
-      h('span', { class: 'jqrg-confirm-danger' }, 'only upload data for games that have local data'),
-      '. Games with only account data will be preserved.',
-    ]));
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-note' }, 'Games without local data will not be affected.'));
-    var errBox = h('div', { class: 'jqrg-auth-error' });
-    wrap.appendChild(errBox);
-    var cancel = h('button', { type: 'button', class: 'jqrg-btn-ghost' }, 'Cancel');
-    var proceed = h('button', { type: 'button', class: 'jqrg-btn-danger' }, 'Merge');
-    wrap.appendChild(h('div', { class: 'jqrg-confirm-actions' }, [cancel, proceed]));
-    content.appendChild(wrap);
-
-    cancel.onclick = function () { if (onDone) onDone('cancelled'); };
-
-    proceed.onclick = function () {
-      cancel.disabled = true; proceed.disabled = true;
-      proceed.textContent = 'Merging…';
-      errBox.textContent = '';
-      Cloud.mergeLocalToAccount().then(function (summary) {
-        if (onDone) onDone('merged', summary);
-      }).catch(function (err) {
-        errBox.textContent = (err && err.message) || 'Merge failed.';
-        cancel.disabled = false; proceed.disabled = false;
-        proceed.textContent = 'Merge';
-      });
-    };
-  }
-
-  /** Entry point: check whether the signed-in user has unsynced local data and, if so, open
-   *  the sync prompt. When finished it restores the profile view. Safe to call whether or
-   *  not a modal is already visible. `afterFn` is invoked after the prompt resolves (or
-   *  immediately if no prompt is shown). */
-  function maybeOfferLocalSync(afterFn) {
+  /** Flush and pull after sign-in before returning to the profile view. This does not
+   *  infer saves from local database presence or open a migration prompt. */
+  function syncAfterAuth(afterFn) {
     var done = function () { if (afterFn) try { afterFn(); } catch (_) {} };
     if (!Cloud.isLoggedIn()) { done(); return; }
-    if (syncPromptInFlight) { done(); return; }
-    // Save writes are already queued by jqrg-cloud and uploaded automatically.
-    // Finish a real flush/pull before showing the profile; do not prompt based on
-    // unrelated or empty game databases that the sync client cannot upload.
-    syncPromptInFlight = true;
+    if (syncAfterAuthInFlight) { done(); return; }
+    // Complete a real flush/pull before showing the profile. Database presence
+    // is not evidence of unsynced saves, so this flow never offers a migration prompt.
+    syncAfterAuthInFlight = true;
     Cloud.forceSync().catch(function (err) {
       try { console.warn('[jqrg-auth-ui] game save sync will retry:', err); } catch (_) {}
     }).then(function () {
-      syncPromptInFlight = false;
+      syncAfterAuthInFlight = false;
       done();
     });
   }
@@ -2032,8 +1766,8 @@
     if (modalEl) {
       var head = modalEl.querySelector('.jqrg-auth-title');
       if (head) head.textContent = Cloud.isLoggedIn() ? 'Your account' : (modalRequired ? 'Sign in to continue' : 'Sign in');
-      // Don't auto-navigate if a sync prompt is (about to be) shown — the caller handles it.
-      if (!syncPromptInFlight) {
+      // Don't navigate until the initial account sync flow has settled.
+      if (!syncAfterAuthInFlight) {
         setTab(Cloud.isLoggedIn() ? 'profile' : currentTab);
       }
     }

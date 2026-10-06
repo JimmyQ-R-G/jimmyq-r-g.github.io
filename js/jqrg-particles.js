@@ -125,16 +125,25 @@
     return v > 0.85;
   }
 
-  // Theme palette — drawn from the existing site theme.
-  var COLORS = {
-    purple:     [176, 122, 255], // #b07aff
-    accent:     [136,  65, 214], // #8841d6
-    pink:       [255, 107, 165],
-    pinkBright: [255,  61, 142], // #FF3D8E
-    cyan:       [104, 230, 255],
-    cyanBright: [  0, 250, 255], // #00FAFF
-    deep:       [ 40,  16,  80]
+  // Each JimmyQrg preset gets its own particle family. The variant is applied
+  // by the head bootstrap before this deferred script runs; theme changes
+  // reload the page so the atlas and cached colors are rebuilt together.
+  var THEME_VARIANT = document.documentElement.getAttribute('data-theme-variant') || 'jimmyqrg';
+  var PALETTES = {
+    jimmyqrg: {
+      purple:[176,122,255], accent:[136,65,214], pink:[255,107,165], pinkBright:[255,61,142],
+      cyan:[104,230,255], cyanBright:[0,250,255], deep:[40,16,80]
+    },
+    'jimmyqrg-solar': {
+      purple:[255,190,73], accent:[227,145,38], pink:[255,126,62], pinkBright:[255,91,43],
+      cyan:[255,231,163], cyanBright:[255,246,206], deep:[76,41,10]
+    },
+    'jimmyqrg-verdant': {
+      purple:[61,218,148], accent:[35,169,111], pink:[176,229,91], pinkBright:[205,255,102],
+      cyan:[107,235,205], cyanBright:[167,255,225], deep:[14,73,47]
+    }
   };
+  var COLORS = PALETTES[THEME_VARIANT] || PALETTES.jimmyqrg;
 
   /* ════ PALETTE CACHE ══════════════════════════════════════════════════════
    * `paletteAt(hue, alpha)` is called HUNDREDS of times per frame (once per
@@ -520,9 +529,25 @@
     return QUALITIES.indexOf(q) >= 0 ? q : DEFAULT_QUALITY;
   }
 
+  function themeAllowsParticles() {
+    return document.documentElement.getAttribute('data-theme') !== 'study';
+  }
+
   function applySettings(force) {
     var newStyle   = getStyle();
     var newQuality = getQuality();
+    if (!themeAllowsParticles()) {
+      currentStyle = newStyle;
+      currentQuality = newQuality;
+      renderer = null;
+      stop();
+      if (canvas) canvas.style.display = 'none';
+      if (scrim) scrim.style.opacity = '0';
+      if (ctx) ctx.clearRect(0, 0, W, H);
+      document.body.classList.remove('lg-on', 'lg-extreme', 'particles-on');
+      document.body.classList.add('lg-off', 'particles-off');
+      return;
+    }
     if (!force && newStyle === currentStyle && newQuality === currentQuality) return;
     currentStyle   = newStyle;
     currentQuality = newQuality;

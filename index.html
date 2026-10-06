@@ -1435,6 +1435,10 @@ html,body{
 }
 .modal-overlay.open .modal{transform:translateY(0) scale(1);opacity:1}
 #announcement-modal .modal{max-width:520px}
+.developer-group-full-modal{max-width:520px}
+.dev-group-full-message{display:flex;align-items:flex-start;gap:14px;padding:24px;color:var(--text);line-height:1.65}
+.dev-group-full-message p{margin:0}
+.dev-group-full-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:50%;background:var(--bg-hover);color:var(--accent-purple);font-weight:800}
 #announcement-modal .modal-body a{color:#fff !important;text-decoration:underline}
 #anniversary-modal .modal{max-width:580px;border:2px solid rgba(255,193,77,.35);background:radial-gradient(120% 90% at 50% 0%,#2a1140 0%,#14071f 55%,#0a0312 100%)}
 #anniversary-modal .modal-close{position:absolute;top:12px;right:14px;z-index:10;color:rgba(255,255,255,.6)}
@@ -2962,9 +2966,9 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
 <script src="/js/gg-detect.js"></script>
 <!-- Set the saved theme and any chat handoff before styles render. -->
 <script src="/js/jqrg-theme-prepaint.js?v=1"></script>
-<link rel="stylesheet" href="/css/jqrg-theme.css?v=2">
-<link rel="stylesheet" href="/css/jqrg-theme-presets.css?v=4">
-<script src="/js/jqrg-theme.js?v=4" defer></script>
+<link rel="stylesheet" href="/css/jqrg-theme.css?v=3">
+<link rel="stylesheet" href="/css/jqrg-theme-presets.css?v=5">
+<script src="/js/jqrg-theme.js?v=5" defer></script>
 </head>
   <body>
 <div id="learn-cover">
@@ -3504,6 +3508,19 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
   </div>
 </div>
 
+<div class="modal-overlay" id="developer-group-full-modal" role="dialog" aria-modal="true" aria-labelledby="developer-group-full-title" onclick="if(event.target===this)closeDeveloperGroupFull()">
+  <div class="modal developer-group-full-modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="developer-group-full-title">JimmyQrg Developers</h3>
+      <button class="modal-close" type="button" onclick="closeDeveloperGroupFull()" aria-label="Close">&times;</button>
+    </div>
+    <div class="dev-group-full-message">
+      <div class="dev-group-full-icon" aria-hidden="true">✓</div>
+      <p>Unfortunately, our developer group is currently full. We appreciate your interest in helping build JimmyQrg, and we’ll reopen applications when we have room for more contributors.</p>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="announcement-modal">
   <div class="modal">
     <div class="modal-header">
@@ -3548,7 +3565,7 @@ body.ui-hidden .top-bar > .tb-actions > *:not(.hide-ui-btn) *::after{
   </div>
 </div>
 
-<script src="/js/jqrg-particles.js?v=73" defer></script>
+<script src="/js/jqrg-particles.js?v=74" defer></script>
 <script src="/js/openGame.js?v=72"></script>
 <script src="/js/jqrg-anniversary.js?v=9"></script>
           <script>
@@ -3963,7 +3980,7 @@ var _D1=[
   {n:_('T3ZP'),img:_("b3Zv"),url:_("L3EvZy9vdm8v"),tags:["platformer","parkour","single-player","offline"]},
   {n:_('T3ZPIDI='),img:_("b3ZvMg=="),url:_("L3EvZy9vdm8yLw=="),tags:["platformer","parkour","single-player","offline"]},
   {n:_('SG9sbG93IEtuaWdodA=='),img:_("aG9sbG93LWtuaWdodA=="),url:_("aHR0cHM6Ly9wZXJmZWN0bmlwLmdpdGh1Yi5pby9qZzIvZy9ob2xsb3cta25pZ2h0Lw=="),tags:["featured","platformer","adventure","single-player","offline"]},
-  {n:_('U2lsa1Nvbmc='),img:_("c2lsa3Nvbmc="),url:_("aHR0cHM6Ly9yYXcuZ2l0aGFjay5jb20vaW5kaWFtb25kYS9wZXJmZWN0bmlwLmdpdGh1Yi5pby9naC1wYWdlcy9xL2cvc2lsa3NvbmcvaW5kZXguaHRtbA=="),tags:["featured","platformer","adventure","single-player","offline"]},
+  {n:_('U2lsa1Nvbmc='),img:_("c2lsa3Nvbmc="),url:_("L3EvZy9zaWxrc29uZy8="),tags:["featured","platformer","adventure","single-player","offline"]},
   {n:_('U3Vid2F5IFN1cmZlcnM='),img:_("c3Vid2F5LXN1cmZlcnM="),url:_("L3EvZy9zdWJ3YXktc3VyZmVycy8="),tags:["touch","runner","arcade","single-player","offline"]},
   {n:_('U3Vid2F5IFN1cmZlcnMgQmVpamluZw=='),img:_("c3Vid2F5LXN1cmZlcnMtYmVpamluZw=="),url:_("L3EvZy9zdWJ3YXktc3VyZmVycy1iZWlqaW5nLw=="),tags:["touch","runner","arcade","single-player","offline"]},
   {n:_('U3Vid2F5IFN1cmZlcnMgSG91c3Rvbg=='),img:_("c3Vid2F5LXN1cmZlcnMtaG91c3Rvbg=="),url:_("L3EvZy9zdWJ3YXktc3VyZmVycy1ob3VzdG9uLw=="),tags:["touch","runner","arcade","single-player","offline"]},
@@ -4208,7 +4225,7 @@ var _D5=[
   {n:_('RGlzY29yZCBTZXJ2ZXI='),img:_("ZGlzY29yZA=="),url:_("aHR0cHM6Ly9kaXNjb3JkLmNvbS9pbnZpdGUvVVdZOHA4bW4=")},
   {n:_('UmVwb3J0IEJ1Z3M='),img:_("cmVwb3J0LWJ1Z3M="),url:_("aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vZm9ybXMvZC9lLzFGQUlwUUxTY1lkYnBlXzlRM3cya3BBZnktbnRMQW9DTXRmOXdnMnZrZkhPdDZ4cll3TXZERk5nL3ZpZXdmb3JtP3VzcD1oZWFkZXI="),form:true},
   {n:_('R2FtZSBTdWdnZXN0aW9ucw=='),img:_("Z2FtZS1zdWdnZXN0aW9ucw=="),url:_("aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vZm9ybXMvZC9lLzFGQUlwUUxTY2V1alo4TGkxeWNZclJJSzlNUjlHVXFJMU9rQU5aaU1vTzFndXU5aHl0ZlU1aGxnL3ZpZXdmb3JtP3VzcD1oZWFkZXI="),form:true},
-  {n:_('Sm9pbiBEZXZlbG9wZXJz'),img:_("am9pbi1kZXZlbG9wZXJz"),url:_("aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vZm9ybXMvZC9lLzFGQUlwUUxTYzBHUnlXSHFBbUk1ZDBaUW5rTHQ5WmYzS1BWT1ZIUEZ1aWk4b3ZPbW9uU2VDNkpnL3ZpZXdmb3JtP3VzcD1oZWFkZXI="),form:true},
+  {n:_('Sm9pbiBEZXZlbG9wZXJz'),img:_("am9pbi1kZXZlbG9wZXJz"),devFull:true},
 ];
 
 function pickRandom(arr){return arr[Math.floor(Math.random()*arr.length)]}
@@ -4687,19 +4704,29 @@ function _rC(){
   var c=document.getElementById('contacts-container');
   var html='<div class="section-title">'+_t(_('Q29udGFjdHM='))+'</div><div class="contacts-grid">';
   _D5.forEach(function(ct){
-    var escaped=ct.url.replace(/'/g,"\\'");
+    var escaped=(ct.url||'').replace(/'/g,"\\'");
     var imgSrc=ct.form?_('L2dhbWUtaW1hZ2VzL2NvbnRhY3RzL2Zvcm1zLnBuZw=='):_('L2dhbWUtaW1hZ2VzL2NvbnRhY3RzLw==')+ct.img+'.png';
     var icon='<div class="skeleton" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"></div>'+
       '<img src="'+imgSrc+'" alt="" decoding="async"'+
         ' onload="var s=this.previousElementSibling;if(s)s.style.display=\'none\'"'+
         ' onerror="var s=this.previousElementSibling;if(s)s.style.display=\'none\';this.style.display=\'none\'">';
-    html+='<div class="contact-tile" onclick="window.open(\''+escaped+'\',\'_blank\')">'+
+    html+='<div class="contact-tile" role="button" tabindex="0" onclick="'+(ct.devFull?'openDeveloperGroupFull(event)':'window.open(\''+escaped+'\',\'_blank\')')+'"'+(ct.devFull?' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openDeveloperGroupFull(event)}"':'')+'>'+
       icon+'<span>'+_t(ct.n)+'</span></div>';
   });
   html+='</div>';
   c.innerHTML=html;
   staggerTiles(c);
 }
+function openDeveloperGroupFull(event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  var modal=document.getElementById('developer-group-full-modal');
+  if(modal) modal.classList.add('open');
+}
+function closeDeveloperGroupFull(){
+  var modal=document.getElementById('developer-group-full-modal');
+  if(modal) modal.classList.remove('open');
+}
+document.addEventListener('keydown',function(event){if(event.key==='Escape')closeDeveloperGroupFull();});
 
 var CLOAK_ICONS=[
   {name:'Default',src:'/cloak-images/default.png'},
@@ -4753,19 +4780,20 @@ function toggleHideUI(){
   document.body.classList.toggle('ui-hidden');
 }
 
-function buildCycle(id,options,currentVal,onChangeExpr){
+function buildCycle(id,options,currentVal,onChangeExpr,disabled){
   var idx=0;
   for(var i=0;i<options.length;i++){if(options[i].value===currentVal){idx=i;break}}
   var arrowL='<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
   var arrowR='<svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
-  return '<div class="setting-cycle" id="'+id+'" data-idx="'+idx+'" data-opts=\''+JSON.stringify(options).replace(/'/g,"&#39;")+'\' data-onchange="'+onChangeExpr.replace(/"/g,'&quot;')+'">'+
-    '<button type="button" class="setting-cycle-arrow" onclick="cycleSetting(\''+id+'\',-1)">'+arrowL+'</button>'+
+  return '<div class="setting-cycle'+(disabled?' is-disabled':'')+'" id="'+id+'" data-idx="'+idx+'" data-opts=\''+JSON.stringify(options).replace(/'/g,"&#39;")+'\' data-onchange="'+onChangeExpr.replace(/"/g,'&quot;')+'"'+(disabled?' aria-disabled="true"':'')+'>'+
+    '<button type="button" class="setting-cycle-arrow"'+(disabled?' disabled':'')+' onclick="cycleSetting(\''+id+'\',-1)">'+arrowL+'</button>'+
     '<span class="setting-cycle-label">'+options[idx].label+'</span>'+
-    '<button type="button" class="setting-cycle-arrow" onclick="cycleSetting(\''+id+'\',1)">'+arrowR+'</button>'+
+    '<button type="button" class="setting-cycle-arrow"'+(disabled?' disabled':'')+' onclick="cycleSetting(\''+id+'\',1)">'+arrowR+'</button>'+
   '</div>';
 }
 function cycleSetting(id,dir){
   var el=document.getElementById(id);if(!el)return;
+  if(el.getAttribute('aria-disabled')==='true')return;
   var opts=JSON.parse(el.dataset.opts);
   var idx=(parseInt(el.dataset.idx,10)+dir+opts.length)%opts.length;
   el.dataset.idx=idx;
@@ -4788,6 +4816,7 @@ function openSettings(){
   var autoAnnounce=localStorage.getItem('autoAnnouncement')||'always';
   var isAuthorized=localStorage.getItem('user')==='authorized';
   var searchEngine=localStorage.getItem('searchEngine')||'duckduckgo';
+  var particlesAvailable=!(window.JqrgTheme&&window.JqrgTheme.isStudy&&window.JqrgTheme.isStudy());
 
   function selOpt(val,cur){return val===cur?' selected':''}
   function searchEngineOpts(cur){
@@ -4846,12 +4875,13 @@ function openSettings(){
     '</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Background</span>'+
-      buildCycle('cyc-bgstyle',bgStyleOpts(),window.JqrgParticles?window.JqrgParticles.getStyle():'constellation',"window.JqrgParticles&&window.JqrgParticles.setStyle(value)")+
+      buildCycle('cyc-bgstyle',bgStyleOpts(),window.JqrgParticles?window.JqrgParticles.getStyle():'constellation',"window.JqrgParticles&&window.JqrgParticles.setStyle(value)",!particlesAvailable)+
     '</div>'+
     '<div class="setting-row">'+
       '<span class="setting-label">Background Quality</span>'+
-      buildCycle('cyc-bgquality',bgQualityOpts(),window.JqrgParticles?window.JqrgParticles.getQuality():'regular',"window.JqrgParticles&&window.JqrgParticles.setQuality(value)")+
+      buildCycle('cyc-bgquality',bgQualityOpts(),window.JqrgParticles?window.JqrgParticles.getQuality():'regular',"window.JqrgParticles&&window.JqrgParticles.setQuality(value)",!particlesAvailable)+
     '</div>'+
+    '<div class="particle-theme-notice"'+(particlesAvailable?' hidden':'')+'>Particle styles and quality are not available in Study themes. Choose a JimmyQrg theme to use these settings.</div>'+
     '<div class="setting-row" style="display:block;padding:6px 0">'+
       '<span class="setting-sub-note" style="display:block;font-size:11.5px;line-height:1.5;opacity:.55;letter-spacing:.2px">'+
         '<b style="opacity:.85">Quality tip:</b> Potato is the lightest option (battery-friendly). '+

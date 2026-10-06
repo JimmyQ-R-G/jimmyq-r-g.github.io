@@ -47,6 +47,7 @@ html[data-theme="study"] *{
 html[data-theme="study"] .bg,
 html[data-theme="study"] .bg::after{display:none !important}
 html[data-theme="study"] #bg-scrim,
+html[data-theme="study"] #bg-particles,
 html[data-theme="study"] #particle-canvas,
 html[data-theme="study"] .particles{display:none !important}
 

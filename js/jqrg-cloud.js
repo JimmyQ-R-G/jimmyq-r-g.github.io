@@ -88,6 +88,7 @@
   var RETRY_MS = 5000;
   var FETCH_INTERVAL_MS = 45 * 1000;
   var MAX_VALUE_BYTES = 512 * 1024;
+  var MAX_BULK_ITEMS = 2000; // Matches ../chat/server/routes/saves.js
   var SYNC_SKIP_PREFIXES = [
     '__jqrg_auth_',
     '__jqrg_cloud_',
@@ -307,12 +308,52 @@
     }, DEBOUNCE_MS);
   }
 
+  function utf8ByteLength(value) {
+    if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(value).length;
+    if (typeof Blob !== 'undefined') return new Blob([value]).size;
+    return value.length;
+  }
+
+  /** Upload batches within the backend limit and verify every row's outcome. */
+  function bulkUpsert(items, allowPartial) {
+    var totals = { accepted: 0, skipped: 0, rejected: 0, total: items.length };
+    var chain = Promise.resolve();
+    for (var start = 0; start < items.length; start += MAX_BULK_ITEMS) {
+      (function (batch) {
+        chain = chain.then(function () {
+          return request('/api/saves/bulk', {
+            method: 'POST',
+            body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: batch }),
+          }).then(function (res) {
+            var accepted = Number(res && res.accepted);
+            var skipped = Number(res && res.skipped) || 0;
+            var rejected = Number(res && res.rejected) || 0;
+            if (!Number.isFinite(accepted) || accepted < 0 || skipped < 0 || rejected < 0 ||
+                accepted + skipped + rejected !== batch.length) {
+              var invalid = new Error('The save service returned an incomplete sync result.');
+              invalid.permanent = true;
+              throw invalid;
+            }
+            totals.accepted += accepted;
+            totals.skipped += skipped;
+            totals.rejected += rejected;
+            if (!allowPartial && (skipped || rejected)) {
+              var incomplete = new Error('The save service did not store every game save.');
+              incomplete.permanent = true;
+              throw incomplete;
+            }
+          });
+        });
+      })(items.slice(start, start + MAX_BULK_ITEMS));
+    }
+    return chain.then(function () { return totals; });
+  }
+
   function flushPending() {
     if (flushInFlight) return activeFlushPromise || Promise.resolve(false);
     if (!authState) return Promise.resolve(false); // nothing to send; stay queued for after login
     var entries = Object.keys(pendingQueue);
     if (!entries.length) return Promise.resolve(true);
-    flushInFlight = true;
     var batch = Object.create(null);
     var items = [];
     for (var i = 0; i < entries.length; i++) {
@@ -323,23 +364,21 @@
         items.push({ key: k, value: '', updated_at: op.time, _delete: true });
       } else {
         var raw = op.value == null ? '' : String(op.value);
-        if (raw.length > MAX_VALUE_BYTES) continue; // too big, skip silently
+        if (utf8ByteLength(raw) > MAX_VALUE_BYTES) {
+          var tooLarge = new Error('A game save exceeds the backend 512 KB per-save limit.');
+          tooLarge.permanent = true;
+          return Promise.reject(tooLarge);
+        }
         items.push({ key: k, value: raw, updated_at: op.time });
       }
     }
+    flushInFlight = true;
     // Split deletes and upserts. Bulk upsert handles inserts/updates in one roundtrip; deletes are per-key.
     var deletes = items.filter(function (it) { return it._delete; });
     var upserts = items.filter(function (it) { return !it._delete; });
     var chain = Promise.resolve();
     if (upserts.length) {
-      chain = chain.then(function () {
-        return request('/api/saves/bulk', {
-          method: 'POST',
-          body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: upserts }),
-        }).then(function (res) {
-          if (res && Number(res.rejected) > 0) throw new Error('The server rejected one or more game saves.');
-        });
-      });
+      chain = chain.then(function () { return bulkUpsert(upserts, false); });
     }
     for (var d = 0; d < deletes.length; d++) {
       (function (item) {
@@ -367,10 +406,19 @@
       // network/server error. A failed upload must never look like a sync.
       flushInFlight = false;
       activeFlushPromise = null;
-      if (authState) setTimeout(function () { flushPending().catch(function () {}); }, RETRY_MS);
+      if (authState && !(err && (err.permanent || (err.status >= 400 && err.status < 500) || err.status === 507))) {
+        setTimeout(function () { flushPending().catch(function () {}); }, RETRY_MS);
+      }
       throw err;
     });
     return activeFlushPromise;
+  }
+
+  function flushAllPending() {
+    return flushPending().then(function (result) {
+      if (authState && Object.keys(pendingQueue).length) return flushAllPending();
+      return result;
+    });
   }
 
   /** Patch localStorage so every write and removal is observed. We replace setItem / removeItem /
@@ -488,25 +536,24 @@
     // pushes still respect per-key recorded times (which override this default below).
     var migrationTs = Date.now();
     var items = [];
+    var oversizedKey = null;
     try {
       for (var i = 0; i < LS.length; i++) {
         var k = LS.key(i);
         if (!k || !shouldSyncKey(k)) continue;
         var v = LS.getItem(k);
         if (v == null) continue;
-        if (v.length > MAX_VALUE_BYTES) continue;
+        if (utf8ByteLength(v) > MAX_VALUE_BYTES) { oversizedKey = k; continue; }
         // Use the recorded per-key write time when we have one; otherwise the keys are
         // pre-tracking-era state from this device and we treat them as freshly migrated.
         var keyTs = keyTimes[k];
         items.push({ key: k, value: v, updated_at: typeof keyTs === 'number' ? keyTs : migrationTs });
       }
     } catch (_) {}
+    if (oversizedKey) return Promise.reject(new Error('Save “' + oversizedKey + '” exceeds the backend 512 KB per-save limit.'));
     var chain = items.length
-      ? request('/api/saves/bulk', {
-          method: 'POST',
-          body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: items }),
-        })
-      : Promise.resolve({ accepted: 0, rejected: 0 });
+      ? bulkUpsert(items, false)
+      : Promise.resolve({ accepted: 0, skipped: 0, rejected: 0, total: 0 });
     return chain.then(function (res) {
       // Push every IDB DB this device is willing to sync: auto-detected plus
       // anything games registered explicitly (e.g. Unity IDBFS at `/idbfs`,
@@ -535,25 +582,24 @@
     opts = opts || {};
     var migrationTs = Date.now();
     var items = [];
+    var oversizedKey = null;
     try {
       for (var i = 0; i < LS.length; i++) {
         var k = LS.key(i);
         if (!k || !shouldSyncKey(k)) continue;
         var v = LS.getItem(k);
         if (v == null) continue;
-        if (v.length > MAX_VALUE_BYTES) continue;
+        if (utf8ByteLength(v) > MAX_VALUE_BYTES) { oversizedKey = k; continue; }
         // Skip empty or whitespace-only values
         if (typeof v === 'string' && v.trim().length === 0) continue;
         var keyTs = keyTimes[k];
         items.push({ key: k, value: v, updated_at: typeof keyTs === 'number' ? keyTs : migrationTs });
       }
     } catch (_) {}
+    if (oversizedKey) return Promise.reject(new Error('Save “' + oversizedKey + '” exceeds the backend 512 KB per-save limit.'));
     var chain = items.length
-      ? request('/api/saves/bulk', {
-          method: 'POST',
-          body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: items }),
-        })
-      : Promise.resolve({ accepted: 0, rejected: 0 });
+      ? bulkUpsert(items, false)
+      : Promise.resolve({ accepted: 0, skipped: 0, rejected: 0, total: 0 });
     return chain.then(function (res) {
       // Only snapshot IDB databases that have actual game save data
       // (skip empty IDB databases created by just opening a game)
@@ -604,7 +650,10 @@
   /** Fetch everything from the server newer than `since` (0 means full snapshot) and apply to localStorage. */
   function pullFromServer(since) {
     if (!authState) return Promise.resolve({ items: [] });
-    var url = '/api/saves?origin=' + encodeURIComponent(STORAGE_NAMESPACE) + '&since=' + (since || 0);
+    // This facade represents localStorage only; other save kinds must not
+    // be installed as unrelated localStorage keys.
+    var url = '/api/saves?origin=' + encodeURIComponent(STORAGE_NAMESPACE) +
+      '&kind=localStorage&since=' + (since || 0);
     return request(url).then(function (data) {
       if (!data || !Array.isArray(data.items)) return data;
       var origSet = _origSetItem;
@@ -630,7 +679,7 @@
     periodicTimer = setInterval(function () {
       if (!authState) return;
       // Flush first so our changes go up before we pull theirs.
-      flushPending().then(function () {
+      flushAllPending().then(function () {
         var since = lastSyncAt ? lastSyncAt - 1000 : 0;
         return pullFromServer(since);
       }).catch(function () {});
@@ -692,7 +741,7 @@
       setAuth(data.user, data.token);
       startPeriodicSync();
       return pullFromServer(0).then(function () {
-        return flushPending();
+        return flushAllPending();
       }).catch(function (err) {
         // Authentication succeeded. Keep the session and retry sync instead
         // of misleadingly reporting that sign-in itself failed.
@@ -797,7 +846,7 @@
       var accountKey = data.account_key || null;
       startPeriodicSync();
       return pullFromServer(0).then(function () {
-        return flushPending();
+        return flushAllPending();
       }).catch(function (err) {
         try { console.warn('[jqrg-cloud] account sync will retry:', err); } catch (_) {}
       }).then(function () { return { user: data.user, accountKey: accountKey }; });
@@ -809,7 +858,7 @@
     if (!had) return Promise.resolve(false);
     // Do not discard volatile game saves when the user signs out. If the
     // upload fails, keep the session active so the pending writes can retry.
-    return flushPending().then(function () {
+    return flushAllPending().then(function () {
       return request('/api/auth/logout', { method: 'POST' }).catch(function () {});
     }).then(function () {
       stopPeriodicSync();
@@ -822,7 +871,7 @@
 
   function forceSync() {
     if (!authState) return Promise.resolve(null);
-    return flushPending().then(function () {
+    return flushAllPending().then(function () {
       var since = lastSyncAt ? lastSyncAt - 1000 : 0;
       return pullFromServer(since);
     });
@@ -914,28 +963,19 @@
     var filtered = beforeFilter - items.length;
     if (!items.length) return Promise.reject(new Error('The import contains no supported game save entries.'));
 
-    // Server's /bulk route reads kind from each item, so we just chunk items directly.
-    var accepted = 0, rejected = filtered, total = beforeFilter;
-    var chain = Promise.resolve();
-    for (var idx = 0; idx < items.length; idx += 500) {
-      (function (slice) {
-        chain = chain.then(function () {
-          return request('/api/saves/bulk', {
-            method: 'POST',
-            body: JSON.stringify({ origin: STORAGE_NAMESPACE, items: slice }),
-          }).then(function (r) {
-            accepted += Number(r && r.accepted) || 0;
-            rejected += Number(r && r.rejected) || 0;
-          });
-        });
-      })(items.slice(idx, idx + 500));
-    }
-    return chain.then(function () {
+    // Server's /bulk route reads kind from each item. Reflect quota/validation
+    // skips instead of telling the user every imported row was saved.
+    return bulkUpsert(items, true).then(function (result) {
       // Mirror localStorage kind items into the live localStorage so the user sees them immediately.
       try {
         items.forEach(function (it) { if (it.kind === 'localStorage') volatileValues[it.key] = String(it.value); });
       } catch (_) {}
-      return { accepted: accepted, rejected: rejected, total: total };
+      return {
+        accepted: result.accepted,
+        skipped: result.skipped,
+        rejected: filtered + result.rejected + result.skipped,
+        total: beforeFilter,
+      };
     });
   }
 
@@ -1832,7 +1872,7 @@
             setAuth(data.user, sso);
             pullFromServer(0).then(function () {
               startPeriodicSync();
-              return flushPending();
+              return flushAllPending();
             }).catch(function () {});
           }
         })

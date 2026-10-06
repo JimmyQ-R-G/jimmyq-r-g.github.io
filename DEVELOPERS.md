@@ -1,5 +1,9 @@
 # Developers Read This
 
+## Theme coverage is part of every feature
+
+When adding or changing a feature, update and review it in **every theme preset** on the main site and JimmyQrg Chat, including its hover/focus/disabled states, overlays, empty states, and responsive layout. Do not treat theme support as a later polish task. Shared components should use the active theme's tokens; when a feature needs theme-specific structure, add the corresponding rules for every affected preset and keep Classic unchanged unless the feature request says otherwise.
+
 ## Cloud Saves & Sign-in (`js/jqrg-cloud.js` + `js/jqrg-auth-ui.js`)
 
 Same-origin pages use the chat backend (`discord.jimmyqrg.com`) for account sign-in and supported cloud saves. Each HTML file pulls in two scripts via the shared inject marker:
