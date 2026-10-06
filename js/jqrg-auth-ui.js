@@ -560,8 +560,7 @@
       if (!id || !pw) { err.textContent = 'Enter a username/email and password.'; return; }
       var submit = form.querySelector('.jqrg-auth-submit');
       submit.disabled = true; submit.textContent = 'Signing in…';
-      // Lock onAuthChange's auto-navigation so the profile view doesn't flicker before we
-      // decide whether to show the sync prompt. Cleared by maybeOfferLocalSync / finish().
+      // Keep the login form visible until the initial account sync completes.
       syncPromptInFlight = true;
       Cloud.login(id, pw).then(function () {
         onSignedIn();
@@ -1485,8 +1484,15 @@
     renderEmailSection(emailSection);
     wrap.appendChild(emailSection);
 
-    var syncStatus = h('div', { class: 'jqrg-sync-status' }, 'Game saves are syncing to the cloud');
+    var syncStatus = h('div', { class: 'jqrg-sync-status' }, 'Checking cloud sync…');
     wrap.appendChild(syncStatus);
+    Cloud.forceSync().then(function () {
+      syncStatus.textContent = 'Cloud sync is current for supported game saves';
+      syncStatus.classList.add('active');
+    }).catch(function () {
+      syncStatus.textContent = 'Cloud sync is unavailable; pending saves will retry';
+      syncStatus.classList.remove('active');
+    });
 
     var actions = h('div', { class: 'jqrg-profile-actions' });
 
@@ -1520,6 +1526,9 @@
       onclick: function () {
         Cloud.logout().then(function () {
           onSignedOut();
+        }).catch(function (err) {
+          syncStatus.textContent = 'Sign out paused because saves could not sync: ' + ((err && err.message) || 'retry later');
+          syncStatus.classList.remove('active');
         });
       },
     }, [actionIcon(ICON_SIGNOUT_SVG), 'Sign out']));
@@ -1531,7 +1540,7 @@
   function doExport(statusEl) {
     if (!Cloud.isLoggedIn()) return;
     if (statusEl) statusEl.textContent = 'Preparing export…';
-    Cloud.forceSync().catch(function () {}).then(function () {
+    Cloud.forceSync().then(function () {
       return Cloud.exportAll();
     }).then(function (snapshot) {
       var json = JSON.stringify(snapshot, null, 2);
@@ -1541,7 +1550,7 @@
       if (statusEl) {
         statusEl.textContent = 'Exported ' + (snapshot.items ? snapshot.items.length : 0) + ' saves';
         statusEl.classList.add('active');
-        setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Game saves are syncing to the cloud'; }, 2500);
+        setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Cloud sync is current for supported game saves'; }, 2500);
       }
     }).catch(function (err) {
       if (statusEl) statusEl.textContent = 'Export failed: ' + ((err && err.message) || 'unknown');
@@ -1560,7 +1569,7 @@
           if (statusEl) {
             statusEl.textContent = 'Imported ' + (result.accepted || 0) + ' saves' + (result.rejected ? ' (' + result.rejected + ' rejected)' : '');
             statusEl.classList.add('active');
-            setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Game saves are syncing to the cloud'; }, 3000);
+            setTimeout(function () { statusEl.classList.remove('active'); statusEl.textContent = 'Cloud sync is current for supported game saves'; }, 3000);
           }
           return Cloud.forceSync().catch(function () {});
         });
@@ -1970,11 +1979,8 @@
     requestAnimationFrame(function () { overlay.classList.add('open'); });
     syncModalRequired();
     document.addEventListener('keydown', escHandler);
-    // If the user is already signed in and has local data that hasn't been pushed yet,
-    // offer to sync it the first time they open the account modal this session.
-    if (Cloud.isLoggedIn() && !opts.skipSyncCheck) {
-      setTimeout(function () { maybeOfferLocalSync(function () { setTab('profile'); }); }, 50);
-    }
+    // buildProfileForm() performs a real flush/pull and reports its status.
+    // Do not run the old database-presence migration prompt on modal open.
   }
 
   function syncModalRequired() {
