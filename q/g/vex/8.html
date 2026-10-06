@@ -1218,7 +1218,7 @@
     <script src="azerion-libs.min.js" defer></script>
 
 <!-- JQRG_CLOUD_INJECT_BEGIN --><script>
-/* The static <script src="/js/jqrg-cloud.js"> tags below sit after the
+/* The static <script src="/js/jqrg-cloud.js?v=75"> tags below sit after the
  * <base href="https://cdn..."> declared on this page, which would route
  * those root-absolute paths to the CDN host (404). Inject them via JS
  * with an explicit absolute URL so they always resolve against the site
@@ -1234,8 +1234,8 @@
       s.defer = true;
       (document.head || document.documentElement).appendChild(s);
     }
-    add('/js/jqrg-cloud.js');
-    add('/js/jqrg-auth-ui.js');
+    add('/js/jqrg-cloud.js?v=75');
+    add('/js/jqrg-auth-ui.js?v=80');
   } catch (_) {}
 })();
 </script><!-- JQRG_CLOUD_INJECT_END -->
